@@ -78,6 +78,9 @@ class ZimPageNameExtractor
 
 		final
 		Strategy strategy = getStrategy(noPathOrFileExt, bits);
+		{
+			log.debug("{} for {}", strategy, url);
+		}
 
 		switch(strategy)
 		{
@@ -96,6 +99,11 @@ class ZimPageNameExtractor
 				return refine(bits[0]+upperFirst(bits[1]), bits[2]);
 			}
 
+			case BIT_THREE_IS_EPISODE_NUMBER:
+			{
+				return refine(bits[0], bits[3]);
+			}
+
 			case FUSE_TWO:
 			{
 				return refine(bits[0]+upperFirst(bits[1]), bits[2]);
@@ -104,6 +112,11 @@ class ZimPageNameExtractor
 			case GWO:
 			{
 				return refine("GNUWorldOrder", bits[5]);
+			}
+
+			case SEASON_2_EPISODE_4:
+			{
+				return refine(bits[0], "s"+bits[2]+"e"+bits[4]);
 			}
 
 			case TTT:
@@ -157,10 +170,13 @@ class ZimPageNameExtractor
 		{
 			return "LinuxLink";
 		}
-		else
+
+		if (showName.endsWith("podcast"))
 		{
-			return upperFirst(removeExtension(showName));
+			showName=showName.substring(0, showName.length()-7)+"Podcast";
 		}
+
+		return upperFirst(removeExtension(showName));
 	}
 
 	private
@@ -195,11 +211,14 @@ class ZimPageNameExtractor
 	private
 	String refineEpisodeNumber(String episode)
 	{
-		while (badNumericPrefix(episode.charAt(0)))
+		log.debug("refine episode '{}'", episode);
+
+		while (!episode.isEmpty() && badNumericPrefix(episode.charAt(0)))
 		{
 			episode=episode.substring(1);
 		}
 
+		log.debug("... to: '{}'", episode);
 		return episode;
 	}
 
@@ -233,6 +252,11 @@ class ZimPageNameExtractor
 			return Strategy.BIT_ONE_IS_EPISODE_NUMBER;
 		}
 
+		if (bits[1].equals("_s"))
+		{
+			return Strategy.SEASON_2_EPISODE_4;
+		}
+
 		if (fuseMarker(bits[2]))
 		{
 			return Strategy.FUSE_TWO;
@@ -243,6 +267,12 @@ class ZimPageNameExtractor
 			return Strategy.BIT_TWO_IS_EPISODE_NUMBER;
 		}
 
+		if (isNumeric(bits[3]))
+		{
+			return Strategy.BIT_THREE_IS_EPISODE_NUMBER;
+		}
+
+		log.warn("no obvious strategy for: '{}'", s);
 		return Strategy.BIT_ONE_IS_EPISODE_NUMBER;
 	}
 
@@ -259,6 +289,12 @@ class ZimPageNameExtractor
 	private
 	boolean isNumeric(String bit)
 	{
+		if (bit.length()==1)
+		{
+			//NB: don't want to match separators...
+			return Character.isDigit(bit.charAt(0));
+		}
+
 		for (char c : bit.toCharArray())
 		{
 			if (!isNumericOrSeperator(c))
@@ -279,6 +315,6 @@ class ZimPageNameExtractor
 	private
 	enum Strategy
 	{
-		TTT, AGENDA31, BIT_TWO_IS_EPISODE_NUMBER, FUSE_TWO, GWO, BIT_ONE_IS_EPISODE_NUMBER
+		TTT, AGENDA31, BIT_TWO_IS_EPISODE_NUMBER, FUSE_TWO, GWO, SEASON_2_EPISODE_4, BIT_THREE_IS_EPISODE_NUMBER, BIT_ONE_IS_EPISODE_NUMBER
 	}
 }
