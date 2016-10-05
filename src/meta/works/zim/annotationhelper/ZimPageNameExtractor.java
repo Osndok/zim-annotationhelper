@@ -70,20 +70,40 @@ class ZimPageNameExtractor
 		{
 			log.debug("split into {} bits", bits.length);
 
-			for (String bit : bits)
+			for(int i=0; i<bits.length; i++)
 			{
-				log.debug("bit: {}", bit);
+				log.debug("bit[{}]: {}", i, bits[i]);
 			}
 		}
 
 		final
-		Strategy strategy = getStrategy(bits);
+		Strategy strategy = getStrategy(noPathOrFileExt, bits);
 
 		switch(strategy)
 		{
+			case AGENDA31:
+			{
+				return refine("Agenda31", bits[5]);
+			}
+
 			case BIT_ONE_IS_EPISODE_NUMBER:
 			{
 				return refine(bits[0], bits[1]);
+			}
+
+			case BIT_TWO_IS_EPISODE_NUMBER:
+			{
+				return refine(bits[0], bits[2]);
+			}
+
+			case FUSE_TWO:
+			{
+				return refine(bits[0]+upperFirst(bits[1]), bits[2]);
+			}
+
+			case TTT:
+			{
+				return refine("TTT", bits[2]);
 			}
 		}
 
@@ -103,7 +123,17 @@ class ZimPageNameExtractor
 	private
 	String refineShowName(String showName)
 	{
-		if (showName.length()<=3)
+		if (showName.equals("lv"))
+		{
+			return "LinuxVoice";
+		}
+		else
+		if (showName.equals("glp"))
+		{
+			return "GoingLinux";
+		}
+		else
+		if (showName.length()<=4)
 		{
 			return showName.toUpperCase();
 		}
@@ -118,6 +148,11 @@ class ZimPageNameExtractor
 			return "TechSNAP";
 		}
 		else
+		if (showName.equals("tllts"))
+		{
+			return "LinuxLink";
+		}
+		else
 		{
 			return upperFirst(showName);
 		}
@@ -126,13 +161,20 @@ class ZimPageNameExtractor
 	private
 	String upperFirst(String showName)
 	{
-		return Character.toUpperCase(showName.charAt(0))+showName.substring(1);
+		if (showName!=null && showName.length()>1)
+		{
+			return Character.toUpperCase(showName.charAt(0)) + showName.substring(1);
+		}
+		else
+		{
+			return showName;
+		}
 	}
 
 	private
 	String refineEpisodeNumber(String episode)
 	{
-		while (badNumberChar(episode.charAt(0)))
+		while (badNumericPrefix(episode.charAt(0)))
 		{
 			episode=episode.substring(1);
 		}
@@ -141,23 +183,76 @@ class ZimPageNameExtractor
 	}
 
 	private
-	boolean badNumberChar(char c)
+	boolean badNumericPrefix(char c)
 	{
-		return c=='-' || c=='0';
+		return c=='-' || c=='0' || c=='_';
 	}
 
 	private
-	Strategy getStrategy(String[] bits)
+	Strategy getStrategy(String s, String[] bits)
 	{
-		final
-		String firstBit = bits[0];
+		if (s.startsWith("T3-"))
+		{
+			return Strategy.TTT;
+		}
+
+		if (s.startsWith("Agenda31"))
+		{
+			return Strategy.AGENDA31;
+		}
+
+		//if (firstBit.equals("Dudmanovi"))
+		if (isNumeric(bits[1]) || bits.length<2)
+		{
+			return Strategy.BIT_ONE_IS_EPISODE_NUMBER;
+		}
+
+		if (fuseMarker(bits[2]))
+		{
+			return Strategy.FUSE_TWO;
+		}
+
+		if (isNumeric(bits[2]))
+		{
+			return Strategy.BIT_TWO_IS_EPISODE_NUMBER;
+		}
 
 		return Strategy.BIT_ONE_IS_EPISODE_NUMBER;
 	}
 
 	private
+	boolean fuseMarker(String bit)
+	{
+		return bit.equals("Luddites")
+			|| bit.equals("Panic")
+			|| bit.equals("Podcast")
+			|| bit.equals("Show")
+			;
+	}
+
+	private
+	boolean isNumeric(String bit)
+	{
+		for (char c : bit.toCharArray())
+		{
+			if (!isNumericOrSeperator(c))
+			{
+				return false;
+			}
+		}
+
+		return bit.length()>0;
+	}
+
+	private
+	boolean isNumericOrSeperator(char c)
+	{
+		return Character.isDigit(c) || c=='-' || c=='_';
+	}
+
+	private
 	enum Strategy
 	{
-		BIT_ONE_IS_EPISODE_NUMBER
+		TTT, AGENDA31, BIT_TWO_IS_EPISODE_NUMBER, FUSE_TWO, BIT_ONE_IS_EPISODE_NUMBER
 	}
 }
