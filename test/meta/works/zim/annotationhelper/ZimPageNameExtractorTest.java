@@ -48,7 +48,7 @@ class ZimPageNameExtractorTest
 				{":GoingLinux:305", "glp305.mp3"},
 				{":HPR:2016", "hpr2016.ogg"},
 				{":Transmit:36", "Transmit36.mp3"},
-				{":KernelPanic:Podcast:128", "KernelPanic_128.ogg"},
+				{":KernelPanic:128", "KernelPanic_128.ogg"},
 				{":LinuxVoice:s04e13", "lv_s04e13.mp3"},
 				{":LinuxLuddites:86", "LinuxLuddites086.mp3"},
 				{":NA:854", "NA-854-2016-08-25-Final.mp3"},

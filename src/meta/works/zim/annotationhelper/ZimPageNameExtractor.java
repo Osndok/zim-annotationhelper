@@ -93,12 +93,17 @@ class ZimPageNameExtractor
 
 			case BIT_TWO_IS_EPISODE_NUMBER:
 			{
-				return refine(bits[0], bits[2]);
+				return refine(bits[0]+upperFirst(bits[1]), bits[2]);
 			}
 
 			case FUSE_TWO:
 			{
 				return refine(bits[0]+upperFirst(bits[1]), bits[2]);
+			}
+
+			case GWO:
+			{
+				return refine("GNUWorldOrder", bits[5]);
 			}
 
 			case TTT:
@@ -154,7 +159,23 @@ class ZimPageNameExtractor
 		}
 		else
 		{
-			return upperFirst(showName);
+			return upperFirst(removeExtension(showName));
+		}
+	}
+
+	private
+	String removeExtension(String showName)
+	{
+		final
+		int period=showName.lastIndexOf('.');
+
+		if (period>0)
+		{
+			return showName.substring(0, period);
+		}
+		else
+		{
+			return showName;
 		}
 	}
 
@@ -199,6 +220,11 @@ class ZimPageNameExtractor
 		if (s.startsWith("Agenda31"))
 		{
 			return Strategy.AGENDA31;
+		}
+
+		if (s.startsWith("gnuWorldOrder"))
+		{
+			return Strategy.GWO;
 		}
 
 		//if (firstBit.equals("Dudmanovi"))
@@ -253,6 +279,6 @@ class ZimPageNameExtractor
 	private
 	enum Strategy
 	{
-		TTT, AGENDA31, BIT_TWO_IS_EPISODE_NUMBER, FUSE_TWO, BIT_ONE_IS_EPISODE_NUMBER
+		TTT, AGENDA31, BIT_TWO_IS_EPISODE_NUMBER, FUSE_TWO, GWO, BIT_ONE_IS_EPISODE_NUMBER
 	}
 }
