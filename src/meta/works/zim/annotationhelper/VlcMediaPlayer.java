@@ -12,6 +12,12 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 		return "vlc";
 	}
 
+	@Override
+	void onStateChange(StateSnapshot was, StateSnapshot now, long age)
+	{
+
+	}
+
 	public static final
 	void main(String[] args)
 	{

@@ -10,21 +10,17 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-import static sun.corba.Bridge.get;
-
 /**
  * Created by robert on 2016-10-06 11:30.
  */
 public abstract
 class AbstractDBusMediaPlayer extends Thread
 {
+	private long lastCallback;
+
 	abstract String getDBusSenderSuffix();
-	/*
-	abstract void onBegin();
-	abstract void onPaused();
-	abstract void onResume();
-	abstract void onStopOrFinished();
-	*/
+
+	abstract void onStateChange(StateSnapshot was, StateSnapshot now, long age);
 
 	private static final
 	Logger log = LoggerFactory.getLogger(AbstractDBusMediaPlayer.class);
@@ -41,6 +37,7 @@ class AbstractDBusMediaPlayer extends Thread
 			catch (Throwable t)
 			{
 				responsive=false;
+				connection=null;
 				log.error("caught", t);
 			}
 
@@ -62,11 +59,15 @@ class AbstractDBusMediaPlayer extends Thread
 		return "org.mpris.MediaPlayer2."+getDBusSenderSuffix();
 	}
 
+	DBusConnection connection;
+
 	private
 	void run2() throws Exception
 	{
-		final
-		DBusConnection connection = DBusConnection.getConnection(DBusConnection.SESSION);
+		if (connection==null)
+		{
+			connection = DBusConnection.getConnection(DBusConnection.SESSION);
+		}
 
 		final
 		String objectPath="/org/mpris/MediaPlayer2";
@@ -83,36 +84,79 @@ class AbstractDBusMediaPlayer extends Thread
 
 		propertiesByName = properties.GetAll(interfaceName);
 		{
-			playbackStatus = get(String.class, "PlaybackStatus");
-			position = get(Long.class, "Position");
+			responsive=true;
+
+			if (log.isTraceEnabled())
+			{
+				for (Map.Entry<String, Variant> me : propertiesByName.entrySet())
+				{
+					final
+					Object value = me.getValue().getValue();
+
+					log.trace("'{}' = ({}) '{}'", me.getKey(), value.getClass(), value);
+				}
+			}
 		}
 
-		responsive=true;
+		final
+		PlayState playState = PlayState.valueOf(get(String.class, "PlaybackStatus"));
 
-		for (Map.Entry<String, Variant> me : propertiesByName.entrySet())
-		{
-			final
-			Object value = me.getValue().getValue();
+		final
+		Long position = get(Long.class, "Position");
 
-			log.info("'{}' = ({}) '{}'", me.getKey(), value.getClass(), value);
-		}
+		final
+		String zimPage;
 
 		final
 		Map<String,Variant> metadata=get(Map.class, "Metadata");
 
 		if (metadata.isEmpty())
 		{
-			log.info("no file open, {}", playbackStatus);
+			log.info("no file open, {}", playState);
+			zimPage=null;
 		}
 		else
 		{
 			final
 			String url = (String) metadata.get("xesam:url").getValue();
 			{
-				log.info("URL: {}", url);
+				log.debug("url: {}", url);
 			}
+
+			zimPage=zimPageNameExtractor.getZimPageNameFor(url);
+		}
+
+		final
+		StateSnapshot newState=new StateSnapshot(playState, position, zimPage);
+
+		final
+		StateSnapshot previousState;
+		{
+			previousState = this.stateSnapshot;
+			stateSnapshot = newState;
+		}
+
+		if (previousState!=null && warrantsFiringCallback(previousState, newState))
+		{
+			log.debug("onStateChange: {} -> {}", previousState, newState);
+
+			final
+			long now=System.currentTimeMillis();
+
+			onStateChange(previousState, newState, now-lastCallback);
+
+			lastCallback=now;
 		}
 	}
+
+	private
+	boolean warrantsFiringCallback(StateSnapshot previousState, StateSnapshot newState)
+	{
+		return !previousState.getPlayState().equals(newState.getPlayState());
+	}
+
+	public static final
+	ZimPageNameExtractor zimPageNameExtractor=new ZimPageNameExtractor();
 
 	Map<String, Variant> propertiesByName=new HashMap<String, Variant>();
 
@@ -122,8 +166,21 @@ class AbstractDBusMediaPlayer extends Thread
 		return (T)propertiesByName.get(keyName).getValue();
 	}
 
+	private
 	boolean responsive;
-	String playbackStatus;
-	Long position;
 
+	public
+	boolean isResponsive()
+	{
+		return responsive;
+	}
+
+	private
+	StateSnapshot stateSnapshot;
+
+	public
+	StateSnapshot getStateSnapshot()
+	{
+		return stateSnapshot;
+	}
 }

@@ -12,6 +12,12 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 		return "rhythmbox";
 	}
 
+	@Override
+	void onStateChange(StateSnapshot was, StateSnapshot now, long age)
+	{
+
+	}
+
 	public static final
 	void main(String[] args)
 	{
