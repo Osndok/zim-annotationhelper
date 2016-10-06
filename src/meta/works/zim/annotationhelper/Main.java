@@ -7,6 +7,12 @@ class Main
 	public static
 	void main(String[] args)
 	{
+		if (args.length==0)
+		{
+			new VlcMediaPlayer().start();
+			new RhythmBoxMediaPlayer().start();
+		}
+		else
 		if (args.length==1)
 		{
 			final

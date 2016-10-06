@@ -1,5 +1,8 @@
 package meta.works.zim.annotationhelper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 
 import static meta.works.zim.annotationhelper.PlayState.Paused;
@@ -12,6 +15,15 @@ import static meta.works.zim.annotationhelper.PlayState.Stopped;
 public
 class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 {
+	private static final
+	Logger log = LoggerFactory.getLogger(RhythmBoxMediaPlayer.class);
+
+	public
+	RhythmBoxMediaPlayer()
+	{
+		super("rhythmbox");
+	}
+
 	@Override
 	String getDBusSenderSuffix()
 	{
@@ -21,12 +33,30 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 	@Override
 	void onStateChange(StateSnapshot was, StateSnapshot now, long age) throws IOException, InterruptedException
 	{
-		//Avoid streaming files...
-		if (now.getUrl()!=null && now.getUrl().startsWith("http") && now.getPlayState()==Playing)
+		if (now.getUrl()!=null && now.getPlayState() == Playing)
 		{
-			Runtime.getRuntime().exec("espeak undownloaded");
-			stopPlayback();
-			return;
+			//Avoid "streaming" files.
+			if (now.getUrl().startsWith("http") )
+			{
+				Runtime.getRuntime().exec("espeak undownloaded");
+				stopPlayback();
+				return;
+			}
+
+			//Avoid playing video files through RB.
+			if (LooksLike.videoFile(now.getUrl()))
+			{
+				stopPlayback();
+
+				if (vlcIsRunning())
+				{
+					tellVlcToPlay(now.getUrl());
+				}
+				else
+				{
+					launchVlcWithUrl(now.getUrl());
+				}
+			}
 		}
 
 		final
@@ -47,15 +77,43 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			else
 			if (was.getPlayState() == Paused && age > NOTABLY_STALE_STATE_MILLIS)
 			{
+				log.debug("pause -> play @ {}ms age", age);
 				zimPageAppender.journalNote("Resuming [["+zimPage+"]]");
 			}
 		}
 	}
 
-	@Override
-	void onPeriodicInterval(StateSnapshot state, String timeCode) throws IOException, InterruptedException
+	private
+	boolean vlcIsRunning() throws IOException, InterruptedException
 	{
-		zimPageAppender.pageNote(state.getZimPage(), timeCode);
+		final
+		Process process=Runtime.getRuntime().exec("pgrep vlc");
+
+		return process.waitFor()==0;
+	}
+
+	private
+	void tellVlcToPlay(String url) throws IOException
+	{
+		Runtime.getRuntime().exec(new String[]{
+			"qdbus",
+			"org.mpris.MediaPlayer2.vlc",
+			"/org/mpris/MediaPlayer2",
+			"org.mpris.MediaPlayer2.Player.OpenUri",
+			url
+		});
+	}
+
+	private
+	void launchVlcWithUrl(String url) throws IOException
+	{
+		Runtime.getRuntime().exec("vlc "+url);
+	}
+
+	@Override
+	void onPeriodicInterval(StateSnapshot state) throws IOException, InterruptedException
+	{
+		zimPageAppender.pageNote(state.getZimPage(), state.getRoughTimeCode());
 	}
 
 	public static final

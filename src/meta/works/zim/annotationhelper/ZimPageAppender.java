@@ -17,6 +17,8 @@ class ZimPageAppender
 	public
 	void journalNote(String memo) throws IOException, InterruptedException
 	{
+		log.debug("journalNote('{}')", memo);
+
 		final
 		String[] command = new String[]
 			{
@@ -28,9 +30,6 @@ class ZimPageAppender
 
 		final
 		ProcessBuilder processBuilder = new ProcessBuilder(command);
-		{
-			//if (DEBUG) processBuilder.inheritIO();
-		}
 
 		final
 		Process process = processBuilder.start();
@@ -51,6 +50,8 @@ class ZimPageAppender
 	public
 	void pageNote(String pageName, String memo) throws IOException, InterruptedException
 	{
+		log.debug("pageNote('{}', '{}')", pageName, memo);
+
 		if (pageName==null)
 		{
 			log.warn("ignoring pageNote() with null page");

@@ -23,8 +23,11 @@ class StateSnapshot
 	private final
 	String url;
 
+	private final
+	String roughTimeCode;
+
 	public
-	StateSnapshot(PlayState playState, Long position, String url, String zimPage)
+	StateSnapshot(PlayState playState, Long position, String url, String zimPage, String roughTimeCode)
 	{
 		this.playState = playState;
 
@@ -41,6 +44,7 @@ class StateSnapshot
 
 		this.time = System.currentTimeMillis();
 		this.url=url;
+		this.roughTimeCode=roughTimeCode;
 	}
 
 	public
@@ -68,6 +72,12 @@ class StateSnapshot
 	String getUrl()
 	{
 		return url;
+	}
+
+	public
+	String getRoughTimeCode()
+	{
+		return roughTimeCode;
 	}
 
 	@Override

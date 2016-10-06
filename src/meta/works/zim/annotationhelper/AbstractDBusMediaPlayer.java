@@ -2,13 +2,9 @@ package meta.works.zim.annotationhelper;
 
 import org.freedesktop.DBus;
 import org.freedesktop.dbus.DBusConnection;
-import org.freedesktop.dbus.DBusInterface;
-import org.freedesktop.dbus.DBusMatchRule;
 import org.freedesktop.dbus.DBusSigHandler;
 import org.freedesktop.dbus.DBusSignal;
 import org.freedesktop.dbus.Variant;
-import org.freedesktop.dbus.exceptions.DBusException;
-import org.freedesktop.dbus.types.DBusMapType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,30 +13,34 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static java.awt.PageAttributes.MediaType.D;
-
 /**
  * Created by robert on 2016-10-06 11:30.
  */
 public abstract
 class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 {
-	private long lastCallback;
+	private long lastStateChangeCallback=System.currentTimeMillis();
 
 	abstract String getDBusSenderSuffix();
 
 	abstract void onStateChange(StateSnapshot was, StateSnapshot now, long age) throws IOException, InterruptedException;
 
-	abstract void onPeriodicInterval(StateSnapshot state, String timeCode) throws IOException, InterruptedException;
+	abstract void onPeriodicInterval(StateSnapshot state) throws IOException, InterruptedException;
 
 	private static final
 	long PERIODIC_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(2);
 
 	public static final
-	long NOTABLY_STALE_STATE_MILLIS = TimeUnit.MINUTES.toSeconds(5);
+	long NOTABLY_STALE_STATE_MILLIS = TimeUnit.MINUTES.toMillis(5);
 
 	private static final
 	Logger log = LoggerFactory.getLogger(AbstractDBusMediaPlayer.class);
+
+	public
+	AbstractDBusMediaPlayer(String name)
+	{
+		super(name);
+	}
 
 	public final
 	void run()
@@ -146,7 +146,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 
 		if (metadata.isEmpty())
 		{
-			log.debug("no file open, {}", playState);
+			log.trace("no file open, {}", playState);
 			url=null;
 			zimPage=null;
 		}
@@ -154,7 +154,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		{
 			url = (String) metadata.get("xesam:url").getValue();
 			{
-				log.debug("url: {}", url);
+				log.trace("url: {}", url);
 			}
 
 			if (isLocalPodcastUrl(url))
@@ -168,7 +168,10 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		}
 
 		final
-		StateSnapshot newState=new StateSnapshot(playState, position, url, zimPage);
+		String roughTimeCode=getRoughTimeCode(position);
+
+		final
+		StateSnapshot newState=new StateSnapshot(playState, position, url, zimPage, roughTimeCode);
 
 		final
 		StateSnapshot previousState;
@@ -177,16 +180,55 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 			stateSnapshot = newState;
 		}
 
-		if (previousState!=null && warrantsFiringCallback(previousState, newState))
+		if (previousState!=null)
 		{
-			log.debug("onStateChange: {} -> {}", previousState, newState);
+			if (warrantsFiringCallback(previousState, newState))
+			{
+				log.debug("onStateChange: {} -> {}", previousState, newState);
+
+				final
+				long now = System.currentTimeMillis();
+
+				onStateChange(previousState, newState, now - lastStateChangeCallback);
+
+				lastStateChangeCallback = now;
+			}
+			else
+			if (!previousState.getRoughTimeCode().equals(roughTimeCode))
+			{
+				onPeriodicInterval(newState);
+			}
+		}
+	}
+
+	/**
+	 * @param positionMicroSeconds
+	 * @return a human-readable time code with
+	 */
+	private
+	String getRoughTimeCode(Long positionMicroSeconds)
+	{
+		if (positionMicroSeconds==null)
+		{
+			return "00:00";
+		}
+		else
+		{
+			long minutes = TimeUnit.MICROSECONDS.toMinutes(positionMicroSeconds);
 
 			final
-			long now=System.currentTimeMillis();
+			long hours=minutes/60;
 
-			onStateChange(previousState, newState, now-lastCallback);
+			minutes=minutes%60;
 
-			lastCallback=now;
+			if (hours>0)
+			{
+				return String.format("%d:%02d:00", hours, minutes);
+			}
+			else
+			{
+				return String.format("%02d:00", minutes);
+			}
 		}
 	}
 
