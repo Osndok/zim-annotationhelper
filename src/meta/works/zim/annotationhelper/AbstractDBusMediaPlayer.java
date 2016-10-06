@@ -2,6 +2,10 @@ package meta.works.zim.annotationhelper;
 
 import org.freedesktop.DBus;
 import org.freedesktop.dbus.DBusConnection;
+import org.freedesktop.dbus.DBusInterface;
+import org.freedesktop.dbus.DBusMatchRule;
+import org.freedesktop.dbus.DBusSigHandler;
+import org.freedesktop.dbus.DBusSignal;
 import org.freedesktop.dbus.Variant;
 import org.freedesktop.dbus.types.DBusMapType;
 import org.slf4j.Logger;
@@ -10,11 +14,13 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.awt.PageAttributes.MediaType.D;
+
 /**
  * Created by robert on 2016-10-06 11:30.
  */
 public abstract
-class AbstractDBusMediaPlayer extends Thread
+class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 {
 	private long lastCallback;
 
@@ -47,14 +53,17 @@ class AbstractDBusMediaPlayer extends Thread
 				log.error("caught", t);
 			}
 
-			try
+			synchronized (this)
 			{
-				Thread.sleep(5000);
-			}
-			catch (InterruptedException e)
-			{
-				log.error("interrupted");
-				return;
+				try
+				{
+					this.wait(5000);
+				}
+				catch (InterruptedException e)
+				{
+					log.error("interrupted");
+					return;
+				}
 			}
 		}
 	}
@@ -73,6 +82,8 @@ class AbstractDBusMediaPlayer extends Thread
 		if (connection==null)
 		{
 			connection = DBusConnection.getConnection(DBusConnection.SESSION);
+
+			//connection.addSigHandler(DBus.Properties.class, getDBusSender(), (DBusSigHandler<?>) this);
 		}
 
 		final
@@ -217,5 +228,17 @@ class AbstractDBusMediaPlayer extends Thread
 	StateSnapshot getStateSnapshot()
 	{
 		return stateSnapshot;
+	}
+
+	@Override
+	public
+	void handle(DBusSignal dBusSignal)
+	{
+		log.debug("received: {}", dBusSignal);
+
+		synchronized (this)
+		{
+			this.notifyAll();
+		}
 	}
 }
