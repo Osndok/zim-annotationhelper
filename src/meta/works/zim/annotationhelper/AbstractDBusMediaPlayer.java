@@ -7,12 +7,15 @@ import org.freedesktop.dbus.DBusMatchRule;
 import org.freedesktop.dbus.DBusSigHandler;
 import org.freedesktop.dbus.DBusSignal;
 import org.freedesktop.dbus.Variant;
+import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.types.DBusMapType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static java.awt.PageAttributes.MediaType.D;
 
@@ -26,7 +29,15 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 
 	abstract String getDBusSenderSuffix();
 
-	abstract void onStateChange(StateSnapshot was, StateSnapshot now, long age);
+	abstract void onStateChange(StateSnapshot was, StateSnapshot now, long age) throws IOException, InterruptedException;
+
+	abstract void onPeriodicInterval(StateSnapshot state, String timeCode) throws IOException, InterruptedException;
+
+	private static final
+	long PERIODIC_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(2);
+
+	public static final
+	long NOTABLY_STALE_STATE_MILLIS = TimeUnit.MINUTES.toSeconds(5);
 
 	private static final
 	Logger log = LoggerFactory.getLogger(AbstractDBusMediaPlayer.class);
@@ -76,6 +87,12 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 
 	DBusConnection connection;
 
+	private static final
+	String OBJECT_PATH="/org/mpris/MediaPlayer2";
+
+	private static final
+	String INTERFACE_NAME="org.mpris.MediaPlayer2.Player";
+
 	private
 	void run2() throws Exception
 	{
@@ -87,19 +104,13 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		}
 
 		final
-		String objectPath="/org/mpris/MediaPlayer2";
-
-		final
-		String interfaceName="org.mpris.MediaPlayer2.Player";
-
-		final
 		DBus.Properties properties = connection.getRemoteObject(
 			getDBusSender(),
-			objectPath,
+			OBJECT_PATH,
 			DBus.Properties.class
 		);
 
-		propertiesByName = properties.GetAll(interfaceName);
+		propertiesByName = properties.GetAll(INTERFACE_NAME);
 		{
 			responsive=true;
 
@@ -135,7 +146,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 
 		if (metadata.isEmpty())
 		{
-			log.info("no file open, {}", playState);
+			log.debug("no file open, {}", playState);
 			url=null;
 			zimPage=null;
 		}
@@ -192,6 +203,9 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	}
 
 	public static final
+	ZimPageAppender zimPageAppender = new ZimPageAppender();
+
+	public static final
 	ZimPageNameExtractor zimPageNameExtractor=new ZimPageNameExtractor();
 
 	Map<String, Variant> propertiesByName=new HashMap<String, Variant>();
@@ -239,6 +253,78 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		synchronized (this)
 		{
 			this.notifyAll();
+		}
+	}
+
+	public
+	void stopPlayback()
+	{
+		log.info("stop playback");
+
+		if (connection!=null)
+		{
+			/* ATTEMPT 1
+			final
+			String source=getDBusSender();
+
+			final
+			String path=OBJECT_PATH;
+
+			final
+			String iface=INTERFACE_NAME;
+
+			final
+			String member;
+
+			final
+			String sig;
+
+			final
+			DBusSignal signal=new DBusSignal(source, path, iface, member, sig, args);
+			connection.sendSignal(signal);
+			*/
+
+			/* ATTEMPT 2
+			final
+			String busName=getDBusSender();
+
+			final
+			String objectPath=OBJECT_PATH;
+
+			final
+			DBusInterface remoteObject;
+			{
+				try
+				{
+					remoteObject = connection.getRemoteObject(busName, objectPath);
+				}
+				catch (DBusException e)
+				{
+					log.error("caught", e);
+					return;
+				}
+
+				log.debug("got: ({}) {}", remoteObject.getClass(), remoteObject);
+			}
+
+			final
+			String methodName="Stop";
+
+			final
+			Object[] arguments=new Object[0];
+
+			connection.callMethodAsync(remoteObject, INTERFACE_NAME+"."+methodName, arguments);
+			*/
+
+			//ATTEMPT 3
+			try
+			{
+				Runtime.getRuntime().exec("qdbus "+getDBusSender()+" /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Stop");
+			}
+			catch (IOException e)
+			{
+				log.error("caught", e);
+			}
 		}
 	}
 }

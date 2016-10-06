@@ -51,6 +51,12 @@ class ZimPageAppender
 	public
 	void pageNote(String pageName, String memo) throws IOException, InterruptedException
 	{
+		if (pageName==null)
+		{
+			log.warn("ignoring pageNote() with null page");
+			return;
+		}
+
 		final
 		String[] command = new String[]
 			{
