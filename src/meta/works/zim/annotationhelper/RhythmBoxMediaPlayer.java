@@ -6,5 +6,15 @@ package meta.works.zim.annotationhelper;
 public
 class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 {
+	@Override
+	String getDBusSenderSuffix()
+	{
+		return "rhythmbox";
+	}
 
+	public static final
+	void main(String[] args)
+	{
+		new RhythmBoxMediaPlayer().run();
+	}
 }

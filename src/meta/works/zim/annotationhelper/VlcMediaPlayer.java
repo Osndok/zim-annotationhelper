@@ -6,4 +6,15 @@ package meta.works.zim.annotationhelper;
 public
 class VlcMediaPlayer extends AbstractDBusMediaPlayer
 {
+	@Override
+	String getDBusSenderSuffix()
+	{
+		return "vlc";
+	}
+
+	public static final
+	void main(String[] args)
+	{
+		new VlcMediaPlayer().run();
+	}
 }
