@@ -34,6 +34,12 @@ class AbstractDBusMediaPlayer extends Thread
 			{
 				run2();
 			}
+			catch (DBus.Error.ServiceUnknown e)
+			{
+				log.debug("{} is not running", getDBusSenderSuffix());
+				responsive = false;
+				connection = null;
+			}
 			catch (Throwable t)
 			{
 				responsive=false;
@@ -99,7 +105,10 @@ class AbstractDBusMediaPlayer extends Thread
 		}
 
 		final
-		PlayState playState = PlayState.valueOf(get(String.class, "PlaybackStatus"));
+		String playStateString = get(String.class, "PlaybackStatus");
+
+		final
+		PlayState playState = PlayState.valueOf(playStateString);
 
 		final
 		Long position = get(Long.class, "Position");
@@ -110,24 +119,34 @@ class AbstractDBusMediaPlayer extends Thread
 		final
 		Map<String,Variant> metadata=get(Map.class, "Metadata");
 
+		final
+		String url;
+
 		if (metadata.isEmpty())
 		{
 			log.info("no file open, {}", playState);
+			url=null;
 			zimPage=null;
 		}
 		else
 		{
-			final
-			String url = (String) metadata.get("xesam:url").getValue();
+			url = (String) metadata.get("xesam:url").getValue();
 			{
 				log.debug("url: {}", url);
 			}
 
-			zimPage=zimPageNameExtractor.getZimPageNameFor(url);
+			if (isLocalPodcastUrl(url))
+			{
+				zimPage = zimPageNameExtractor.getZimPageNameFor(url);
+			}
+			else
+			{
+				zimPage = null;
+			}
 		}
 
 		final
-		StateSnapshot newState=new StateSnapshot(playState, position, zimPage);
+		StateSnapshot newState=new StateSnapshot(playState, position, url, zimPage);
 
 		final
 		StateSnapshot previousState;
@@ -150,6 +169,12 @@ class AbstractDBusMediaPlayer extends Thread
 	}
 
 	private
+	boolean isLocalPodcastUrl(String url)
+	{
+		return url.startsWith("file:///mnt/shared/Podcasts/");
+	}
+
+	private
 	boolean warrantsFiringCallback(StateSnapshot previousState, StateSnapshot newState)
 	{
 		return !previousState.getPlayState().equals(newState.getPlayState());
@@ -163,7 +188,17 @@ class AbstractDBusMediaPlayer extends Thread
 	private <T>
 	T get(Class<T> c, String keyName)
 	{
-		return (T)propertiesByName.get(keyName).getValue();
+		final
+		Variant variant = propertiesByName.get(keyName);
+
+		if (variant==null)
+		{
+			return null;
+		}
+		else
+		{
+			return (T) variant.getValue();
+		}
 	}
 
 	private

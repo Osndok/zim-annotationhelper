@@ -10,7 +10,7 @@ class StateSnapshot
 	PlayState playState;
 
 	private final
-	long position;
+	Long position;
 
 	private final
 	String zimPage;
@@ -19,7 +19,7 @@ class StateSnapshot
 	long time;
 
 	public
-	StateSnapshot(PlayState playState, long position, String zimPage)
+	StateSnapshot(PlayState playState, Long position, String url, String zimPage)
 	{
 		this.playState = playState;
 		this.position = position;
@@ -35,7 +35,7 @@ class StateSnapshot
 	}
 
 	public
-	long getPosition()
+	Long getPosition()
 	{
 		return position;
 	}
