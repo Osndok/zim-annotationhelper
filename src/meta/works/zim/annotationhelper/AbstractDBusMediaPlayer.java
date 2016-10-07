@@ -241,7 +241,30 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	private
 	boolean warrantsFiringCallback(StateSnapshot previousState, StateSnapshot newState)
 	{
-		return !previousState.getPlayState().equals(newState.getPlayState());
+		if (!previousState.getPlayState().equals(newState.getPlayState()))
+		{
+			return true;
+		}
+
+		final
+		String oldSubject=previousState.getZimPage();
+
+		final
+		String newSubject=newState.getZimPage();
+
+		if (newSubject==null)
+		{
+			return oldSubject!=null;
+		}
+		else
+		{
+			return !newSubject.equals(oldSubject);
+		}
+
+		/*
+		NB: eventually, we will probably want to add a file/uri check too. In which case,
+		we might as well push the logic into the 'equals()' function, methinks.
+		 */
 	}
 
 	public static final
