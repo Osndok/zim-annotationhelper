@@ -60,7 +60,10 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 	@Override
 	void onPeriodicInterval(StateSnapshot state) throws IOException, InterruptedException
 	{
-		zimPageAppender.pageNote(state.getZimPage(), state.getRoughTimeCode());
+		if (state.getZimPage()!=null)
+		{
+			zimPageAppender.pageNote(state.getZimPage(), state.getRoughTimeCode());
+		}
 	}
 
 	public static final
