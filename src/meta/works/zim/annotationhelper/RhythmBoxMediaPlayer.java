@@ -56,6 +56,8 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				{
 					launchVlcWithUrl(now.getUrl());
 				}
+
+				return;
 			}
 		}
 
