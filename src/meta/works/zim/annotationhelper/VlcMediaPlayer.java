@@ -44,7 +44,7 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 
 		if (now.getPlayState()==Playing)
 		{
-			if (was.getPlayState() == Stopped)
+			if (was.getPlayState() == Stopped || !was.sameShowAs(now))
 			{
 				zimPageAppender.journalNote("Starting [["+zimPage+"]]");
 			}

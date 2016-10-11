@@ -72,7 +72,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 
 		if (now.getPlayState()==Playing)
 		{
-			if (was.getPlayState() == Stopped || !zimPage.equals(was.getZimPage()))
+			if (was.getPlayState() == Stopped  || !was.sameShowAs(now))
 			{
 				zimPageAppender.journalNote("Starting [["+zimPage+"]]");
 			}

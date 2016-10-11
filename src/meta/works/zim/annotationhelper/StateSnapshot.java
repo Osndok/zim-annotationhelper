@@ -91,4 +91,10 @@ class StateSnapshot
 			//", time=" + time +
 			'}';
 	}
+
+	public
+	boolean sameShowAs(StateSnapshot other)
+	{
+		return this.url.equals(other.getUrl());
+	}
 }
