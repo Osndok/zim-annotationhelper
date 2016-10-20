@@ -5,6 +5,7 @@ import org.freedesktop.dbus.DBusConnection;
 import org.freedesktop.dbus.DBusSigHandler;
 import org.freedesktop.dbus.DBusSignal;
 import org.freedesktop.dbus.Variant;
+import org.freedesktop.dbus.exceptions.DBusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,12 +52,6 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 			{
 				run2();
 			}
-			catch (DBus.Error.ServiceUnknown e)
-			{
-				log.debug("{} is not running", getDBusSenderSuffix());
-				responsive = false;
-				connection = null;
-			}
 			catch (Throwable t)
 			{
 				responsive=false;
@@ -96,21 +91,73 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	private
 	void run2() throws Exception
 	{
-		if (connection==null)
-		{
-			connection = DBusConnection.getConnection(DBusConnection.SESSION);
-
-			//connection.addSigHandler(DBus.Properties.class, getDBusSender(), (DBusSigHandler<?>) this);
-		}
+		final
+		StateSnapshot newState=getNewState();
 
 		final
-		DBus.Properties properties = connection.getRemoteObject(
-			getDBusSender(),
-			OBJECT_PATH,
-			DBus.Properties.class
-		);
+		StateSnapshot previousState;
+		{
+			previousState = this.stateSnapshot;
+			stateSnapshot = newState;
+		}
 
-		propertiesByName = properties.GetAll(INTERFACE_NAME);
+		if (previousState!=null)
+		{
+			if (warrantsFiringCallback(previousState, newState))
+			{
+				log.debug("onStateChange: {} -> {}", previousState, newState);
+
+				final
+				long now = System.currentTimeMillis();
+
+				onStateChange(previousState, newState, now - lastStateChangeCallback);
+
+				lastStateChangeCallback = now;
+			}
+			else
+			if (!previousState.getRoughTimeCode().equals(newState.getRoughTimeCode()))
+			{
+				onPeriodicInterval(newState);
+			}
+		}
+	}
+
+	private
+	StateSnapshot getNewState()
+	{
+		final
+		DBus.Properties properties;
+		{
+			try
+			{
+				if (connection == null)
+				{
+					connection = DBusConnection.getConnection(DBusConnection.SESSION);
+
+					//connection.addSigHandler(DBus.Properties.class, getDBusSender(), (DBusSigHandler<?>) this);
+				}
+
+				properties = connection.getRemoteObject(
+					getDBusSender(),
+					OBJECT_PATH,
+					DBus.Properties.class
+				);
+
+				propertiesByName = properties.GetAll(INTERFACE_NAME);
+			}
+			catch (DBus.Error.ServiceUnknown e)
+			{
+				log.debug("{} is not running", getDBusSenderSuffix());
+				responsive = false;
+				connection = null;
+				return new StateSnapshot(PlayState.Stopped, null, null, null, NO_TIME_CODE);
+			}
+			catch (DBusException e)
+			{
+				throw new RuntimeException(e);
+			}
+		}
+
 		{
 			responsive=true;
 
@@ -170,36 +217,11 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		final
 		String roughTimeCode=getRoughTimeCode(position);
 
-		final
-		StateSnapshot newState=new StateSnapshot(playState, position, url, zimPage, roughTimeCode);
-
-		final
-		StateSnapshot previousState;
-		{
-			previousState = this.stateSnapshot;
-			stateSnapshot = newState;
-		}
-
-		if (previousState!=null)
-		{
-			if (warrantsFiringCallback(previousState, newState))
-			{
-				log.debug("onStateChange: {} -> {}", previousState, newState);
-
-				final
-				long now = System.currentTimeMillis();
-
-				onStateChange(previousState, newState, now - lastStateChangeCallback);
-
-				lastStateChangeCallback = now;
-			}
-			else
-			if (!previousState.getRoughTimeCode().equals(roughTimeCode))
-			{
-				onPeriodicInterval(newState);
-			}
-		}
+		return new StateSnapshot(playState, position, url, zimPage, roughTimeCode);
 	}
+
+	private static final
+	String NO_TIME_CODE = "X";
 
 	/**
 	 * @param positionMicroSeconds
