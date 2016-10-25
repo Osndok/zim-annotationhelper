@@ -28,7 +28,7 @@ class ZimPageNameExtractor
 	String getZimPageNameFor(String url)
 	{
 		final
-		String noPathOrFileExt;
+		String withoutPathOrFileExt;
 		{
 			final
 			int beginIndex;
@@ -62,11 +62,11 @@ class ZimPageNameExtractor
 				}
 			}
 
-			noPathOrFileExt=url.substring(beginIndex, endIndex);
+			withoutPathOrFileExt=url.substring(beginIndex, endIndex);
 		}
 
 		final
-		String[] bits = noPathOrFileExt.replaceAll(BREAK_MATCHING_REGEX, " ").split(" ");
+		String[] bits = withoutPathOrFileExt.replaceAll(BREAK_MATCHING_REGEX, " ").split(" ");
 		{
 			log.debug("split into {} bits", bits.length);
 
@@ -77,9 +77,10 @@ class ZimPageNameExtractor
 		}
 
 		final
-		Strategy strategy = getStrategy(noPathOrFileExt, bits);
+		Strategy strategy = getStrategy(withoutPathOrFileExt, bits);
 		{
 			log.debug("{} for {}", strategy, url);
+			this.lastStrategy=strategy;
 		}
 
 		switch(strategy)
@@ -123,9 +124,119 @@ class ZimPageNameExtractor
 			{
 				return refine("TTT", bits[2]);
 			}
+
+			case USER_ERROR_DIAMOND_COLLECTION:
+			{
+				return refine("UE", "DC"+refineEpisodeNumber(bits[5]));
+			}
+
+			//CAREFUL! No unit test coverage ATM!
+			case BEST_EFFORT:
+			{
+				final
+				int firstWithNumber=firstWithNumber(bits);
+
+				final
+				int lastWithNumber=lastWithNumber(bits);
+
+				if (firstWithNumber>1 && lastWithNumber >1)
+				{
+					final
+					String show = join(bits, 0, firstWithNumber-1);
+
+					final
+					String episode = join(bits, firstWithNumber, lastWithNumber);
+
+					return refine(show, episode);
+				}
+				else
+				{
+					return withoutPathOrFileExt;
+				}
+			}
 		}
 
-		return "wip";
+		return withoutPathOrFileExt;
+	}
+
+	private
+	int firstWithNumber(String[] bits)
+	{
+		for (int i=0; i<bits.length; i++)
+		{
+			final
+			String bit=bits[i];
+
+			if (stringContainsDigit(bit))
+			{
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+	private
+	int lastWithNumber(String[] bits)
+	{
+		for (int i=bits.length-1; i>0; i--)
+		{
+			final
+			String bit=bits[i];
+
+			if (stringContainsDigit(bit))
+			{
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+	private
+	boolean stringContainsDigit(String bit)
+	{
+		for (char c : bit.toCharArray())
+		{
+			if (Character.isDigit(c))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private
+	String join(String[] bits, int start, int end)
+	{
+		final
+		StringBuilder sb = new StringBuilder();
+		{
+			for (int i=start; i<=end; i++)
+			{
+				final
+				String bit=bits[i];
+
+				if (bit.charAt(0)=='-')
+				{
+					sb.append(bit.substring(1));
+				}
+				else
+				{
+					sb.append(bit);
+				}
+
+				if (sb.charAt(sb.length()-1)!='-')
+				{
+					sb.append('-');
+				}
+			}
+
+			sb.deleteCharAt(sb.length()-1);
+		}
+
+		return sb.toString();
 	}
 
 	private
@@ -246,7 +357,13 @@ class ZimPageNameExtractor
 			return Strategy.GWO;
 		}
 
-		//if (firstBit.equals("Dudmanovi"))
+		if (s.startsWith("ue-Diamond-Collection"))
+		{
+			return Strategy.USER_ERROR_DIAMOND_COLLECTION;
+		}
+
+		//----------- begin generic (wide-net) reasoning -------------
+
 		if (isNumeric(bits[1]) || bits.length<2)
 		{
 			return Strategy.BIT_ONE_IS_EPISODE_NUMBER;
@@ -273,7 +390,7 @@ class ZimPageNameExtractor
 		}
 
 		log.warn("no obvious strategy for: '{}'", s);
-		return Strategy.BIT_ONE_IS_EPISODE_NUMBER;
+		return Strategy.BEST_EFFORT;
 	}
 
 	private
@@ -313,8 +430,26 @@ class ZimPageNameExtractor
 	}
 
 	private
+	Strategy lastStrategy;
+
+	public
+	boolean lastStrategyWasBestEffort()
+	{
+		return lastStrategy== Strategy.BEST_EFFORT;
+	}
+
+	private
 	enum Strategy
 	{
-		TTT, AGENDA31, BIT_TWO_IS_EPISODE_NUMBER, FUSE_TWO, GWO, SEASON_2_EPISODE_4, BIT_THREE_IS_EPISODE_NUMBER, BIT_ONE_IS_EPISODE_NUMBER
+		TTT,
+		AGENDA31,
+		BIT_ONE_IS_EPISODE_NUMBER,
+		BIT_TWO_IS_EPISODE_NUMBER,
+		BIT_THREE_IS_EPISODE_NUMBER,
+		FUSE_TWO,
+		GWO,
+		SEASON_2_EPISODE_4,
+		USER_ERROR_DIAMOND_COLLECTION,
+		BEST_EFFORT,
 	}
 }

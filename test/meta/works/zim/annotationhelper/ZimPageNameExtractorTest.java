@@ -39,6 +39,7 @@ class ZimPageNameExtractorTest
 				{":Unfilter:198", "unfilter-0198-432p.mp4"},
 				{":WTR:53", "WTR-0053-432p.mp4"},
 				{":UE:3", "ue-003.mp4"},
+				{":UE:DC2", "ue-Diamond-Collection-02.mp4"},
 				{":SN:562", "sn0562_h264m_864x480_500.mp4"},
 				{":TWIT:578", "twit0578_h264m_864x480_500.mp4"},
 				{":Agenda31:83", "Agenda31.A31-083.May28.2016.mp3"},
@@ -65,4 +66,28 @@ class ZimPageNameExtractorTest
 	{
 		assertEquals(zimPageNameExtractor.getZimPageNameFor(input), expectedOutput);
 	}
+
+	/* DNW
+	@DataProvider(name = "bestEffortPairs")
+	public
+	Object[][] bestEffortData1()
+	{
+		return new Object[][]
+			{
+				{":A-b-c:2", "a-b-c-2.ogg"},
+				{":A-b-c:2", "a-b-c-2-extra.ogg"},
+				{":Alpha-beta-delta:2", "alpha-beta-delta-2.ogg"},
+			};
+	}
+
+	@Test(dataProvider = "bestEffortPairs")
+	public
+	void testBestEffortPageExtraction(String expectedOutput, String input) throws Exception
+	{
+		final
+		String actualOutput=zimPageNameExtractor.getZimPageNameFor(input);
+		assertTrue(zimPageNameExtractor.lastStrategyWasBestEffort());
+		assertEquals(actualOutput, expectedOutput);
+	}
+	*/
 }
