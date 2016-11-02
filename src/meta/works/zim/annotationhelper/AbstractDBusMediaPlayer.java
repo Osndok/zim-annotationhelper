@@ -20,6 +20,9 @@ import java.util.concurrent.TimeUnit;
 public abstract
 class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 {
+    private static final
+    long SLEEP_MILLIS = TimeUnit.SECONDS.toMillis(3);
+
 	private long lastStateChangeCallback=System.currentTimeMillis();
 
 	abstract String getDBusSenderSuffix();
@@ -63,7 +66,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 			{
 				try
 				{
-					this.wait(5000);
+					this.wait(SLEEP_MILLIS);
 				}
 				catch (InterruptedException e)
 				{
