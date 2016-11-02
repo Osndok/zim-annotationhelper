@@ -261,6 +261,11 @@ class ZimPageNameExtractor
 		{
 			return "GoingLinux";
 		}
+        else
+        if (showName.equals("tri"))
+        {
+            return "Triangulation";
+        }
 		else
 		if (showName.length()<=4)
 		{
