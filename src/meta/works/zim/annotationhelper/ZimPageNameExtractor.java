@@ -3,6 +3,10 @@ package meta.works.zim.annotationhelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Given a URL or file-name, return/compute the Zim page name therefor.
  */
@@ -249,24 +253,40 @@ class ZimPageNameExtractor
 		);
 	}
 
+    private static final
+    Map<String,String> SHOW_NAME_MAP;
+
+    static
+    {
+        final
+        Map<String,String> a=new HashMap<String, String>();
+        {
+            a.put("lv", "LinuxVoice");
+            a.put("glp", "GoingLinux");
+            a.put("tri", "Triangulation");
+            a.put("ttg", "TechGuy");
+            a.put("techsnap", "TechSNAP");
+            a.put("tllts", "LinuxLink");
+        }
+
+        SHOW_NAME_MAP=Collections.unmodifiableMap(a);
+    }
+
 	private
 	String refineShowName(String showName)
 	{
-		if (showName.equals("lv"))
-		{
-			return "LinuxVoice";
-		}
-		else
-		if (showName.equals("glp"))
-		{
-			return "GoingLinux";
-		}
-        else
-        if (showName.equals("tri"))
+        //Do we have a pre-set name?
         {
-            return "Triangulation";
+            final
+            String preset=SHOW_NAME_MAP.get(showName);
+
+            if (preset!=null)
+            {
+                log.debug("preset: '{}' -> '{}'", showName, preset);
+                return preset;
+            }
         }
-		else
+
 		if (showName.length()<=4)
 		{
 			return showName.toUpperCase();
@@ -275,16 +295,6 @@ class ZimPageNameExtractor
 		if (showName.startsWith("linuxaction"))
 		{
 			return "LAS";
-		}
-		else
-		if (showName.equals("techsnap"))
-		{
-			return "TechSNAP";
-		}
-		else
-		if (showName.equals("tllts"))
-		{
-			return "LinuxLink";
 		}
 
 		if (showName.endsWith("podcast"))

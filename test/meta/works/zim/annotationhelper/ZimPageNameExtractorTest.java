@@ -58,6 +58,7 @@ class ZimPageNameExtractorTest
 				{":LinuxLink:672", "tllts_672-08-31-16.ogg"},
 				{":UbuntuPodcast:s09e31", "ubuntupodcast_s09e31.mp3"},
                 {":Triangulation:271", "tri0271_h264m_864x480_500.mp4"},
+                {":TechGuy:1340", "ttg1340_h264m_864x480_500.mp4"},
 			};
 	}
 
