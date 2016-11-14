@@ -260,8 +260,10 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	private
 	boolean isLocalPodcastUrl(String url)
 	{
-		return url.startsWith("file:///mnt/shared/Podcasts/");
-	}
+		//return url.startsWith("file:///mnt/shared/Podcasts/");
+        //return url.startsWith("/mnt/media/Podcasts");
+        return url.contains("/Podcasts/");
+    }
 
 	private
 	boolean warrantsFiringCallback(StateSnapshot previousState, StateSnapshot newState)
