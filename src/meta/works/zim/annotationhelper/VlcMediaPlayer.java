@@ -42,9 +42,12 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 			return;
 		}
 
+		final
+		boolean changedShows = !was.sameShowAs(now);
+
 		if (now.getPlayState()==Playing)
 		{
-			if (was.getPlayState() == Stopped || !was.sameShowAs(now))
+			if (was.getPlayState() == Stopped || changedShows)
 			{
 				zimPageAppender.journalNote("Starting [["+zimPage+"]]");
 			}
@@ -54,6 +57,11 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 				log.debug("pause -> play @ {}ms age", age);
 				zimPageAppender.journalNote("Resuming [["+zimPage+"]]");
 			}
+		}
+		else
+		if (changedShows)
+		{
+			zimPageAppender.journalNote("[["+zimPage+"]] "+now.getPlayState());
 		}
 	}
 
