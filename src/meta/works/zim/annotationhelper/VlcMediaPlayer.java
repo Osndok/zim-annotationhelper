@@ -39,6 +39,11 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 		if (zimPage==null)
 		{
 			//probably music...
+			if (was.getZimPage()!=null)
+			{
+				zimPageAppender.journalNote("Finished [["+was.getZimPage()+"]] ?");
+			}
+
 			return;
 		}
 
