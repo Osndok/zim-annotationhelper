@@ -95,6 +95,13 @@ class StateSnapshot
 	public
 	boolean sameShowAs(StateSnapshot other)
 	{
-		return this.url.equals(other.getUrl());
+		if (this.url==null)
+		{
+			return other.url==null;
+		}
+		else
+		{
+			return this.url.equals(other.getUrl());
+		}
 	}
 }
