@@ -149,7 +149,15 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			{
 				if (title!=null)
 				{
-					zimPageAppender.pageNote(zimPage, String.format("\"%s\"", title));
+					if (title.indexOf('"')>=0)
+					{
+						zimPageAppender.pageNote(zimPage, String.format("%s", title));
+					}
+					else
+					{
+						zimPageAppender.pageNote(zimPage, String.format("\"%s\"", title));
+					}
+
 					didSomething=true;
 				}
 			}
