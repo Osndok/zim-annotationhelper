@@ -32,6 +32,12 @@ class ShowNotesURLSourceTest
 		t(":NA:582", "http://582.nashownotes.com");
 		t(":NA:582b", "http://582.nashownotes.com");
 		t(":NA:1234", "http://1234.nashownotes.com");
+
+		//Jupiter Broadcasting show notes include a non-predictable wiki page id number (and a nicified show title).
+		//This is available from the xml feed:
+		// <feedburner:origLink>http://www.jupiterbroadcasting.com/104836/minimal-functional-product-cr-232/</feedburner:origLink>
+		//...but I'm not sure how to get that from rhythmbox, if it is even possible.
+		//t(":CR:232", "http://www.jupiterbroadcasting.com/104836/minimal-functional-product-cr-232/");
 	}
 
 	private
