@@ -11,12 +11,30 @@ import static meta.works.zim.annotationhelper.PlayState.Stopped;
 
 /**
  * Created by robert on 2016-10-06 11:32.
+ *
+ * [Variant: [Argument: a{sv} {
+ * 	"mpris:trackid" = [Variant(QString): "/org/mpris/MediaPlayer2/Track/9925"],
+ * 	"xesam:url" = [Variant(QString): "file:///mnt/shared/Podcasts/Distrowatch%20Weekly%20Podcast/dww20161121.mp3"],
+ * 	"xesam:title" = [Variant(QString): "DistroWatch Weekly, Issue 688 21 November 2016"],
+ * 	"xesam:artist" = [Variant(QStringList): {""menckenmadness@gmail.com" (Bruce Patterson)"}],
+ * 	"xesam:album" = [Variant(QString): "Distrowatch Weekly Podcast"],
+ * 	"xesam:genre" = [Variant(QStringList): {"Podcast"}],
+ * 	"xesam:audioBitrate" = [Variant(int): 128000],
+ * 	"xesam:lastUsed" = [Variant(QString): "2016-11-22T17:49:46Z"],
+ * 	"mpris:length" = [Variant(qlonglong): 2597000000],
+ * 	"xesam:trackNumber" = [Variant(int): 0],
+ * 	"xesam:useCount" = [Variant(int): 1],
+ * 	"xesam:userRating" = [Variant(double): 0]
+ * }]]
  */
 public
 class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 {
 	private static final
 	Logger log = LoggerFactory.getLogger(RhythmBoxMediaPlayer.class);
+
+	private final
+	ShowNotesURLSource showNotesURLSource=new ShowNotesURLSource();
 
 	public
 	RhythmBoxMediaPlayer()
@@ -30,6 +48,8 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 		return "rhythmbox";
 	}
 
+	boolean kludge_automaticHalt;
+
 	@Override
 	void onStateChange(StateSnapshot was, StateSnapshot now, long age) throws IOException, InterruptedException
 	{
@@ -40,6 +60,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			{
 				Runtime.getRuntime().exec("espeak undownloaded");
 				stopPlayback();
+				kludge_automaticHalt=true;
 				return;
 			}
 
@@ -47,6 +68,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			if (LooksLike.videoFile(now.getUrl()))
 			{
 				stopPlayback();
+				kludge_automaticHalt=true;
 
 				if (vlcIsRunning())
 				{
@@ -56,6 +78,8 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				{
 					launchVlcWithUrl(now.getUrl());
 				}
+
+				noteTitleAndShowNotes(now);
 
 				return;
 			}
@@ -69,11 +93,21 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			//probably music...
 			if (was.getZimPage()!=null)
 			{
-				zimPageAppender.journalNote("Finished [["+was.getZimPage()+"]] ?");
+				if (kludge_automaticHalt)
+				{
+					//mute meaningless 'finished', as vlc is playing... or it otherwise never really started.
+					kludge_automaticHalt=false;
+				}
+				else
+				{
+					zimPageAppender.journalNote("Finished [[" + was.getZimPage() + "]] ?");
+				}
 			}
 
 			return;
 		}
+
+		kludge_automaticHalt=false;
 
 		final
 		boolean changedShows=!was.sameShowAs(now);
@@ -83,6 +117,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			if (was.getPlayState() == Stopped  || changedShows)
 			{
 				zimPageAppender.journalNote("Starting [["+zimPage+"]]");
+				noteTitleAndShowNotes(now);
 			}
 			else
 			if (was.getPlayState() == Paused && age > NOTABLY_STALE_STATE_MILLIS)
@@ -95,6 +130,48 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 		if (changedShows)
 		{
 			zimPageAppender.journalNote("[["+zimPage+"]] "+now.getPlayState());
+			noteTitleAndShowNotes(now);
+		}
+	}
+
+	private
+	void noteTitleAndShowNotes(StateSnapshot stateSnapshot) throws IOException, InterruptedException
+	{
+		final
+		String zimPage = stateSnapshot.getZimPage();
+
+		if (zimPage!=null)
+		{
+			boolean didSomething=false;
+
+			final
+			String title=stateSnapshot.getTitle();
+			{
+				if (title!=null)
+				{
+					zimPageAppender.pageNote(zimPage, String.format("\"%s\"", title));
+					didSomething=true;
+				}
+			}
+
+			final
+			String album=stateSnapshot.getAlbum();
+
+			final
+			String showNotesUrl=showNotesURLSource.getShowNotesURL(zimPage);
+			{
+				if (showNotesUrl!=null)
+				{
+					zimPageAppender.pageNote(zimPage, String.format("* [[%s|Show Notes]]", showNotesUrl));
+					didSomething=true;
+				}
+			}
+
+			if (didSomething)
+			{
+				//extra newline to separate the coming time codes.
+				zimPageAppender.pageNote(zimPage, "");
+			}
 		}
 	}
 

@@ -40,6 +40,9 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	private static final
 	Logger log = LoggerFactory.getLogger(AbstractDBusMediaPlayer.class);
 
+	private final
+	ShowNotesURLSource showNotesURLSource=new ShowNotesURLSource();
+
 	public
 	AbstractDBusMediaPlayer(String name)
 	{
@@ -153,7 +156,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 				log.debug("{} is not running", getDBusSenderSuffix());
 				responsive = false;
 				connection = null;
-				return new StateSnapshot(PlayState.Stopped, null, null, null, NO_TIME_CODE);
+				return new StateSnapshot(PlayState.Stopped, null, null, null, NO_TIME_CODE, null, null);
 			}
 			catch (DBusException e)
 			{
@@ -194,14 +197,25 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		final
 		String url;
 
+		final
+		String album;
+
+		final
+		String title;
+
 		if (metadata.isEmpty())
 		{
 			log.trace("no file open, {}", playState);
 			url=null;
 			zimPage=null;
+			album=null;
+			title=null;
 		}
 		else
 		{
+			album = optionalString(metadata, "xesam:album");
+			title = optionalString(metadata, "xesam:title");
+
 			url = (String) metadata.get("xesam:url").getValue();
 			{
 				log.trace("url: {}", url);
@@ -220,7 +234,23 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		final
 		String roughTimeCode=getRoughTimeCode(position);
 
-		return new StateSnapshot(playState, position, url, zimPage, roughTimeCode);
+		return new StateSnapshot(playState, position, url, zimPage, roughTimeCode, album, title);
+	}
+
+	private
+	String optionalString(Map<String, Variant> metadata, String fieldName)
+	{
+		final
+		Variant variant = metadata.get(fieldName);
+
+		if (variant==null)
+		{
+			return null;
+		}
+		else
+		{
+			return (String)variant.getValue();
+		}
 	}
 
 	private static final

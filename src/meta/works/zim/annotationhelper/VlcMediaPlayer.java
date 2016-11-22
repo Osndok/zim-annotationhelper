@@ -11,6 +11,19 @@ import static meta.works.zim.annotationhelper.PlayState.Stopped;
 
 /**
  * Created by robert on 2016-10-06 11:31.
+ *
+ * NB: gets a lot less data than rhythmbox (which has/controls the podcatcher):
+ *
+ * (Metadata entry)
+ * [Variant: [Argument: a{sv} {
+ * 	"mpris:trackid" = [Variant: [ObjectPath: /org/videolan/vlc/playlist/17]],
+ * 	"xesam:url" = [Variant(QString): "file:///mnt/shared/Podcasts/All%20Jupiter%20Broadcasting%20Videos/cr-0232-432p.mp4"],
+ * 	"vlc:time" = [Variant(uint): 3726],
+ * 	"mpris:length" = [Variant(qlonglong): 3726976000],
+ * 	"vlc:encodedby" = [Variant(QString): "Lavf57.25.100"],
+ * 	"vlc:length" = [Variant(qlonglong): 3726976],
+ * 	"vlc:publisher" = [Variant(int): 5]
+ * }]]
  */
 public
 class VlcMediaPlayer extends AbstractDBusMediaPlayer
