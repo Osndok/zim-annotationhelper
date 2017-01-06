@@ -34,7 +34,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 	Logger log = LoggerFactory.getLogger(RhythmBoxMediaPlayer.class);
 
 	private final
-	ShowNotesURLSource showNotesURLSource=new ShowNotesURLSource();
+	ShowNotesSource showNotesSource =new ShowNotesBasicURLSource();
 
 	public
 	RhythmBoxMediaPlayer()
@@ -166,7 +166,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			String album=stateSnapshot.getAlbum();
 
 			final
-			String showNotesUrl=showNotesURLSource.getShowNotesURL(zimPage);
+			String showNotesUrl= showNotesSource.getShowNotesURL(zimPage);
 			{
 				if (showNotesUrl!=null)
 				{

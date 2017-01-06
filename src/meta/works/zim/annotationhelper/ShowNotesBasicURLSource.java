@@ -12,11 +12,12 @@ import java.util.Scanner;
  * Created by robert on 2016-11-22 11:36.
  */
 public
-class ShowNotesURLSource
+class ShowNotesBasicURLSource implements ShowNotesSource
 {
 	private static final
-	Logger log = LoggerFactory.getLogger(ShowNotesURLSource.class);
+	Logger log = LoggerFactory.getLogger(ShowNotesBasicURLSource.class);
 
+	@Override
 	public
 	String getShowNotesURL(String zimPageName)
 	{

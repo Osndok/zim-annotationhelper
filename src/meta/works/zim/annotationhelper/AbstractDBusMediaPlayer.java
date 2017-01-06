@@ -40,9 +40,6 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	private static final
 	Logger log = LoggerFactory.getLogger(AbstractDBusMediaPlayer.class);
 
-	private final
-	ShowNotesURLSource showNotesURLSource=new ShowNotesURLSource();
-
 	public
 	AbstractDBusMediaPlayer(String name)
 	{

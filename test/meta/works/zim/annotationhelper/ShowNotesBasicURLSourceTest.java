@@ -9,16 +9,16 @@ import static org.testng.Assert.*;
  * Created by robert on 2016-11-22 11:41.
  */
 public
-class ShowNotesURLSourceTest
+class ShowNotesBasicURLSourceTest
 {
 	private
-	ShowNotesURLSource showNotesURLSource;
+	ShowNotesBasicURLSource showNotesURLSource;
 
 	@BeforeMethod
 	public
 	void setUp() throws Exception
 	{
-		showNotesURLSource=new ShowNotesURLSource();
+		showNotesURLSource=new ShowNotesBasicURLSource();
 	}
 
 	@Test
