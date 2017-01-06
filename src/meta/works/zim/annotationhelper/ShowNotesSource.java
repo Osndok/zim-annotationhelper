@@ -7,4 +7,5 @@ public
 interface ShowNotesSource
 {
 	String getShowNotesURL(String zimPageName);
+	String getShowNotesURL(String enclosingZimPage, String episodeIdentifier);
 }

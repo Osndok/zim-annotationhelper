@@ -12,45 +12,13 @@ import java.util.Scanner;
  * Created by robert on 2016-11-22 11:36.
  */
 public
-class ShowNotesBasicURLSource implements ShowNotesSource
+class ShowNotesBasicURLSource extends AbstractShowNotesSource
 {
 	private static final
 	Logger log = LoggerFactory.getLogger(ShowNotesBasicURLSource.class);
 
 	@Override
 	public
-	String getShowNotesURL(String zimPageName)
-	{
-		if (zimPageName==null)
-		{
-			log.debug("no zim page");
-			return null;
-		}
-		else
-		{
-			final
-			String[] bits = zimPageName.split(":");
-
-			if (bits.length<2)
-			{
-				log.debug("not enough segments '{}'", zimPageName);
-				return null;
-			}
-			else
-			{
-				final
-				String showName=bits[bits.length - 2];
-
-				final
-				String episodeNumber=bits[bits.length - 1];
-
-				log.debug("extracting '{}' -> '{}' / '{}'", zimPageName, showName, episodeNumber);
-				return getShowNotesURL(showName, episodeNumber);
-			}
-		}
-	}
-
-	private
 	String getShowNotesURL(String showName, String episodeName)
 	{
 		if (showName.equals("DWW"))
