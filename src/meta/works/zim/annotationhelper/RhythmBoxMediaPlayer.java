@@ -34,7 +34,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 	Logger log = LoggerFactory.getLogger(RhythmBoxMediaPlayer.class);
 
 	private final
-	ShowNotesSource showNotesSource =new ShowNotesBasicURLSource();
+	ShowNotesSource showNotesSource =new ShowNotesMultiSource();
 
 	public
 	RhythmBoxMediaPlayer()
