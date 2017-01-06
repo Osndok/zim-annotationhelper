@@ -119,6 +119,12 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 				onStateChange(previousState, newState, now - lastStateChangeCallback);
 
 				lastStateChangeCallback = now;
+
+				if (firstTimeCode(newState))
+				{
+					zimPageAppender.pageNote(newState.getZimPage(), "\n");
+					onPeriodicInterval(newState);
+				}
 			}
 			else
 			if (!previousState.getRoughTimeCode().equals(newState.getRoughTimeCode()))
@@ -126,6 +132,15 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 				onPeriodicInterval(newState);
 			}
 		}
+	}
+
+	private
+	boolean firstTimeCode(StateSnapshot state)
+	{
+		final
+		String roughTimeCode = state.getRoughTimeCode();
+
+		return roughTimeCode!=null && roughTimeCode.equals("00:00");
 	}
 
 	private
