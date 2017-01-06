@@ -6,6 +6,8 @@
 LOG_FILE=/tmp/zim-annotationhelper.log
 PID_FILE=/tmp/zim-annotationhelper.pid
 
+cd /
+
 function status()
 {
 	if [ -r "$PID_FILE" ]; then
