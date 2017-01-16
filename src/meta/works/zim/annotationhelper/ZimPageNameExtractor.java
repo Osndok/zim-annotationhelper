@@ -134,6 +134,11 @@ class ZimPageNameExtractor
 				return refine("UE", "DC"+refineEpisodeNumber(bits[5]));
 			}
 
+			case CSWDC:
+			{
+				return refine("CommonSenseWithDanCarlin", getCswdcEpisodeNumber(withoutPathOrFileExt));
+			}
+
 			//CAREFUL! No unit test coverage ATM!
 			case BEST_EFFORT:
 			{
@@ -161,6 +166,17 @@ class ZimPageNameExtractor
 		}
 
 		return withoutPathOrFileExt;
+	}
+
+	private
+	String getCswdcEpisodeNumber(String baseName)
+	{
+		//"cswdcd12.mp3"
+		// 012345678
+		char hundredsCode=baseName.charAt(5);
+		int hundreds=(hundredsCode-'a');
+		String subHundreds=baseName.substring(6,8);
+		return hundreds+subHundreds;
 	}
 
 	private
@@ -377,6 +393,11 @@ class ZimPageNameExtractor
 			return Strategy.USER_ERROR_DIAMOND_COLLECTION;
 		}
 
+		if (s.startsWith("cswdc"))
+		{
+			return Strategy.CSWDC;
+		}
+
 		//----------- begin generic (wide-net) reasoning -------------
 
 		if (isNumeric(bits[1]) || bits.length<2)
@@ -466,5 +487,6 @@ class ZimPageNameExtractor
 		SEASON_2_EPISODE_4,
 		USER_ERROR_DIAMOND_COLLECTION,
 		BEST_EFFORT,
+		CSWDC,
 	}
 }

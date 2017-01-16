@@ -59,6 +59,8 @@ class ZimPageNameExtractorTest
 				{":UbuntuPodcast:s09e31", "ubuntupodcast_s09e31.mp3"},
                 {":Triangulation:271", "tri0271_h264m_864x480_500.mp4"},
                 {":TechGuy:1340", "ttg1340_h264m_864x480_500.mp4"},
+				{":CommonSenseWithDanCarlin:299", "cswdcc99.mp3"},
+				{":CommonSenseWithDanCarlin:312", "cswdcd12.mp3"},
 			};
 	}
 
