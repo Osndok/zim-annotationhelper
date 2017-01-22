@@ -61,6 +61,9 @@ class ZimPageNameExtractorTest
                 {":TechGuy:1340", "ttg1340_h264m_864x480_500.mp4"},
 				{":CommonSenseWithDanCarlin:299", "cswdcc99.mp3"},
 				{":CommonSenseWithDanCarlin:312", "cswdcd12.mp3"},
+				{":MartinHash:189", "file:///mnt/shared/Podcasts/PRay TeLL, Dr. Hash/2016-04-15_189_obesity.mp3"},
+				{":MartinHash:189", "file:///mnt/shared/Podcasts/PRay%20TeLL,%20Dr.%20Hash/2016-04-15_189_obesity.mp3"},
+				//{":2016:4", "2016-04-15_189_obesity.mp3"}
 			};
 	}
 

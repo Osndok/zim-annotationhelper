@@ -81,7 +81,7 @@ class ZimPageNameExtractor
 		}
 
 		final
-		Strategy strategy = getStrategy(withoutPathOrFileExt, bits);
+		Strategy strategy = getStrategy(url, withoutPathOrFileExt, bits);
 		{
 			log.debug("{} for {}", strategy, url);
 			this.lastStrategy=strategy;
@@ -117,6 +117,11 @@ class ZimPageNameExtractor
 			case GWO:
 			{
 				return refine("GNUWorldOrder", bits[5]);
+			}
+
+			case MartinHash:
+			{
+				return refine("MartinHash", bits[3]);
 			}
 
 			case SEASON_2_EPISODE_4:
@@ -371,8 +376,17 @@ class ZimPageNameExtractor
 	}
 
 	private
-	Strategy getStrategy(String s, String[] bits)
+	Strategy getStrategy(String url, String s, String[] bits)
 	{
+		//-----needs deep context... can't extract from basic filename---------
+
+		if (url.contains("/Podcasts/PRay"))
+		{
+			return Strategy.MartinHash;
+		}
+
+		//-----------------------------------------
+
 		if (s.startsWith("T3-"))
 		{
 			return Strategy.TTT;
@@ -488,5 +502,6 @@ class ZimPageNameExtractor
 		USER_ERROR_DIAMOND_COLLECTION,
 		BEST_EFFORT,
 		CSWDC,
+		MartinHash,
 	}
 }
