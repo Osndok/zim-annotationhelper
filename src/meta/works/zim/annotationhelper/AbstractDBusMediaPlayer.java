@@ -141,6 +141,9 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	}
 
 	private
+	Boolean appRunning;
+
+	private
 	StateSnapshot getNewState()
 	{
 		final
@@ -162,10 +165,29 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 				);
 
 				propertiesByName = properties.GetAll(INTERFACE_NAME);
+
+				if (appRunning==Boolean.TRUE)
+				{
+					log.trace("{} is running", getDBusSenderSuffix());
+				}
+				else
+				{
+					appRunning=Boolean.TRUE;
+					log.debug("{} is running", getDBusSenderSuffix());
+				}
 			}
 			catch (DBus.Error.ServiceUnknown e)
 			{
-				log.debug("{} is not running", getDBusSenderSuffix());
+				if (appRunning==Boolean.FALSE)
+				{
+					log.trace("{} is NOT running", getDBusSenderSuffix());
+				}
+				else
+				{
+					appRunning=Boolean.FALSE;
+					log.debug("{} is NOT running", getDBusSenderSuffix());
+				}
+
 				responsive = false;
 				connection = null;
 				return new StateSnapshot(PlayState.Stopped, null, null, null, NO_TIME_CODE, null, null);
