@@ -114,7 +114,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 
 		if (now.getPlayState()==Playing)
 		{
-			if (was.getPlayState() == Stopped  || changedShows)
+			if (was.getPlayState() == Stopped  || changedShows || firstTimeCode(now))
 			{
 				zimPageAppender.journalNote("Starting [["+zimPage+"]]");
 				noteTitleAndShowNotes(now);
@@ -123,7 +123,15 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			if (was.getPlayState() == Paused && age > NOTABLY_STALE_STATE_MILLIS)
 			{
 				log.debug("pause -> play @ {}ms age", age);
-				zimPageAppender.journalNote("Resuming [["+zimPage+"]]");
+
+				if (now.getRoughTimeCode()==null)
+				{
+					zimPageAppender.journalNote("Resuming [[" + zimPage + "]]");
+				}
+				else
+				{
+					zimPageAppender.journalNote("Resuming [[" + zimPage + "]] @ "+now.getRoughTimeCode());
+				}
 			}
 		}
 		else

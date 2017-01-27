@@ -131,7 +131,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		}
 	}
 
-	private
+	protected
 	boolean firstTimeCode(StateSnapshot state)
 	{
 		final
