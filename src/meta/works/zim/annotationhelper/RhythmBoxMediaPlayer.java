@@ -55,6 +55,12 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 	{
 		if (now.getUrl()!=null && now.getPlayState() == Playing)
 		{
+			if (kludge_automaticHalt)
+			{
+				log.debug("kludge_automaticHalt");
+				return;
+			}
+
 			//Avoid "streaming" files.
 			if (now.getUrl().startsWith("http") )
 			{
@@ -97,6 +103,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				if (kludge_automaticHalt)
 				{
 					//mute meaningless 'finished', as vlc is playing... or it otherwise never really started.
+					log.debug("intercepted 'finished' message");
 					kludge_automaticHalt=false;
 				}
 				else
