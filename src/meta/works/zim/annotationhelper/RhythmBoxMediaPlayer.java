@@ -70,6 +70,9 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				stopPlayback();
 				kludge_automaticHalt=true;
 
+				//Do this first so that vlc won't run away making logging statements & mess up the order.
+				noteTitleAndShowNotes(now);
+
 				if (vlcIsRunning())
 				{
 					tellVlcToPlay(now.getUrl());
@@ -78,8 +81,6 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				{
 					launchVlcWithUrl(now.getUrl());
 				}
-
-				noteTitleAndShowNotes(now);
 
 				return;
 			}
