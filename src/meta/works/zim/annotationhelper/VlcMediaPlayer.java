@@ -49,12 +49,12 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 		final
 		String zimPage = now.getZimPage();
 
-		if (zimPage==null)
+		if (zimPage==null || now.getPlayState()==Stopped)
 		{
 			//probably music...
-			if (was.getZimPage()!=null)
+			if (was.getZimPage()!=null && !firstTimeCode(was))
 			{
-				zimPageAppender.journalNote("Finished [["+was.getZimPage()+"]] ?");
+				zimPageAppender.journalNote("Finished [["+was.getZimPage()+"]]");
 			}
 
 			return;
@@ -62,6 +62,22 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 
 		final
 		boolean changedShows = !was.sameShowAs(now);
+
+		if (changedShows && was.getZimPage()!=null)
+		{
+			log.debug("changedShows");
+
+			//TODO: there is another possibility... it could have been playing & hit the last timecode!
+			if (was.getPlayState() == Paused)
+			{
+				zimPageAppender.journalNote("Left [[" + was.getZimPage() + "]]");
+			}
+			else
+			{
+				zimPageAppender.journalNote("Finished [[" + was.getZimPage() + "]]");
+			}
+		}
+
 
 		if (now.getPlayState()==Playing)
 		{

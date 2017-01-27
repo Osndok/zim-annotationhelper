@@ -108,7 +108,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				}
 				else
 				{
-					zimPageAppender.journalNote("Finished [[" + was.getZimPage() + "]] ?");
+					zimPageAppender.journalNote("Finished [[" + was.getZimPage() + "]]");
 				}
 			}
 
@@ -119,6 +119,21 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 
 		final
 		boolean changedShows=!was.sameShowAs(now);
+
+		if (changedShows && was.getZimPage()!=null)
+		{
+			log.debug("changedShows");
+
+			//TODO: there is another possibility... it could have been playing & hit the last timecode!
+			if (was.getPlayState() == Paused)
+			{
+				zimPageAppender.journalNote("Left [[" + was.getZimPage() + "]]");
+			}
+			else
+			{
+				zimPageAppender.journalNote("Finished [[" + was.getZimPage() + "]]");
+			}
+		}
 
 		if (now.getPlayState()==Playing)
 		{
