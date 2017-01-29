@@ -267,6 +267,8 @@ class ZimPageNameExtractor
 	private
 	String refine(String showName, String episode)
 	{
+		log.debug("refine('{}', '{}')", showName, episode);
+
 		return String.format(
 			":%s:%s",
 			refineShowName(showName),
@@ -360,13 +362,40 @@ class ZimPageNameExtractor
 	{
 		log.debug("refine episode '{}'", episode);
 
-		while (!episode.isEmpty() && badNumericPrefix(episode.charAt(0)))
+		if (episode.isEmpty())
 		{
-			episode=episode.substring(1);
+			return "Other";
 		}
 
+		char firstChar;//='0';
+
+		do
+		{
+			firstChar=episode.charAt(0);
+
+			if (badNumericPrefix(firstChar))
+			{
+				//Trim off leading zeros, or the like...
+				episode = episode.substring(1);
+			}
+			else
+			{
+				break;
+			}
+		}
+		while (!episode.isEmpty());
+
 		log.debug("... to: '{}'", episode);
-		return episode;
+
+		if (episode.isEmpty())
+		{
+			//Opps... I never suspected an episode zero before... :LNL:0 !?!?
+			return String.valueOf(firstChar);
+		}
+		else
+		{
+			return episode;
+		}
 	}
 
 	private
