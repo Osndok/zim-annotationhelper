@@ -53,7 +53,8 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 	@Override
 	void onStateChange(StateSnapshot was, StateSnapshot now, long age) throws IOException, InterruptedException
 	{
-		if (now.getUrl()!=null && now.getPlayState() == Playing)
+		//NB: we often get a 'paused' state before 'playing'.
+		if (now.getUrl()!=null && now.getPlayState() != Stopped)
 		{
 			if (kludge_automaticHalt)
 			{
