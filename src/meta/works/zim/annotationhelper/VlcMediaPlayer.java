@@ -54,7 +54,12 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 			//probably music...
 			if (was.getZimPage()!=null && !firstTimeCode(was))
 			{
+				log.debug("previously had a zim page ('{}'), and this is the first time code of something without one", was.getZimPage());
 				zimPageAppender.journalNote("Finished [["+was.getZimPage()+"]]");
+			}
+			else
+			{
+				log.debug("no zim page, or stopped; and no previous zim page (with some time investment)");
 			}
 
 			return;
@@ -81,8 +86,11 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 
 		if (now.getPlayState()==Playing)
 		{
+			log.debug("now playing");
+
 			if (was.getPlayState() == Stopped || changedShows || firstTimeCode(now))
 			{
+				log.debug("starting: was {} / changedShows={} / firstTimeCode=???", was.getPlayState(), changedShows);
 				zimPageAppender.journalNote("Starting [["+zimPage+"]]");
 			}
 			else
@@ -103,7 +111,12 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 		else
 		if (changedShows)
 		{
+			log.debug("just changed shows?");
 			zimPageAppender.journalNote("[["+zimPage+"]] "+now.getPlayState());
+		}
+		else
+		{
+			log.debug("not notable");
 		}
 	}
 
