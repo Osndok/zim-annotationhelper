@@ -117,8 +117,9 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 
 				lastStateChangeCallback = now;
 
-				if (firstTimeCode(newState))
+				if (firstTimeCode(newState) && newState.getPlayState() == PlayState.Playing)
 				{
+					log.debug("adding initial 0:00 interval");
 					zimPageAppender.pageNote(newState.getZimPage(), "\n");
 					onPeriodicInterval(newState);
 				}
@@ -126,7 +127,12 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 			else
 			if (!previousState.getRoughTimeCode().equals(newState.getRoughTimeCode()))
 			{
+				log.debug("periodic");
 				onPeriodicInterval(newState);
+			}
+			else
+			{
+				log.trace("not notable");
 			}
 		}
 	}
