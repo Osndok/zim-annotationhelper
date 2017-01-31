@@ -104,7 +104,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				if (kludge_automaticHalt)
 				{
 					//mute meaningless 'finished', as vlc is playing... or it otherwise never really started.
-					log.debug("intercepted 'finished' message");
+					log.debug("intercepted 'finished' message (zim page became null)");
 					kludge_automaticHalt=false;
 				}
 				else
