@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import static meta.works.zim.annotationhelper.PlayState.Paused;
 import static meta.works.zim.annotationhelper.PlayState.Playing;
@@ -30,6 +31,9 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 {
 	private static final
 	Logger log = LoggerFactory.getLogger(VlcMediaPlayer.class);
+
+	private static final
+	long RECENT_ACTIVITY_THRESHOLD = TimeUnit.MINUTES.toMillis(5);
 
 	public
 	VlcMediaPlayer()
@@ -78,8 +82,13 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 				zimPageAppender.journalNote("Left [[" + was.getZimPage() + "]]");
 			}
 			else
+			if (isRecent(was))
 			{
 				zimPageAppender.journalNote("Finished [[" + was.getZimPage() + "]]");
+			}
+			else
+			{
+				log.debug("...ignoring stale changedShow transition: {} -> {}", was, now);
 			}
 		}
 
@@ -118,6 +127,18 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 		{
 			log.debug("not notable");
 		}
+	}
+
+	private
+	boolean isRecent(StateSnapshot stateSnapshot)
+	{
+		final
+		long now = System.currentTimeMillis();
+
+		final
+		long snapshotTime = stateSnapshot.getSnapshotTime();
+
+		return now-snapshotTime > RECENT_ACTIVITY_THRESHOLD;
 	}
 
 	@Override

@@ -1,5 +1,8 @@
 package meta.works.zim.annotationhelper;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -116,8 +119,20 @@ class StateSnapshot
 			playState +
 			" @ " + position +
 			", zimPage='" + zimPage + '\'' +
-			//", time=" + time +
+			", time=" + format(time) +
 			'}';
+	}
+
+	private static final
+	DateFormat DATE_FORMAT=new SimpleDateFormat("yyyy-MM-dd @ HH:mm:ss z");
+
+	private static
+	String format(long time)
+	{
+		synchronized (DATE_FORMAT)
+		{
+			return DATE_FORMAT.format(new Date(time));
+		}
 	}
 
 	public
@@ -131,5 +146,11 @@ class StateSnapshot
 		{
 			return this.url.equals(other.getUrl());
 		}
+	}
+
+	public
+	long getSnapshotTime()
+	{
+		return time;
 	}
 }
