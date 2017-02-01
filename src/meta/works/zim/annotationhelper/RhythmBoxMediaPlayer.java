@@ -51,7 +51,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 	boolean kludge_automaticHalt;
 
 	@Override
-	void onStateChange(StateSnapshot was, StateSnapshot now, long age) throws IOException, InterruptedException
+	StateChangeReturn onStateChange(StateSnapshot was, StateSnapshot now, long age) throws IOException, InterruptedException
 	{
 		//NB: we often get a 'paused' state before 'playing'.
 		if (now.getUrl()!=null && now.getPlayState() != Stopped)
@@ -59,7 +59,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			if (kludge_automaticHalt)
 			{
 				log.debug("kludge_automaticHalt");
-				return;
+				return null;
 			}
 
 			//Avoid "streaming" files.
@@ -68,7 +68,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				Runtime.getRuntime().exec("espeak undownloaded");
 				stopPlayback();
 				kludge_automaticHalt=true;
-				return;
+				return new StateChangeReturn().withInitialTimeCodeSuppressed();
 			}
 
 			//Avoid playing video files through RB.
@@ -89,7 +89,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 					launchVlcWithUrl(now.getUrl());
 				}
 
-				return;
+				return new StateChangeReturn().withInitialTimeCodeSuppressed();
 			}
 		}
 
@@ -113,7 +113,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				}
 			}
 
-			return;
+			return null;
 		}
 
 		kludge_automaticHalt=false;
@@ -164,6 +164,8 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			zimPageAppender.journalNote("[["+zimPage+"]] "+now.getPlayState());
 			noteTitleAndShowNotes(now);
 		}
+
+		return null;
 	}
 
 	private

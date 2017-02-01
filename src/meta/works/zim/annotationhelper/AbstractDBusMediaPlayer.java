@@ -27,7 +27,8 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 
 	abstract String getDBusSenderSuffix();
 
-	abstract void onStateChange(StateSnapshot was, StateSnapshot now, long age) throws IOException, InterruptedException;
+	abstract
+	StateChangeReturn onStateChange(StateSnapshot was, StateSnapshot now, long age) throws IOException, InterruptedException;
 
 	abstract void onPeriodicInterval(StateSnapshot state) throws IOException, InterruptedException;
 
@@ -113,11 +114,13 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 				final
 				long now = System.currentTimeMillis();
 
-				onStateChange(previousState, newState, now - lastStateChangeCallback);
+				final
+				StateChangeReturn scr=onStateChange(previousState, newState, now - lastStateChangeCallback);
 
 				lastStateChangeCallback = now;
 
-				if (firstTimeCode(newState) && newState.getPlayState() == PlayState.Playing)
+				if (firstTimeCode(newState) && newState.getPlayState() == PlayState.Playing &&
+					(scr==null || !scr.isInitialTimeCodeSuppressed()))
 				{
 					log.debug("adding initial 0:00 interval");
 					zimPageAppender.pageNote(newState.getZimPage(), "\n");

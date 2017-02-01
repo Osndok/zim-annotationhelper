@@ -48,7 +48,7 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 	}
 
 	@Override
-	void onStateChange(StateSnapshot was, StateSnapshot now, long age) throws IOException, InterruptedException
+	StateChangeReturn onStateChange(StateSnapshot was, StateSnapshot now, long age) throws IOException, InterruptedException
 	{
 		final
 		String zimPage = now.getZimPage();
@@ -66,7 +66,7 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 				log.debug("no zim page, or stopped; and no previous zim page (with some time investment)");
 			}
 
-			return;
+			return null;
 		}
 
 		final
@@ -127,6 +127,8 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 		{
 			log.debug("not notable");
 		}
+
+		return null;
 	}
 
 	private
