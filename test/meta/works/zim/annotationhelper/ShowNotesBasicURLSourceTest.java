@@ -32,6 +32,7 @@ class ShowNotesBasicURLSourceTest
 		t(":NA:582", "http://582.nashownotes.com");
 		t(":NA:582b", "http://582.nashownotes.com");
 		t(":NA:1234", "http://1234.nashownotes.com");
+		t(":SN:597", "https://www.grc.com/sn/sn-597-notes.pdf");
 
 		//Jupiter Broadcasting show notes include a non-predictable wiki page id number (and a nicified show title).
 		//This is available from the xml feed:

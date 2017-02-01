@@ -59,7 +59,11 @@ class ShowNotesBasicURLSource extends AbstractShowNotesSource
 				log.debug("unable to parse NA show number from: '{}'", episodeName);
 				return null;
 			}
-
+		}
+		else
+		if (showName.equals("SN"))
+		{
+			return String.format("https://www.grc.com/sn/sn-%s-notes.pdf", episodeName);
 		}
 
 		log.info("unhandled show: '{}' / episode: '{}'", showName, episodeName);
