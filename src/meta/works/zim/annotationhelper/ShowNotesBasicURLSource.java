@@ -65,6 +65,11 @@ class ShowNotesBasicURLSource extends AbstractShowNotesSource
 		{
 			return String.format("https://www.grc.com/sn/sn-%s-notes.pdf", episodeName);
 		}
+		else
+		if (showName.equals("TWIT"))
+		{
+			return String.format("https://twit.tv/shows/this-week-in-tech/episodes/%s?autostart=false", episodeName);
+		}
 
 		log.info("unhandled show: '{}' / episode: '{}'", showName, episodeName);
 		return null;
