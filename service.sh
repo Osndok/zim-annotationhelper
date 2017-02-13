@@ -32,10 +32,14 @@ function start()
 		return
 	fi
 
+	# We copy the jar out of /mnt/projects, so we don't get hung up on that flaky mountpoint...
 	JAR=/mnt/projects/zim-annotationhelper/out/artifacts/zim_annotationhelper_jar/zim-annotationhelper.jar
+	JAR2=/tmp/zim-annotationhelper.jar
+	cp -v "$JAR" "$JAR2"
+
 	D1=/usr/share/java/dbus-java
 	D2=/usr/lib/java
-	nohup java -cp $D1/dbus.jar:$D2/unix.jar:$D2/debug-disable.jar -Djava.library.path=/usr/lib64/libmatthew-java -jar "$JAR" >> $LOG_FILE 2>&1 &
+	nohup java -cp $D1/dbus.jar:$D2/unix.jar:$D2/debug-disable.jar -Djava.library.path=/usr/lib64/libmatthew-java -jar "$JAR2" >> $LOG_FILE 2>&1 &
 	echo -n "$!" > "$PID_FILE"
 	sleep 0.5
 	status
