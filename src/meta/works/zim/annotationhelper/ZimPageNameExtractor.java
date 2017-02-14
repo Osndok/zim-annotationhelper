@@ -126,7 +126,7 @@ class ZimPageNameExtractor
 
 			case SEASON_2_EPISODE_4:
 			{
-				return refine(bits[0], "s"+bits[2]+"e"+bits[4]);
+				return refine(bits[0], "s"+bits[2]+":e"+bits[4]);
 			}
 
 			case TTT:
