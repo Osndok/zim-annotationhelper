@@ -243,6 +243,11 @@ class ZimPageNameExtractor
 				final
 				String bit=bits[i];
 
+				if (bit.isEmpty())
+				{
+					continue;
+				}
+
 				if (bit.charAt(0)=='-')
 				{
 					sb.append(bit.substring(1));
