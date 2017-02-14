@@ -50,13 +50,13 @@ class ZimPageNameExtractorTest
 				{":HPR:2016", "hpr2016.ogg"},
 				{":Transmit:36", "Transmit36.mp3"},
 				{":KernelPanic:128", "KernelPanic_128.ogg"},
-				{":LinuxVoice:s04e13", "lv_s04e13.mp3"},
+				{":LinuxVoice:s04:e13", "lv_s04e13.mp3"},
 				{":LinuxLuddites:86", "LinuxLuddites086.mp3"},
 				{":NA:854", "NA-854-2016-08-25-Final.mp3"},
 				{":NA:1234", "NA-1234-20200825.mp3"},
 				{":SMLR:208", "SMLR-E208.mp3"},
 				{":LinuxLink:672", "tllts_672-08-31-16.ogg"},
-				{":UbuntuPodcast:s09e31", "ubuntupodcast_s09e31.mp3"},
+				{":UbuntuPodcast:s09:e31", "ubuntupodcast_s09e31.mp3"},
                 {":Triangulation:271", "tri0271_h264m_864x480_500.mp4"},
                 {":TechGuy:1340", "ttg1340_h264m_864x480_500.mp4"},
 				{":CommonSenseWithDanCarlin:299", "cswdcc99.mp3"},
@@ -66,6 +66,12 @@ class ZimPageNameExtractorTest
 				//{":2016:4", "2016-04-15_189_obesity.mp3"}
 				{":LNL:0", "LNL00.ogg"},
 				{":LNL:2", "LNL02.ogg"},
+				{":FreeTalk:Live:2017:02:01", "FTL2017-02-01.mp3"},
+				{":FreeTalk:Digest:2017:02:12", "FTL Digest 2017-02-12.mp3"},
+				{":BillBurr:MMPC:2017:02:03", "MMPC_2-3-17.mp3"},
+				{":BillBurr:MMPC:2017:12:13", "MMPC_12-13-17.mp3"},
+				{":BillBurr:TAPC:2017:02:09", "TAMMP_2-9-17.mp3"},
+				{":BillBurr:TAPC:2017:12:19", "TAMMP_12-19-17.mp3"}
 			};
 	}
 
