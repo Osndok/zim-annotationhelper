@@ -94,6 +94,59 @@ class ZimPageNameExtractor
 				return refine("Agenda31", bits[5]);
 			}
 
+			case BillBurr:
+			{
+				final
+				String minusYear=bits[3];
+
+				final
+				String minusMonth=bits[1];
+
+				final
+				String minusDate=bits[2];
+
+				final
+				String year="20"+minusYear.substring(1);
+
+				final
+				String date;
+				{
+					final
+					StringBuilder sb=new StringBuilder();
+					{
+						sb.append(year);
+
+						if (minusMonth.length()==2)
+						{
+							sb.append(':');
+							sb.append(minusMonth);
+							sb.replace(5, 6, "0");
+						}
+						else
+						{
+							sb.append(minusMonth);
+							sb.replace(4, 5, ":");
+						}
+
+						if (minusDate.length()==2)
+						{
+							sb.append(':');
+							sb.append(minusDate);
+							sb.replace(8, 9, "0");
+						}
+						else
+						{
+							sb.append(minusDate);
+							sb.replace(7, 8, ":");
+						}
+					}
+
+					date=sb.toString();
+				}
+
+				return refine("BillBurr:"+bits[0], date);
+			}
+
 			case BIT_ONE_IS_EPISODE_NUMBER:
 			{
 				return refine(bits[0], bits[1]);
@@ -107,6 +160,67 @@ class ZimPageNameExtractor
 			case BIT_THREE_IS_EPISODE_NUMBER:
 			{
 				return refine(bits[0], bits[3]);
+			}
+
+			case FTL:
+			{
+				if (withoutPathOrFileExt.contains("Digest"))
+				{
+					final
+					String year=bits[5];
+
+					final
+					String minusMonth=bits[6];
+
+					final
+					String minusDate=bits[7];
+
+					final
+					String date;
+					{
+						final
+						StringBuilder sb=new StringBuilder();
+						{
+							sb.append(year);
+							sb.append(minusMonth);
+							sb.append(minusDate);
+							sb.replace(4, 5, ":");
+							sb.replace(7, 8, ":");
+						}
+
+						date=sb.toString();
+					}
+					return refine("FreeTalk:Digest", date);
+				}
+				else
+				{
+					final
+					String year=bits[1];
+
+					final
+					String minusMonth=bits[2];
+
+					final
+					String minusDate=bits[3];
+
+					final
+					String date;
+					{
+						final
+						StringBuilder sb=new StringBuilder();
+						{
+							sb.append(year);
+							sb.append(minusMonth);
+							sb.append(minusDate);
+							sb.replace(4, 5, ":");
+							sb.replace(7, 8, ":");
+						}
+
+						date=sb.toString();
+					}
+
+					return refine("FreeTalk:Live", date);
+				}
 			}
 
 			case FUSE_TWO:
@@ -421,6 +535,11 @@ class ZimPageNameExtractor
 
 		//-----------------------------------------
 
+		if (s.startsWith("FTL"))
+		{
+			return Strategy.FTL;
+		}
+
 		if (s.startsWith("T3-"))
 		{
 			return Strategy.TTT;
@@ -444,6 +563,11 @@ class ZimPageNameExtractor
 		if (s.startsWith("cswdc"))
 		{
 			return Strategy.CSWDC;
+		}
+
+		if (s.startsWith("TAMMP") || s.startsWith("MMPC"))
+		{
+			return Strategy.BillBurr;
 		}
 
 		//----------- begin generic (wide-net) reasoning -------------
@@ -537,5 +661,7 @@ class ZimPageNameExtractor
 		BEST_EFFORT,
 		CSWDC,
 		MartinHash,
+		FTL,
+		BillBurr,
 	}
 }
