@@ -62,12 +62,14 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				return null;
 			}
 
-			//Avoid "streaming" files.
-			if (now.getUrl().startsWith("http") )
+			//Avoid "streaming" those files which are intended to be downloaded.
+			if (now.getUrl().startsWith("http") && !now.getUrl().endsWith(".m3u"))
 			{
+				log.warn("url triggers undownloaded catch: '{}'", now.getUrl());
 				Runtime.getRuntime().exec("espeak undownloaded");
 				stopPlayback();
-				kludge_automaticHalt=true;
+				//NB: The following can stick (if it never actually starts playing), so for now we don't:
+				//kludge_automaticHalt=true;
 				return new StateChangeReturn().withInitialTimeCodeSuppressed();
 			}
 
