@@ -167,13 +167,28 @@ class ZimPageNameExtractor
 				if (withoutPathOrFileExt.contains("Digest"))
 				{
 					final
-					String year=bits[5];
+					String year;
 
 					final
-					String minusMonth=bits[6];
+					String minusMonth;
 
 					final
-					String minusDate=bits[7];
+					String minusDate;
+
+					if (bits[1].equals("Digest"))
+					{
+						//no spaces
+						year=bits[2];
+						minusMonth=bits[3];
+						minusDate=bits[4];
+					}
+					else
+					{
+						//with spaces (generates empty segments)
+						year=bits[5];
+						minusMonth=bits[6];
+						minusDate=bits[7];
+					}
 
 					final
 					String date;
