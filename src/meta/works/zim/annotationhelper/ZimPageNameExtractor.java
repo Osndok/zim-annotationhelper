@@ -491,6 +491,7 @@ class ZimPageNameExtractor
 		}
 	}
 
+	//clean-up, nicify...
 	private
 	String refineEpisodeNumber(String episode)
 	{
@@ -525,6 +526,12 @@ class ZimPageNameExtractor
 		{
 			//Opps... I never suspected an episode zero before... :LNL:0 !?!?
 			return String.valueOf(firstChar);
+		}
+
+		if (episode.length()==8 && episode.startsWith("20"))
+		{
+			//Break the year into it's own 'folder'...
+			return episode.substring(0,4)+":"+episode.substring(4);
 		}
 		else
 		{

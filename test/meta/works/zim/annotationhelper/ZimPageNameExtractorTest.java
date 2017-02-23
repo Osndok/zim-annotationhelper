@@ -43,7 +43,7 @@ class ZimPageNameExtractorTest
 				{":SN:562", "sn0562_h264m_864x480_500.mp4"},
 				{":TWIT:578", "twit0578_h264m_864x480_500.mp4"},
 				{":Agenda31:83", "Agenda31.A31-083.May28.2016.mp3"},
-				//{"???", "dww20160829.mp3"},
+				{":DWW:2016:0829", "dww20160829.mp3"},
 				{":Dudmanovi:16", "Dudmanovi.cz-016-20151402.mp3"},
 				{":GNUWorldOrder:9", "gnuWorldOrder_Xx09.webm"},
 				{":GoingLinux:305", "glp305.mp3"},
