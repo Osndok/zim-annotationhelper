@@ -3,6 +3,8 @@ package meta.works.zim.annotationhelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,9 +30,21 @@ class ZimPageNameExtractor
 		"(?<=[0-9])(?=[^0-9])"
 	);
 
+	private
+	String kludge_lastSeenUrl;
+
 	public
 	String getZimPageNameFor(String url)
 	{
+		try
+		{
+			url = URLDecoder.decode(url, "UTF-8");
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			log.error("bad url?", e);
+		}
+
 		final
 		String withoutPathOrFileExt;
 		{
@@ -74,9 +88,14 @@ class ZimPageNameExtractor
 		{
 			log.debug("split into {} bits", bits.length);
 
-			for(int i=0; i<bits.length; i++)
+			if (!withoutPathOrFileExt.equals(kludge_lastSeenUrl))
 			{
-				log.debug("bit[{}]: {}", i, bits[i]);
+				for (int i = 0; i < bits.length; i++)
+				{
+					log.info("bit[{}]: {}", i, bits[i]);
+				}
+
+				kludge_lastSeenUrl=withoutPathOrFileExt;
 			}
 		}
 
