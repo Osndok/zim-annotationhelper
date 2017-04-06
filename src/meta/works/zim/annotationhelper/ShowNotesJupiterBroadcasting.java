@@ -114,34 +114,6 @@ class ShowNotesJupiterBroadcasting extends AbstractShowNotesSource
 	}
 
 	private
-	String fetchUrlContent(String url)
-	{
-		try
-		{
-			final
-			Scanner scanner = new Scanner(new URL(url).openStream(), "UTF-8");
-
-			try
-			{
-				scanner.useDelimiter("\\A");
-				return scanner.next();
-			}
-			finally
-			{
-				scanner.close();
-			}
-		}
-		catch (RuntimeException e)
-		{
-			throw e;
-		}
-		catch (Exception e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
-
-	private
 	String getJbWikiName(String enclosingZimPage)
 	{
 		final

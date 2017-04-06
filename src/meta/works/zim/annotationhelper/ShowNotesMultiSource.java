@@ -15,7 +15,8 @@ class ShowNotesMultiSource extends AbstractShowNotesSource
 	private final
 	List<AbstractShowNotesSource> implementations= Arrays.asList(
 		new ShowNotesBasicURLSource(),
-		new ShowNotesJupiterBroadcasting()
+		new ShowNotesJupiterBroadcasting(),
+		new ShowNotesUbuntuPodcast()
 	);
 
 	private static final
