@@ -34,29 +34,39 @@ class AbstractShowNotesSource implements ShowNotesSource
 		else
 		if (acceptUnparsedZimPageName(zimPageName))
 		{
-			final
-			String[] bits = zimPageName.split(":");
+			log.debug("{} WILL attempt: '{}'", this, zimPageName);
 
-			if (bits.length<2)
+			try
 			{
-				log.debug("not enough segments '{}'", zimPageName);
-				return null;
+				final
+				String[] bits = zimPageName.split(":");
+
+				if (bits.length < 2)
+				{
+					log.debug("not enough segments '{}'", zimPageName);
+					return null;
+				}
+				else
+				{
+					final
+					String showName = bits[bits.length - 2];
+
+					final
+					String episodeNumber = bits[bits.length - 1];
+
+					log.debug("extracting '{}' -> '{}' / '{}'", zimPageName, showName, episodeNumber);
+					return getShowNotesURL(showName, episodeNumber);
+				}
 			}
-			else
+			catch (Exception e)
 			{
-				final
-				String showName=bits[bits.length - 2];
-
-				final
-				String episodeNumber=bits[bits.length - 1];
-
-				log.debug("extracting '{}' -> '{}' / '{}'", zimPageName, showName, episodeNumber);
-				return getShowNotesURL(showName, episodeNumber);
+				log.error("caught", e);
+				return null;
 			}
 		}
 		else
 		{
-			log.trace("unacceptable: {}", zimPageName);
+			log.debug("{} refuses to attempt: '{}'", this, zimPageName);
 			return null;
 		}
 	}
