@@ -7,5 +7,12 @@ public
 interface ShowNotesSource
 {
 	String getShowNotesURL(String zimPageName);
-	String getShowNotesURL(String enclosingZimPage, String episodeIdentifier);
+
+	/*
+	NOT PROTECTED from the accept filter & try/catch wrapper
+	USE ONLY FOR TESTING SPECIFIC IMPLEMENTATIONS...
+	TODO: remove this from the interface altogether?!?
+	 */
+	@Deprecated
+	String unsafe_getShowNotesURL(String enclosingZimPage, String episodeIdentifier);
 }

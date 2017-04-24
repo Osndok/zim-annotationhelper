@@ -24,12 +24,12 @@ class ShowNotesMultiSource extends AbstractShowNotesSource
 
 	@Override
 	public
-	String getShowNotesURL(String enclosingZimPage, String episodeIdentifier)
+	String unsafe_getShowNotesURL(String enclosingZimPage, String episodeIdentifier)
 	{
 		for (AbstractShowNotesSource implementation : this.implementations)
 		{
 			final
-			String answer = implementation.getShowNotesURL(enclosingZimPage, episodeIdentifier);
+			String answer = implementation.unsafe_getShowNotesURL(enclosingZimPage, episodeIdentifier);
 
 			if (answer!=null)
 			{

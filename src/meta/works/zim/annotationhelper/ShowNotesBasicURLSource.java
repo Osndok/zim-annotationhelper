@@ -19,7 +19,7 @@ class ShowNotesBasicURLSource extends AbstractShowNotesSource
 
 	@Override
 	public
-	String getShowNotesURL(String showName, String episodeName)
+	String unsafe_getShowNotesURL(String showName, String episodeName)
 	{
 		if (showName.equals("DWW"))
 		{

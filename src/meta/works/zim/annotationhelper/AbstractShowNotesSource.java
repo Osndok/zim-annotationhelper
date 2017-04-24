@@ -55,7 +55,7 @@ class AbstractShowNotesSource implements ShowNotesSource
 					String episodeNumber = bits[bits.length - 1];
 
 					log.debug("extracting '{}' -> '{}' / '{}'", zimPageName, showName, episodeNumber);
-					return getShowNotesURL(showName, episodeNumber);
+					return unsafe_getShowNotesURL(showName, episodeNumber);
 				}
 			}
 			catch (Exception e)

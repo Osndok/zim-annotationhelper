@@ -61,7 +61,7 @@ class ShowNotesJupiterBroadcastingTest
 	void testUnknownShowNameDoesNotThrow() throws Exception
 	{
 		final
-		String showNotesURL = showNotesSource.getShowNotesURL("Blather", "1234");
+		String showNotesURL = showNotesSource.unsafe_getShowNotesURL("Blather", "1234");
 
 		assertNull(showNotesURL);
 	}
