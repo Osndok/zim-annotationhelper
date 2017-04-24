@@ -21,6 +21,8 @@ class ShowNotesBasicURLSource extends AbstractShowNotesSource
 	public
 	String unsafe_getShowNotesURL(String showName, String episodeName)
 	{
+		unsafeShowNotesUrlNumCalls++;
+
 		if (showName.equals("DWW"))
 		{
 			return "https://distrowatch.com/weekly.php?issue="+episodeName;

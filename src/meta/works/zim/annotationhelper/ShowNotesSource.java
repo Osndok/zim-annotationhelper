@@ -6,7 +6,10 @@ package meta.works.zim.annotationhelper;
 public
 interface ShowNotesSource
 {
+	int getShowNotesUrlNumCalls();
 	String getShowNotesURL(String zimPageName);
+
+	int getUnsafeShowNotesUrlNumCalls();
 
 	/*
 	NOT PROTECTED from the accept filter & try/catch wrapper

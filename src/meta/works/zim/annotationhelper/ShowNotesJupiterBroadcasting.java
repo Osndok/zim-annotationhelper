@@ -31,6 +31,8 @@ class ShowNotesJupiterBroadcasting extends AbstractShowNotesSource
 	public
 	String unsafe_getShowNotesURL(String enclosingZimPage, String episodeIdentifier)
 	{
+		unsafeShowNotesUrlNumCalls++;
+
 		final
 		String jbWikiName = getJbWikiName(enclosingZimPage);
 		{

@@ -23,6 +23,7 @@ class ShowNotesUbuntuPodcast extends AbstractShowNotesSource
 	public
 	String unsafe_getShowNotesURL(String seasonWithPrefix, String episodeWithPrefix)
 	{
+		unsafeShowNotesUrlNumCalls++;
 		return getShowNotesUrlFromPage(seasonWithPrefix.substring(1), episodeWithPrefix, 1);
 	}
 

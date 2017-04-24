@@ -22,10 +22,30 @@ class AbstractShowNotesSource implements ShowNotesSource
 		return true;
 	}
 
+	int showNotesUrlNumCalls=0;
+
+	@Override
+	public final
+	int getShowNotesUrlNumCalls()
+	{
+		return showNotesUrlNumCalls;
+	}
+
+	int unsafeShowNotesUrlNumCalls=0;
+
+	@Override
+	public final
+	int getUnsafeShowNotesUrlNumCalls()
+	{
+		return unsafeShowNotesUrlNumCalls;
+	}
+
 	@Override
 	public final
 	String getShowNotesURL(String zimPageName)
 	{
+		showNotesUrlNumCalls++;
+
 		if (zimPageName==null)
 		{
 			log.debug("no zim page");
