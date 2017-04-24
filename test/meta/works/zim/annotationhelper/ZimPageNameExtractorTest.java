@@ -72,7 +72,8 @@ class ZimPageNameExtractorTest
 				{":BillBurr:MMPC:2017:02:03", "MMPC_2-3-17.mp3"},
 				{":BillBurr:MMPC:2017:12:13", "MMPC_12-13-17.mp3"},
 				{":BillBurr:TAMMP:2017:02:09", "TAMMP_2-9-17.mp3"},
-				{":BillBurr:TAMMP:2017:12:19", "TAMMP_12-19-17.mp3"}
+				{":BillBurr:TAMMP:2017:12:19", "TAMMP_12-19-17.mp3"},
+				{":OffTheAirLive:354", "Off_The_Air_Live_354_3-25-17.mp3"}
 			};
 	}
 

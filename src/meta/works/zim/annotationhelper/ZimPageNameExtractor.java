@@ -478,7 +478,43 @@ class ZimPageNameExtractor
 			showName=showName.substring(0, showName.length()-7)+"Podcast";
 		}
 
-		return upperFirst(removeExtension(showName));
+		return collapseSeparators(upperFirst(removeExtension(showName)));
+	}
+
+	private
+	String collapseSeparators(String s)
+	{
+		final
+		StringBuilder sb=new StringBuilder(s);
+
+		int i=0;
+
+		while (i<sb.length())
+		{
+			if (isSeparator(sb.charAt(i)))
+			{
+				sb.deleteCharAt(i);
+			}
+			else
+			{
+				i++;
+			}
+		}
+
+		if (sb.length()>1)
+		{
+			return sb.toString();
+		}
+		else
+		{
+			return s;
+		}
+	}
+
+	private
+	boolean isSeparator(char c)
+	{
+		return c=='_' || c=='-';
 	}
 
 	private
@@ -521,23 +557,44 @@ class ZimPageNameExtractor
 			return "Other";
 		}
 
+		final
+		StringBuilder sb=new StringBuilder(episode);
+
 		char firstChar;//='0';
 
+		//TRIM FROM THE FRONT
 		do
 		{
-			firstChar=episode.charAt(0);
+			firstChar=sb.charAt(0);
 
 			if (badNumericPrefix(firstChar))
 			{
 				//Trim off leading zeros, or the like...
-				episode = episode.substring(1);
+				sb.deleteCharAt(0);
 			}
 			else
 			{
 				break;
 			}
 		}
-		while (!episode.isEmpty());
+		while (sb.length()>0);
+
+		//TRUNCATE OTHER NUMBERS & IDENTIFIERS
+		{
+			for (int i=1; i<sb.length(); i++)
+			{
+				final
+				char c = sb.charAt(i);
+
+				if (isSeparator(c))
+				{
+					sb.delete(i, sb.length());
+					break;
+				}
+			}
+		}
+
+		episode=sb.toString();
 
 		log.debug("... to: '{}'", episode);
 
@@ -663,7 +720,7 @@ class ZimPageNameExtractor
 
 		for (char c : bit.toCharArray())
 		{
-			if (!isNumericOrSeperator(c))
+			if (!isNumericOrSeparator(c))
 			{
 				return false;
 			}
@@ -673,19 +730,13 @@ class ZimPageNameExtractor
 	}
 
 	private
-	boolean isNumericOrSeperator(char c)
+	boolean isNumericOrSeparator(char c)
 	{
 		return Character.isDigit(c) || c=='-' || c=='_';
 	}
 
 	private
 	Strategy lastStrategy;
-
-	public
-	boolean lastStrategyWasBestEffort()
-	{
-		return lastStrategy== Strategy.BEST_EFFORT;
-	}
 
 	private
 	enum Strategy
