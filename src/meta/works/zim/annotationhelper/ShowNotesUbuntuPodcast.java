@@ -83,7 +83,13 @@ class ShowNotesUbuntuPodcast extends AbstractShowNotesSource
 		}
 
 		final
-		int highLimit=urlContent.indexOf('"', center);
+		int endingQuote=urlContent.indexOf('"', center);
+
+		final
+		int endingHash=urlContent.indexOf('#', center);
+
+		final
+		int highLimit=minPositive(endingQuote, endingHash);
 		{
 			if (highLimit<0)
 			{
@@ -109,5 +115,13 @@ class ShowNotesUbuntuPodcast extends AbstractShowNotesSource
 		}
 
 		return href;
+	}
+
+	private
+	int minPositive(int a, int b)
+	{
+		if (a<0) return b;
+		if (b<0) return a;
+		return Math.min(a,b);
 	}
 }

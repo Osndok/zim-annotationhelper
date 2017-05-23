@@ -73,7 +73,10 @@ class ZimPageNameExtractorTest
 				{":BillBurr:MMPC:2017:12:13", "MMPC_12-13-17.mp3"},
 				{":BillBurr:TAMMP:2017:02:09", "TAMMP_2-9-17.mp3"},
 				{":BillBurr:TAMMP:2017:12:19", "TAMMP_12-19-17.mp3"},
-				{":OffTheAirLive:354", "Off_The_Air_Live_354_3-25-17.mp3"}
+				{":OffTheAirLive:354", "Off_The_Air_Live_354_3-25-17.mp3"},
+				{":LinuxAction:Special:1", "LinuxActionSpecial1-NewLokiAppCenter.mp4"},
+				{":LinuxAction:News:1", "lan-001.mp4"},
+				{":AskNoah:5", "asknoah-0005.mp4"},
 			};
 	}
 

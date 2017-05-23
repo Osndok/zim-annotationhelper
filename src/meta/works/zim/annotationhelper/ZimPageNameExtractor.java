@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+
 /**
  * Given a URL or file-name, return/compute the Zim page name therefor.
  */
@@ -102,7 +103,7 @@ class ZimPageNameExtractor
 		final
 		Strategy strategy = getStrategy(url, withoutPathOrFileExt, bits);
 		{
-			log.debug("{} for {}", strategy, url);
+			log.info("{} for {}", strategy, url);
 			this.lastStrategy=strategy;
 		}
 
@@ -178,7 +179,15 @@ class ZimPageNameExtractor
 
 			case BIT_THREE_IS_EPISODE_NUMBER:
 			{
-				return refine(bits[0], bits[3]);
+				if (bits[2].equals("E"))
+				{
+					//"E" is for... "EPISODE!"
+					return refine(bits[0], bits[3]);
+				}
+				else
+				{
+					return refine(bits[0] + bits[1] + ":" + bits[2], bits[3]);
+				}
 			}
 
 			case FTL:
@@ -435,7 +444,7 @@ class ZimPageNameExtractor
     static
     {
         final
-        Map<String,String> a=new HashMap<String, String>();
+        Map<String,String> a=new HashMap<>();
         {
             a.put("lv", "LinuxVoice");
             a.put("glp", "GoingLinux");
@@ -443,6 +452,8 @@ class ZimPageNameExtractor
             a.put("ttg", "TechGuy");
             a.put("techsnap", "TechSNAP");
             a.put("tllts", "LinuxLink");
+			a.put("lan", "LinuxAction:News");
+			a.put("asknoah", "AskNoah");
         }
 
         SHOW_NAME_MAP=Collections.unmodifiableMap(a);
@@ -673,6 +684,11 @@ class ZimPageNameExtractor
 		if (isNumeric(bits[1]) || bits.length<2)
 		{
 			return Strategy.BIT_ONE_IS_EPISODE_NUMBER;
+		}
+
+		if (bits.length>4 && isNumeric(bits[3]))
+		{
+			return Strategy.BIT_THREE_IS_EPISODE_NUMBER;
 		}
 
 		if (bits[1].equals("_s"))
