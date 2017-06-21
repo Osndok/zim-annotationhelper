@@ -135,7 +135,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 			else
 			if (!previousState.getRoughTimeCode().equals(newState.getRoughTimeCode()))
 			{
-				log.debug("periodic");
+				log.trace("periodic");
 				onPeriodicInterval(newState);
 			}
 			else

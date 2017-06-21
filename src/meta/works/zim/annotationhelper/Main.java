@@ -1,14 +1,20 @@
 package meta.works.zim.annotationhelper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public
 class Main
 {
+	private static final
+	Logger log = LoggerFactory.getLogger(Main.class);
 
 	public static
 	void main(String[] args)
 	{
 		if (args.length==0)
 		{
+			log.debug("activated; starting monitors");
 			new VlcMediaPlayer().start();
 			new RhythmBoxMediaPlayer().start();
 		}
