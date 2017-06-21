@@ -103,7 +103,7 @@ class ZimPageNameExtractor
 		final
 		Strategy strategy = getStrategy(url, withoutPathOrFileExt, bits);
 		{
-			log.info("{} for {}", strategy, url);
+			log.debug("{} for {}", strategy, url);
 			this.lastStrategy=strategy;
 		}
 
