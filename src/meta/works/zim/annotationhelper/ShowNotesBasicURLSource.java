@@ -28,6 +28,11 @@ class ShowNotesBasicURLSource extends AbstractShowNotesSource
 			return "https://distrowatch.com/weekly.php?issue="+episodeName;
 		}
 		else
+		if (showName.equals("LNL"))
+		{
+			return "https://latenightlinux.com/late-night-linux-episode-"+episodeName+"/";
+		}
+		else
 		if (showName.equals("NA"))
 		{
 			final
