@@ -126,6 +126,11 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 					zimPageAppender.pageNote(newState.getZimPage(), "\n");
 					onPeriodicInterval(newState);
 				}
+
+				if (newState.getPlayState() == PlayState.Playing)
+				{
+					zimPageAppender.maybeNoteFirstPlay(newState.getUrl());
+				}
 			}
 			else
 			if (!previousState.getRoughTimeCode().equals(newState.getRoughTimeCode()))
