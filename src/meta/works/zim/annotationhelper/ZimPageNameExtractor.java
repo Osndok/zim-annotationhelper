@@ -19,6 +19,9 @@ class ZimPageNameExtractor
 	private static final
 	Logger log = LoggerFactory.getLogger(ZimPageNameExtractor.class);
 
+	private final
+	boolean debug;
+
 	/*
 	http://stackoverflow.com/questions/2559759/how-do-i-convert-camelcase-into-human-readable-names-in-java
 	 */
@@ -33,6 +36,12 @@ class ZimPageNameExtractor
 
 	private
 	String kludge_lastSeenUrl;
+
+	public
+	ZimPageNameExtractor(boolean debug)
+	{
+		this.debug = debug;
+	}
 
 	public
 	String getZimPageNameFor(String url)
@@ -91,9 +100,12 @@ class ZimPageNameExtractor
 
 			if (!withoutPathOrFileExt.equals(kludge_lastSeenUrl))
 			{
-				for (int i = 0; i < bits.length; i++)
+				if (debug)
 				{
-					log.info("bit[{}]: {}", i, bits[i]);
+					for (int i = 0; i < bits.length; i++)
+					{
+						log.info("bit[{}]: {}", i, bits[i]);
+					}
 				}
 
 				kludge_lastSeenUrl=withoutPathOrFileExt;

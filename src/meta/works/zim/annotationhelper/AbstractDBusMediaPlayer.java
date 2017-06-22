@@ -376,7 +376,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	ZimPageAppender zimPageAppender = new ZimPageAppender();
 
 	public static final
-	ZimPageNameExtractor zimPageNameExtractor=new ZimPageNameExtractor();
+	ZimPageNameExtractor zimPageNameExtractor=new ZimPageNameExtractor(false);
 
 	Map<String, Variant> propertiesByName=new HashMap<String, Variant>();
 

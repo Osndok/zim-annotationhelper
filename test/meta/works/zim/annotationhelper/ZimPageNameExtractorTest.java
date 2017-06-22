@@ -19,7 +19,7 @@ class ZimPageNameExtractorTest
 	public
 	void setUp() throws Exception
 	{
-		zimPageNameExtractor=new ZimPageNameExtractor();
+		zimPageNameExtractor=new ZimPageNameExtractor(true);
 	}
 
 	@DataProvider(name = "outputInputPairs")
