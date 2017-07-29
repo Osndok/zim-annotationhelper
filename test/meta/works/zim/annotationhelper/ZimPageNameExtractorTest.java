@@ -70,6 +70,8 @@ class ZimPageNameExtractorTest
 				{":FreeTalk:Digest:2017:02:12", "FTL Digest 2017-02-12.mp3"},
 				{":FreeTalk:Digest:2017:02:16", "FTLDigest2017-02-16.mp3"},
 				{":FreeTalk:Digest:2017:06:18", "FTLDigest2017-06-18-2017.mp3"}, //was probably a mis-type on there side
+				{":FreeTalk:Digest:2017:06:28", "FTLDigest2017-6-28.mp3"}, //Missing zeros, now?!
+				{":FreeTalk:Digest:2017:06:02", "FTLDigest2017-6-2.mp3"}, //Might as well test for unzeroed day!
 				{":BillBurr:MMPC:2017:02:03", "MMPC_2-3-17.mp3"},
 				{":BillBurr:MMPC:2017:12:13", "MMPC_12-13-17.mp3"},
 				{":BillBurr:TAMMP:2017:02:09", "TAMMP_2-9-17.mp3"},

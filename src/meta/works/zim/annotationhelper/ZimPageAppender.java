@@ -73,7 +73,7 @@ class ZimPageAppender
 		final
 		ProcessBuilder processBuilder = new ProcessBuilder(command);
 		{
-			//if (DEBUG) processBuilder.inheritIO();
+			processBuilder.inheritIO();
 		}
 
 		final

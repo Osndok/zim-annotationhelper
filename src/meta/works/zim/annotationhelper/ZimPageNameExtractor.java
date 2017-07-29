@@ -115,7 +115,14 @@ class ZimPageNameExtractor
 		final
 		Strategy strategy = getStrategy(url, withoutPathOrFileExt, bits);
 		{
-			log.debug("{} for {}", strategy, url);
+			if (debug)
+			{
+				log.info("'{}' strategy for {}", strategy, url);
+			}
+			else
+			{
+				log.debug("'{}' strategy for {}", strategy, url);
+			}
 			this.lastStrategy=strategy;
 		}
 
@@ -240,7 +247,15 @@ class ZimPageNameExtractor
 							sb.append(minusMonth);
 							sb.append(minusDate);
 							sb.replace(4, 5, ":");
+							if (minusMonth.length()==2)
+							{
+								sb.insert(5, '0');
+							}
 							sb.replace(7, 8, ":");
+							if (minusDate.length()==2)
+							{
+								sb.insert(8, '0');
+							}
 						}
 
 						date=sb.toString();
