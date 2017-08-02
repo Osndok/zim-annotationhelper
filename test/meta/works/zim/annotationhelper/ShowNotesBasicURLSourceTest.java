@@ -36,6 +36,8 @@ class ShowNotesBasicURLSourceTest
 		t(":TWIT:599", "https://twit.tv/shows/this-week-in-tech/episodes/599?autostart=false");
 		t(":LNL:12", "https://latenightlinux.com/late-night-linux-episode-12/");
 
+		t(":LinuxAction:News:10", "http://linuxactionnews.com/10");
+
 		//Jupiter Broadcasting show notes include a non-predictable wiki page id number (and a nicified show title).
 		//This is available from the xml feed:
 		// <feedburner:origLink>http://www.jupiterbroadcasting.com/104836/minimal-functional-product-cr-232/</feedburner:origLink>

@@ -60,16 +60,34 @@ class AbstractShowNotesSource implements ShowNotesSource
 			{
 				final
 				String[] bits = zimPageName.split(":");
+				{
+					log.debug("'{}' split into {} segments", zimPageName, bits.length);
+				}
 
 				if (bits.length < 2)
 				{
-					log.debug("not enough segments '{}'", zimPageName);
 					return null;
 				}
 				else
 				{
 					final
-					String showName = bits[bits.length - 2];
+					String showName;
+					{
+						//NB: the first bit is usually empty; ":A:B" -> {"", "A", "B"}
+						if (bits.length==3)
+						{
+							showName=bits[1];
+						}
+						else
+						if (bits.length==4)
+						{
+							showName=bits[1]+":"+bits[2];
+						}
+						else
+						{
+							showName=bits[bits.length - 2];
+						}
+					}
 
 					final
 					String episodeNumber = bits[bits.length - 1];

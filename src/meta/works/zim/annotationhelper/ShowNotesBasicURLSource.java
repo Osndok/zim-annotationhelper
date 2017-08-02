@@ -33,6 +33,11 @@ class ShowNotesBasicURLSource extends AbstractShowNotesSource
 			return "https://latenightlinux.com/late-night-linux-episode-"+episodeName+"/";
 		}
 		else
+		if (showName.equals("LinuxAction:News"))
+		{
+			return "http://linuxactionnews.com/"+episodeName;
+		}
+		else
 		if (showName.equals("NA"))
 		{
 			final
