@@ -225,9 +225,20 @@ class ZimPageNameExtractor
 					if (bits[1].equals("Digest"))
 					{
 						//no spaces
-						year=bits[2];
-						minusMonth=bits[3];
-						minusDate=bits[4];
+						if (bits.length>=5)
+						{
+							//the common case
+							year = bits[2];
+							minusMonth = bits[3];
+							minusDate = bits[4];
+						}
+						else
+						{
+							//they tried to type a '-' and hit a '0'...
+							year = bits[2];
+							minusMonth=bits[3].substring(0,3);
+							minusDate=bits[3].substring(3);
+						}
 					}
 					else
 					{
