@@ -81,6 +81,7 @@ class ZimPageNameExtractorTest
 				{":LinuxAction:Special:1", "LinuxActionSpecial1-NewLokiAppCenter.mp4"},
 				{":LinuxAction:News:1", "lan-001.mp4"},
 				{":AskNoah:5", "asknoah-0005.mp4"},
+				{":Podcast:LibertarianChristian:32", "/mnt/shared/Podcasts/The Libertarian Christian Podcast/Ep_32_-_Called_to_Freedom.mp3'"},
 			};
 	}
 

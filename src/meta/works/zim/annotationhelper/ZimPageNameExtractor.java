@@ -314,6 +314,11 @@ class ZimPageNameExtractor
 				return refine("GNUWorldOrder", bits[5]);
 			}
 
+			case LIBERTARIAN_CHRISTIAN:
+			{
+				return refine("Podcast:LibertarianChristian", refineEpisodeNumber(bits[1]));
+			}
+
 			case MartinHash:
 			{
 				return refine("MartinHash", bits[3]);
@@ -680,6 +685,14 @@ class ZimPageNameExtractor
 			return Strategy.MartinHash;
 		}
 
+		if (url.contains("Libertarian"))
+		{
+			if (url.contains("Christian"))
+			{
+				return Strategy.LIBERTARIAN_CHRISTIAN;
+			}
+		}
+
 		//-----------------------------------------
 
 		if (s.startsWith("FTL"))
@@ -809,5 +822,6 @@ class ZimPageNameExtractor
 		MartinHash,
 		FTL,
 		BillBurr,
+		LIBERTARIAN_CHRISTIAN,
 	}
 }
