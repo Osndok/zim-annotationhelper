@@ -82,6 +82,7 @@ class ZimPageNameExtractorTest
 				{":LinuxAction:News:1", "lan-001.mp4"},
 				{":AskNoah:5", "asknoah-0005.mp4"},
 				{":Podcast:LibertarianChristian:32", "/mnt/shared/Podcasts/The Libertarian Christian Podcast/Ep_32_-_Called_to_Freedom.mp3'"},
+				{":Podcast:LibertarianChristian:32", "/mnt/shared/Podcasts/The%20Libertarian%20Christian%20Podcast/Ep_32_-_Called_to_Freedom.mp3'"},
 			};
 	}
 
@@ -90,6 +91,13 @@ class ZimPageNameExtractorTest
 	void testGetZimPageNameFor(String expectedOutput, String input) throws Exception
 	{
 		assertEquals(zimPageNameExtractor.getZimPageNameFor(input), expectedOutput);
+
+		/*dnw?
+		if (input.contains(" "))
+		{
+			assertEquals(zimPageNameExtractor.getZimPageNameFor(input.replaceAll(" ", "%20")), expectedOutput);
+		}
+		*/
 	}
 
 	/* DNW

@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -111,17 +113,38 @@ class ZimPageAppender
 
 		if (lastPlayTime == null || differentDayNumber(lastPlayTime))
 		{
-			try
+			final
+			String decoded;
 			{
-				journalNote("First music/podcast of the day: "+basename(url));
-			}
-			catch (Exception e)
-			{
-				log.error("caught", e);
+				try
+				{
+					decoded = URLDecoder.decode(url, "UTF-8");
+				}
+				catch (Throwable e)
+				{
+					e.printStackTrace();
+					actuallyNoteFirstPlay(stashFile, url);
+					return;
+				}
 			}
 
-			stashFile.setLastPlayTime(System.currentTimeMillis());
+			actuallyNoteFirstPlay(stashFile, decoded);
 		}
+	}
+
+	private
+	void actuallyNoteFirstPlay(StashFile stashFile, String url)
+	{
+		try
+		{
+			journalNote("First music/podcast of the day: "+basename(url));
+		}
+		catch (Exception e)
+		{
+			log.error("caught", e);
+		}
+
+		stashFile.setLastPlayTime(System.currentTimeMillis());
 	}
 
 	private
