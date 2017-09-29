@@ -48,8 +48,8 @@ function start()
 function stop()
 {
 	if [ -r "$PID_FILE" ]; then
-		pkill -F "$PID_FILE" java
-		pkill -f zim-annotationhelper
+		pkill -F "$PID_FILE" java || true
+		pkill -f zim-annotationhelper || true
 		rm -f "$PID_FILE"
 	else
 		echo 1>&2 "ERROR: Missing/unreadable pid file: $PID_FILE"
