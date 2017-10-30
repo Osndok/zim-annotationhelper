@@ -32,9 +32,6 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 	private static final
 	Logger log = LoggerFactory.getLogger(VlcMediaPlayer.class);
 
-	private static final
-	long RECENT_ACTIVITY_THRESHOLD = TimeUnit.MINUTES.toMillis(5);
-
 	public
 	VlcMediaPlayer()
 	{
@@ -59,7 +56,7 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 			if (was.getZimPage()!=null && !firstTimeCode(was))
 			{
 				log.debug("previously had a zim page ('{}'), and this is the first time code of something without one", was.getZimPage());
-				zimPageAppender.journalNote("Finished [["+was.getZimPage()+"]]");
+				finishedPlaying(was);
 			}
 			else
 			{
@@ -84,7 +81,7 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 			else
 			if (isRecent(was))
 			{
-				zimPageAppender.journalNote("Finished [[" + was.getZimPage() + "]]");
+				finishedPlaying(was);
 			}
 			else
 			{
@@ -129,18 +126,6 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 		}
 
 		return null;
-	}
-
-	private
-	boolean isRecent(StateSnapshot stateSnapshot)
-	{
-		final
-		long now = System.currentTimeMillis();
-
-		final
-		long snapshotTime = stateSnapshot.getSnapshotTime();
-
-		return now-snapshotTime > RECENT_ACTIVITY_THRESHOLD;
 	}
 
 	@Override

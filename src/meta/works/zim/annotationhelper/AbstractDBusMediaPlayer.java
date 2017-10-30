@@ -23,6 +23,9 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
     private static final
     long SLEEP_MILLIS = TimeUnit.SECONDS.toMillis(3);
 
+	private static final
+	long RECENT_ACTIVITY_THRESHOLD = TimeUnit.MINUTES.toMillis(5);
+
 	private long lastStateChangeCallback=System.currentTimeMillis();
 
 	abstract String getDBusSenderSuffix();
@@ -496,5 +499,23 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 				log.error("caught", e);
 			}
 		}
+	}
+
+	protected
+	void finishedPlaying(StateSnapshot was) throws IOException, InterruptedException
+	{
+		zimPageAppender.journalNote("Finished [[" + was.getZimPage() + "]]");
+	}
+
+	protected static
+	boolean isRecent(StateSnapshot stateSnapshot)
+	{
+		final
+		long now = System.currentTimeMillis();
+
+		final
+		long snapshotTime = stateSnapshot.getSnapshotTime();
+
+		return now-snapshotTime > RECENT_ACTIVITY_THRESHOLD;
 	}
 }

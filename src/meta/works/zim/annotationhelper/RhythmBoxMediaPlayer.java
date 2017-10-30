@@ -63,7 +63,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			}
 
 			//Avoid "streaming" those files which are intended to be downloaded.
-			if (now.getUrl().startsWith("http") && !now.getUrl().endsWith(".m3u"))
+			if (now.getUrl().startsWith("http") && !acceptableStreamingSource(now.getUrl()))
 			{
 				log.warn("url triggers undownloaded catch: '{}'", now.getUrl());
 				Runtime.getRuntime().exec("espeak undownloaded");
@@ -111,7 +111,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				}
 				else
 				{
-					zimPageAppender.journalNote("Finished [[" + was.getZimPage() + "]]");
+					finishedPlaying(was);
 				}
 			}
 
@@ -133,8 +133,13 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				zimPageAppender.journalNote("Left [[" + was.getZimPage() + "]]");
 			}
 			else
+			if (isRecent(was))
 			{
-				zimPageAppender.journalNote("Finished [[" + was.getZimPage() + "]]");
+				finishedPlaying(was);
+			}
+			else
+			{
+				log.debug("...ignoring stale changedShow transition: {} -> {}", was, now);
 			}
 		}
 
@@ -168,6 +173,14 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 		}
 
 		return null;
+	}
+
+	private
+	boolean acceptableStreamingSource(String url)
+	{
+		return url.endsWith(".m3u")
+			|| url.contains("soundcloud.com")
+			;
 	}
 
 	private
