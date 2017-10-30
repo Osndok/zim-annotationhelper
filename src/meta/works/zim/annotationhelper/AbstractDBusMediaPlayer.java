@@ -504,6 +504,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	protected
 	void finishedPlaying(StateSnapshot was) throws IOException, InterruptedException
 	{
+		zimPageAppender.pageNote(was.getZimPage(), ".end");
 		zimPageAppender.journalNote("Finished [[" + was.getZimPage() + "]]");
 	}
 
