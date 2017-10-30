@@ -233,6 +233,16 @@ class ZimPageNameExtractor
 							minusDate = bits[4];
 						}
 						else
+						if (bits.length == 3)
+						{
+							//No separators?
+							String yyyymmdd=bits[2];
+							year=yyyymmdd.substring(0,4);
+							minusMonth="-"+yyyymmdd.substring(4,6);
+							minusDate="-"+yyyymmdd.substring(6,8);
+
+						}
+						else
 						{
 							//they tried to type a '-' and hit a '0'...
 							year = bits[2];
