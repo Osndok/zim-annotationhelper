@@ -38,6 +38,11 @@ class ShowNotesBasicURLSource extends AbstractShowNotesSource
 			return "http://linuxactionnews.com/"+episodeName;
 		}
 		else
+		if (showName.startsWith("FreeTalk:"))
+		{
+			return "https://www.freetalklive.com/podcast/"+reformatFreeTalkDate(episodeName);
+		}
+		else
 		if (showName.equals("NA"))
 		{
 			final
@@ -85,5 +90,11 @@ class ShowNotesBasicURLSource extends AbstractShowNotesSource
 
 		log.info("unhandled show: '{}' / episode: '{}'", showName, episodeName);
 		return null;
+	}
+
+	private
+	String reformatFreeTalkDate(String ymd)
+	{
+		return ymd.replace(':','-');
 	}
 }

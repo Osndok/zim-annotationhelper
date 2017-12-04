@@ -43,6 +43,9 @@ class ShowNotesBasicURLSourceTest
 		// <feedburner:origLink>http://www.jupiterbroadcasting.com/104836/minimal-functional-product-cr-232/</feedburner:origLink>
 		//...but I'm not sure how to get that from rhythmbox, if it is even possible.
 		//t(":CR:232", "http://www.jupiterbroadcasting.com/104836/minimal-functional-product-cr-232/");
+
+		t(":FreeTalk:Live:2017:10:25", "https://www.freetalklive.com/podcast/2017-10-25");
+		t(":FreeTalk:Digest:2017:10:25", "https://www.freetalklive.com/podcast/2017-10-25");
 	}
 
 	private

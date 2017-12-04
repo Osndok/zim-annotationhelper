@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -68,6 +69,23 @@ class AbstractShowNotesSource implements ShowNotesSource
 				{
 					return null;
 				}
+
+				final
+				int year=findYear(bits);
+
+				if (year>0)
+				{
+					//NB: If it looks wrong, that's because it is... the 1 is to avoid the ':' prefix (a shortcut?)
+					final
+					String showName = String.join(":", Arrays.copyOfRange(bits, 1, year));
+
+					final
+					String episodeNumber = String.join(":", Arrays.copyOfRange(bits, year, bits.length));
+
+					log.debug("year-split '{}' -> '{}' / '{}'", zimPageName, showName, episodeNumber);
+
+					return unsafe_getShowNotesURL(showName, episodeNumber);
+				}
 				else
 				{
 					final
@@ -107,6 +125,35 @@ class AbstractShowNotesSource implements ShowNotesSource
 			log.debug("{} refuses to attempt: '{}'", this, zimPageName);
 			return null;
 		}
+	}
+
+	private
+	int findYear(String[] bits)
+	{
+		for(int i=0; i<bits.length; i++)
+		{
+			final
+			String bit=bits[i];
+
+			if (bit.length()==4)
+			{
+				if (bit.startsWith("19") || bit.startsWith("20"))
+				{
+					final
+					char c2=bit.charAt(2);
+
+					final
+					char c3=bit.charAt(3);
+
+					if (Character.isDigit(c2) && Character.isDigit(c3))
+					{
+						return i;
+					}
+				}
+			}
+		}
+
+		return 0;
 	}
 
 	protected
