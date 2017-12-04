@@ -35,6 +35,8 @@ class EndMarker
 					{
 						return true;
 					}
+
+					line=br.readLine();
 				}
 			}
 			finally
