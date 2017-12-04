@@ -9,6 +9,7 @@ import org.freedesktop.dbus.exceptions.DBusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -95,6 +96,9 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	private static final
 	String INTERFACE_NAME="org.mpris.MediaPlayer2.Player";
 
+	protected
+	boolean ignoringDocumentedReplay;
+
 	private
 	void run2() throws Exception
 	{
@@ -108,6 +112,9 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 			stateSnapshot = newState;
 		}
 
+		final
+		String newZimPageName = newState.getZimPage();
+
 		if (previousState!=null)
 		{
 			if (warrantsFiringCallback(previousState, newState))
@@ -117,6 +124,24 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 				if (newState.getPlayState() == PlayState.Playing)
 				{
 					zimPageAppender.maybeNoteFirstPlay(newState.getUrl());
+
+					if (newZimPageName==null)
+					{
+						ignoringDocumentedReplay=false;
+					}
+					else
+					{
+						final
+						File zimPageFile=zimPageAppender.getPageFile(newZimPageName);
+
+						ignoringDocumentedReplay=EndMarker.isPresentIn(zimPageFile);
+					}
+				}
+
+				if (ignoringDocumentedReplay)
+				{
+					log.info("zim page already has an end marker, so ignoring this replay: {}", newZimPageName);
+					return;
 				}
 
 				final
@@ -131,7 +156,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 					(scr==null || !scr.isInitialTimeCodeSuppressed()))
 				{
 					log.debug("adding initial 0:00 interval");
-					zimPageAppender.pageNote(newState.getZimPage(), "\n");
+					zimPageAppender.pageNote(newZimPageName, "\n");
 					onPeriodicInterval(newState);
 				}
 			}
@@ -139,6 +164,9 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 			if (!previousState.getRoughTimeCode().equals(newState.getRoughTimeCode()))
 			{
 				log.trace("periodic");
+
+				if (ignoringDocumentedReplay) return;
+
 				onPeriodicInterval(newState);
 			}
 			else
@@ -504,7 +532,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	protected
 	void finishedPlaying(StateSnapshot was) throws IOException, InterruptedException
 	{
-		zimPageAppender.pageNote(was.getZimPage(), ".end");
+		zimPageAppender.pageNote(was.getZimPage(), EndMarker.STRING);
 		zimPageAppender.journalNote("Finished [[" + was.getZimPage() + "]]");
 	}
 

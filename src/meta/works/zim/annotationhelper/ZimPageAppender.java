@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Calendar;
 import java.util.Date;
@@ -172,5 +171,55 @@ class ZimPageAppender
 
 		log.debug("day match? {} =?= {}", thatDay, thisDay);
 		return thatDay != thisDay;
+	}
+
+	public
+	File getPageFile(final String pageName)
+	{
+		final
+		StringBuilder sb=new StringBuilder(getNotebookDirectory());
+
+		for (String bit : pageName.split(":"))
+		{
+			if (!bit.isEmpty())
+			{
+				sb.append(File.separator);
+				sb.append(bit);
+			}
+		}
+
+		sb.append(".txt");
+
+		final
+		String retval=sb.toString();
+
+		log.debug("getPageFile('{}') -> '{}'", pageName, retval);
+
+		return new File(retval);
+	}
+
+	private
+	String getNotebookDirectory()
+	{
+		final
+		String override=System.getProperty("zim.notebook.path");
+
+		if (override==null)
+		{
+			final
+			String userHome=System.getProperty("user.home");
+
+			final
+			String notebooksDir=System.getProperty("zim.notebooks.dirname", "Notebooks");
+
+			final
+			String notebookName=System.getProperty("zim.notebook.name", "Primary");
+
+			return String.format("%s%s%s%s%s", userHome, File.separator, notebooksDir, File.separator, notebookName);
+		}
+		else
+		{
+			return override;
+		}
 	}
 }
