@@ -156,7 +156,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 					(scr==null || !scr.isInitialTimeCodeSuppressed()))
 				{
 					log.debug("adding initial 0:00 interval");
-					zimPageAppender.pageNote(newZimPageName, "\n");
+					zimPageAppender.pageNote(newZimPageName, "");
 					onPeriodicInterval(newState);
 				}
 			}
