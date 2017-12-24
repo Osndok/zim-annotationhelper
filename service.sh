@@ -5,6 +5,7 @@
 
 LOG_FILE=/tmp/zim-annotationhelper.log
 PID_FILE=/tmp/zim-annotationhelper.pid
+PROJECTS=$HOME/Projects
 
 cd /
 
@@ -32,8 +33,8 @@ function start()
 		return
 	fi
 
-	# We copy the jar out of /mnt/projects, so we don't get hung up on that flaky mountpoint...
-	JAR=/mnt/projects/zim-annotationhelper/out/artifacts/zim_annotationhelper_jar/zim-annotationhelper.jar
+	# We copy the jar out of projects, so we don't get hung up on that flaky mountpoint...
+	JAR=$PROJECTS/zim-annotationhelper/out/artifacts/zim_annotationhelper_jar/zim-annotationhelper.jar
 	JAR2=/tmp/zim-annotationhelper.jar
 	cp -v "$JAR" "$JAR2"
 
