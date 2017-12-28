@@ -1,0 +1,359 @@
+<?xml version="1.0" standalone="yes"?>
+<rhythmdb version="2.0">
+  <entry type="ignore">
+    <title></title>
+    <genre></genre>
+    <artist></artist>
+    <album></album>
+    <location>file:///mnt/shared/Music/From_iTunes/duplicated.txt</location>
+    <mtime>1475601947</mtime>
+    <date>0</date>
+    <media-type>application/octet-stream</media-type>
+  </entry>
+  <entry type="podcast-feed">
+    <title>All Jupiter Broadcasting Videos</title>
+    <genre></genre>
+    <artist>Jupiter Broadcasting</artist>
+    <album></album>
+    <location>http://feeds.feedburner.com/AllJupiterVideos</location>
+    <last-seen>1514446453</last-seen>
+    <date>0</date>
+    <media-type>application/octet-stream</media-type>
+    <status>1</status>
+    <description>Jupiter Broadcasting Videos</description>
+    <subtitle></subtitle>
+    <summary></summary>
+    <lang>en</lang>
+    <copyright>Copyright, Jupiter Broadcasting 2008</copyright>
+    <image>http://www.jupiterbroadcasting.com/jupiter.png</image>
+    <post-time>1514361638</post-time>
+  </entry>
+  <entry type="podcast-feed">
+    <title>Security Now (Video-HI)</title>
+    <genre></genre>
+    <artist>TWiT</artist>
+    <album></album>
+    <location>http://feeds.twit.tv/sn_video_large.xml</location>
+    <last-seen>1514446441</last-seen>
+    <date>0</date>
+    <media-type>application/octet-stream</media-type>
+    <status>1</status>
+    <description>Steve Gibson, the man who coined the term spyware and created the first anti-spyware program, creator of Spinrite and ShieldsUP, discusses the hot topics in security today with Leo Laporte.
+
+Records live every Tuesday at 4:30pm Eastern / 1:30pm Pacific / 21:30 UTC.</description>
+    <subtitle></subtitle>
+    <summary></summary>
+    <lang>en-US</lang>
+    <copyright>This work is licensed under a Creative Commons License - Attribution-NonCommercial-NoDerivatives 4.0 International - http://creativecommons.org/licenses/by-nc-nd/4.0/</copyright>
+    <image>https://elroycdn.twit.tv/sites/default/files/styles/twit_album_art_2048x2048/public/images/shows/security_now/album_art/sd/sn1400videohi.jpg?itok=m_PHDBoz</image>
+    <post-time>1514313347</post-time>
+  </entry>
+  <entry type="podcast-feed">
+    <title>This Week in Tech (Video-HI)</title>
+    <genre></genre>
+    <artist>TWiT</artist>
+    <album></album>
+    <location>http://feeds.twit.tv/twit_video_large.xml</location>
+    <last-seen>1514446441</last-seen>
+    <date>0</date>
+    <media-type>application/octet-stream</media-type>
+    <status>1</status>
+    <description>Your first podcast of the week is the last word in tech. Join the top tech pundits in a roundtable discussion of the latest trends in high tech.
+
+Records live every Sunday at 6:00pm Eastern / 3:00pm Pacific / 23:00 UTC.</description>
+    <subtitle></subtitle>
+    <summary></summary>
+    <lang>en-US</lang>
+    <copyright>This work is licensed under a Creative Commons License - Attribution-NonCommercial-NoDerivatives 4.0 International - http://creativecommons.org/licenses/by-nc-nd/4.0/</copyright>
+    <image>https://elroycdn.twit.tv/sites/default/files/styles/twit_album_art_2048x2048/public/images/shows/this_week_in_tech/album_art/sd/twit1400videohi.jpg?itok=niauJ52x</image>
+    <post-time>1514129747</post-time>
+  </entry>
+  <entry type="podcast-feed">
+    <title>Off The Air Live</title>
+    <genre></genre>
+    <artist>Libertarian Comedy Radio</artist>
+    <album></album>
+    <location>http://offtheairlive.libsyn.com/rss</location>
+    <last-seen>1514446445</last-seen>
+    <date>0</date>
+    <media-type>application/octet-stream</media-type>
+    <status>1</status>
+    <description>Libertarian Comedy Radio</description>
+    <subtitle></subtitle>
+    <summary></summary>
+    <lang>en</lang>
+    <copyright>&lt;![CDATA[</copyright>
+    <image>http://static.libsyn.com/p/assets/1/7/4/0/17407fe0b1c0615d/otal1400.jpg</image>
+    <post-time>1513689552</post-time>
+  </entry>
+  <entry type="song">
+    <title>I Wanna Be Like You</title>
+    <genre>Electronic</genre>
+    <artist>Adam Watts</artist>
+    <album>The Noise Inside</album>
+    <track-number>1</track-number>
+    <duration>177</duration>
+    <file-size>2920838</file-size>
+    <location>file:///mnt/shared/Music/Adam%20Watts/The%20Noise%20Inside/01%20I%20Wanna%20Be%20Like%20You.mp3</location>
+    <mtime>1202850922</mtime>
+    <first-seen>1453827772</first-seen>
+    <last-seen>1514435042</last-seen>
+    <bitrate>127</bitrate>
+    <date>0</date>
+    <media-type>audio/mpeg</media-type>
+    <beats-per-minute>156</beats-per-minute>
+    <composer>Unknown</composer>
+  </entry>
+  <entry type="song">
+    <title>Ghost Song</title>
+    <genre>Electronic</genre>
+    <artist>Air</artist>
+    <album>The Virgin Suicides</album>
+    <track-number>10</track-number>
+    <duration>136</duration>
+    <file-size>2800561</file-size>
+    <location>file:///mnt/shared/Music/Air/The%20Virgin%20Suicides/10%20Ghost%20Song.mp3</location>
+    <mtime>1168881624</mtime>
+    <first-seen>1453827770</first-seen>
+    <last-seen>1514435042</last-seen>
+    <bitrate>159</bitrate>
+    <date>729755</date>
+    <media-type>audio/mpeg</media-type>
+    <composer>Unknown</composer>
+  </entry>
+  <entry type="song">
+    <title>Shower The People</title>
+    <genre>Unknown</genre>
+    <artist>Woody Wright</artist>
+    <album>Cover To Cover</album>
+    <track-number>5</track-number>
+    <duration>287</duration>
+    <file-size>7525258</file-size>
+    <location>file:///mnt/shared/Music/Woody%20Wright/Woody%20Wright%20-%20Cover%20To%20Cover/05%20-%20Shower%20The%20People.ogg</location>
+    <mtime>1456522775</mtime>
+    <first-seen>1456523980</first-seen>
+    <last-seen>1514435042</last-seen>
+    <bitrate>224</bitrate>
+    <date>0</date>
+    <media-type>audio/x-vorbis</media-type>
+    <composer>Unknown</composer>
+  </entry>
+  <entry type="podcast-post">
+    <title>Liberation Library [4] Blood Makes the Green Grass Grow: Conditioned Killers in War and Society</title>
+    <genre>Podcast</genre>
+    <artist>Liberty Weekly; Patrick MacFarlane; James Corbett</artist>
+    <album>The Liberty Weekly Podcast</album>
+    <duration>3154</duration>
+    <file-size>49356352</file-size>
+    <location>file:///mnt/yard/Podcasts/The%20Liberty%20Weekly%20Podcast/Liberation_Library_4_Blood_Makes_the_Green_Grass_Grow_Conditioning_Soldiers_to_Kill.mp3</location>
+    <mountpoint>http://traffic.libsyn.com/libertyweekly/Liberation_Library_4_Blood_Makes_the_Green_Grass_Grow_Conditioning_Soldiers_to_Kill.mp3?dest-id=523399</mountpoint>
+    <first-seen>1514488475</first-seen>
+    <last-seen>1514488475</last-seen>
+    <date>0</date>
+    <media-type>audio/mpeg</media-type>
+    <status>100</status>
+    <description>In this first video/documentary style podcast, I review Lt. Col. Dave Grossman's seminal work&#xA0;On Killing: The Psychological Cost of Learning to Kill in War and Society. In doing so, I examine mankind's inherent resistance to taking human life. Next, we take a look at the US Army's discovery of this resistance and their subsequent efforts to overcome it. Finally, I examine Dave Grossman himself, his overarching thesis, and his side business, where he conditions government goons to kill reflexively.</description>
+    <subtitle>http://libertyweekly.libsyn.com/rss</subtitle>
+    <summary></summary>
+    <lang></lang>
+    <copyright></copyright>
+    <image></image>
+    <post-time>1513798252</post-time>
+  </entry>
+  <entry type="podcast-post">
+    <title>An American's Guide to Brazilian Libertarianism Ep. 39</title>
+    <genre>Podcast</genre>
+    <artist>The Liberty Weekly Podcast; Patrick MacFarlane; Actual Anarchy Podcast</artist>
+    <album>The Liberty Weekly Podcast</album>
+    <duration>2472</duration>
+    <file-size>31437019</file-size>
+    <location>file:///mnt/yard/Podcasts/The%20Liberty%20Weekly%20Podcast/An_Americans_Guide_to_Brazilian_Libertarianism_Ep._39.mp3</location>
+    <mountpoint>http://traffic.libsyn.com/libertyweekly/An_Americans_Guide_to_Brazilian_Libertarianism_Ep._39.mp3?dest-id=523399</mountpoint>
+    <first-seen>1514488475</first-seen>
+    <last-seen>1514489464</last-seen>
+    <date>0</date>
+    <media-type>audio/mpeg</media-type>
+    <status>100</status>
+    <description>What if I told you that there is one country in the world where "Mises" garners more google searches than "Marx?" Which country&#xA0; would you guess? The United States? Switzerland? New Zealand? WRONG. It's BRAZIL. In this episode, Liberty Weekly listener (and native Brazilian) Dallas Ferraz primes us on the Brazilian Liberty Movement.</description>
+    <subtitle>http://libertyweekly.libsyn.com/rss</subtitle>
+    <summary></summary>
+    <lang></lang>
+    <copyright></copyright>
+    <image></image>
+    <post-time>1509927690</post-time>
+  </entry>
+  <entry type="podcast-post">
+    <title>HPR2254: Introduction to Model Rocketry</title>
+    <genre>Podcast</genre>
+    <artist>hpr.nospam@nospam.saner.net (Steve Saner)</artist>
+    <album>Hacker Public Radio</album>
+    <duration>3384</duration>
+    <file-size>33210075</file-size>
+    <location>file:///mnt/yard/Podcasts/Hacker%20Public%20Radio/hpr2254.ogg</location>
+    <mountpoint>http://hackerpublicradio.org/eps/hpr2254.ogg</mountpoint>
+    <first-seen>1490248851</first-seen>
+    <last-seen>1490248852</last-seen>
+    <bitrate>80</bitrate>
+    <date>0</date>
+    <media-type>audio/x-vorbis</media-type>
+    <status>100</status>
+    <description>Introduction to Model Rocketry&#13;
+In this episode I introduce the hobby of model rocketry. I specifically highlight some of the advanced elements of the hobby to show how model rocketry goes from being a fun activity for kids to a serious hobby enjoyed by many adults.&#13;
+Outline&#13;
+&#13;
+History of model rocketry.&#13;
+&#13;
+&#13;
+Early amateur experimentation with rocketry.&#13;
+G. Harry Stine develops the model rocket motor.&#13;
+Vern Estes develops a way to mass produce motors.&#13;
+&#13;
+&#13;
+Basic model rocket components and flight.&#13;
+&#13;
+&#13;
+Airframe, nose cone, and fins.&#13;
+The part of the model rocket motor.&#13;
+Recovery mechanism (parachutes and streamers).&#13;
+The launch pad&#13;
+The basic flight profile of a model rocket.&#13;
+Building a typical model rocket kit.&#13;
+&#13;
+&#13;
+Scratch building your own designs.&#13;
+&#13;
+&#13;
+Using commercial components.&#13;
+Using ordinary materials for rockets.&#13;
+Fabricating components: Lathes, laser cutters, CNC machines, etc.&#13;
+Using CAD and simulation software.&#13;
+&#13;
+&#13;
+Craftsmanship and scale modeling.&#13;
+Model rocket competition.&#13;
+&#13;
+&#13;
+Regional, national, and international meets.&#13;
+Events: Altitude, duration, advanced recovery methods, payloads, egglofting.&#13;
+&#13;
+&#13;
+High power rockets.&#13;
+&#13;
+&#13;
+Large rockets.&#13;
+High altitude rockets.&#13;
+Supersonic rockets&#13;
+Composite motors.&#13;
+Regulations&#13;
+Certification&#13;
+Materials&#13;
+&#13;
+&#13;
+Complex rocketry.&#13;
+&#13;
+&#13;
+Motor clustering.&#13;
+Staging.&#13;
+Dual deployment.&#13;
+&#13;
+&#13;
+Electronics&#13;
+&#13;
+&#13;
+Altimeters&#13;
+Flight computers&#13;
+Tracking&#13;
+Cameras&#13;
+&#13;
+&#13;
+Experimental motors.&#13;
+National associations.&#13;
+&#13;
+&#13;
+National Association of Rocketry (NAR).&#13;
+Tripoli Rocketry Association (TRA).&#13;
+Safety codes.&#13;
+Liability insurance.&#13;
+Local clubs.&#13;
+&#13;
+&#13;
+Safety.&#13;
+A little about my personal interests in model rocketry.&#13;
+&#13;
+Resources&#13;
+The following is a non-exhaustive list of companies that manufacture and/or sell model rocket kits and suplies. I've primary listed those that I'm most familiar with. There are certainly others.&#13;
+&#13;
+Estes https://www.estesrockets.com/&#13;
+Quest http://www.questaerospace.com/&#13;
+Semroc http://www.semroc.com/&#13;
+Apogee Components https://www.apogeerockets.com/&#13;
+LOC Precision http://www.locprecision.com/&#13;
+Public Missles Ltd https://publicmissiles.com/&#13;
+Madcow Rocketry https://www.madcowrocketry.com/&#13;
+Giant Leap Rocketry https://giantleaprocketry.com/&#13;
+Flis Kits Inc http://www.fliskits.com/&#13;
+Wildman Rocketry https://www.wildmanrocketry.com/&#13;
+&#13;
+These are some of the major manufactures of high power composite motors.&#13;
+&#13;
+Aerotech Consumer Aerospace 
+</description>
+    <subtitle>http://hackerpublicradio.org/hpr_ogg_rss.php</subtitle>
+    <summary></summary>
+    <lang></lang>
+    <copyright></copyright>
+    <image></image>
+    <post-time>1490227200</post-time>
+  </entry>
+  <entry type="podcast-post">
+    <title>SN 576: Flip&#xA0;Feng&#xA0;Shui</title>
+    <genre>Podcast</genre>
+    <artist>leo@twit.tv (Leo Laporte)</artist>
+    <album>Security Now (Video-HI)</album>
+    <duration>8359</duration>
+    <file-size>494618857</file-size>
+    <location>file:///mnt/yard/Podcasts/Security%20Now%20(Video-HI)/sn0576_h264m_864x480_500.mp4</location>
+    <mountpoint>http://www.podtrac.com/pts/redirect.mp4/cdn.twit.tv/video/sn/sn0576/sn0576_h264m_864x480_500.mp4</mountpoint>
+    <first-seen>1473258195</first-seen>
+    <last-seen>1473258195</last-seen>
+    <bitrate>128</bitrate>
+    <date>0</date>
+    <media-type>audio/x-aac</media-type>
+    <status>100</status>
+    <description>Hosts: Leo Laporte, Steve Gibson
+The continuing woes of WoSign, autonomous micro-recon drones turn out to be real, a new crypto attack on short block ciphers prompts immediate changes oin OpenVPN and OpenSSL, introducing a new Security Now! Abbreviation: "YAWTTY": Yet Another Way To Track You, a discouraging social engineering experiment, another clever USB attack and a look at the weaponizing of RowHammer with "Flip Feng Shui" - the most incredibly righteous and sublime hack... ever!
+We invite you to read our show notes.
+Download or subscribe to this show at https://twit.tv/shows/security-now.
+You can submit a question to Security Now! at the GRC Feedback Page.
+For 16kbps versions, transcripts, and notes (including fixes), visit Steve's site: grc.com, also the home of the best disk maintenance and recovery utility ever written Spinrite 6.
+Bandwidth for Security Now is provided by Cachefly.
+</description>
+    <subtitle>http://feeds.twit.tv/sn_video_large.xml</subtitle>
+    <summary></summary>
+    <lang></lang>
+    <copyright></copyright>
+    <image></image>
+    <post-time>1473216717</post-time>
+  </entry>
+  <entry type="iradio">
+    <title>WKNC 88.1 FM (NC State) (High Quality)</title>
+    <genre>Music</genre>
+    <artist></artist>
+    <album></album>
+    <location>http://wknc.sma.ncsu.edu:8000/wknchq.ogg.m3u</location>
+    <play-count>1</play-count>
+    <last-played>1406842345</last-played>
+    <bitrate>112</bitrate>
+    <date>0</date>
+    <media-type>application/octet-stream</media-type>
+  </entry>
+  <entry type="iradio">
+    <title>WKNC 88.1 FM (NC State) (Low Quality)</title>
+    <genre>Music</genre>
+    <artist></artist>
+    <album></album>
+    <location>http://wknc.sma.ncsu.edu:8000/wkncmq.ogg.m3u</location>
+    <date>0</date>
+    <media-type>application/octet-stream</media-type>
+  </entry>
+</rhythmdb>
