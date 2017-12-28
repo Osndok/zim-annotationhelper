@@ -133,6 +133,7 @@ class VlcMediaPlayer extends AbstractDBusMediaPlayer
 	{
 		if (state.getZimPage()!=null)
 		{
+			log.debug("onPeriodicInterval");
 			zimPageAppender.pageNote(state.getZimPage(), state.getRoughTimeCode());
 		}
 	}

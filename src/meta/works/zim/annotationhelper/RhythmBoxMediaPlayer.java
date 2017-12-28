@@ -224,11 +224,14 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				}
 			}
 
+			/* tends to add extra blank lines
 			if (didSomething)
 			{
 				//extra newline to separate the coming time codes.
+				log.debug("no top-level metadata...");
 				zimPageAppender.pageNote(zimPage, "");
 			}
+			*/
 		}
 	}
 
@@ -264,6 +267,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 	{
 		if (state.getZimPage()!=null)
 		{
+			log.debug("onPeriodicInterval");
 			zimPageAppender.pageNote(state.getZimPage(), state.getRoughTimeCode());
 		}
 	}
