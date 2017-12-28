@@ -5,8 +5,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -94,23 +98,29 @@ class ZimPageNameExtractor
 		}
 
 		final
-		String[] bits = withoutPathOrFileExt.replaceAll(BREAK_MATCHING_REGEX, " ").split(" ");
+		List<String> bitsList = removeHazards(withoutPathOrFileExt.replaceAll(BREAK_MATCHING_REGEX, " ").split(" "));
 		{
-			log.debug("split into {} bits", bits.length);
+			log.debug("split into {} bits", bitsList.size());
 
 			if (!withoutPathOrFileExt.equals(kludge_lastSeenUrl))
 			{
 				if (debug)
 				{
-					for (int i = 0; i < bits.length; i++)
+					for (int i = 0; i < bitsList.size(); i++)
 					{
-						log.info("bit[{}]: {}", i, bits[i]);
+						log.info("bit[{}]: {}", i, bitsList.get(i));
 					}
 				}
 
 				kludge_lastSeenUrl=withoutPathOrFileExt;
 			}
 		}
+
+		final
+		String[] bits=bitsList.toArray(new String[bitsList.size()]);
+
+		final
+		int last=bits.length-1;
 
 		final
 		Strategy strategy = getStrategy(url, withoutPathOrFileExt, bits);
@@ -329,6 +339,32 @@ class ZimPageNameExtractor
 				return refine("Podcast:LibertarianChristian", refineEpisodeNumber(bits[1]));
 			}
 
+			case LIBERTY_WEEKLY:
+			{
+				final
+				int ep=firstMatching(bits, "Ep");
+
+				if (ep>=0)
+				{
+					return refine("Podcast:LibertyWeekly:Episode", refineEpisodeNumber(bits[ep+1]));
+				}
+
+				if (bits[0].equals("LL"))
+				{
+					return refine("Podcast:LibertyWeekly:LiberationLibrary", refineEpisodeNumber(bits[1]));
+				}
+
+				final
+				int library=firstMatching(bits, "Library");
+
+				if (library>0)
+				{
+					return refine("Podcast:LibertyWeekly:LiberationLibrary", refineEpisodeNumber(bits[library+1]));
+				}
+
+				return null;
+			}
+
 			case MartinHash:
 			{
 				return refine("MartinHash", bits[3]);
@@ -381,6 +417,35 @@ class ZimPageNameExtractor
 		}
 
 		return withoutPathOrFileExt;
+	}
+
+	private
+	int firstMatching(String[] bits, String token)
+	{
+		for (int i=0; i<bits.length; i++)
+		{
+			if (token.equalsIgnoreCase(bits[i]))
+			{
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+	private static final
+	Collection<String> HAZARDS=Arrays.asList("", "\t");
+
+	private
+	List<String> removeHazards(String[] bits)
+	{
+		final
+		List<String> retval=new ArrayList<>(Arrays.asList(bits));
+		{
+			retval.removeAll(HAZARDS);
+		}
+
+		return retval;
 	}
 
 	private
@@ -682,7 +747,7 @@ class ZimPageNameExtractor
 	private
 	boolean badNumericPrefix(char c)
 	{
-		return c=='-' || c=='0' || c=='_';
+		return c=='-' || c=='0' || c=='_' || c=='.';
 	}
 
 	private
@@ -695,11 +760,16 @@ class ZimPageNameExtractor
 			return Strategy.MartinHash;
 		}
 
-		if (url.contains("Libertarian"))
+		if (url.contains("Libert"))
 		{
 			if (url.contains("Christian"))
 			{
 				return Strategy.LIBERTARIAN_CHRISTIAN;
+			}
+
+			if (url.contains("Weekly"))
+			{
+				return Strategy.LIBERTY_WEEKLY;
 			}
 		}
 
@@ -833,5 +903,6 @@ class ZimPageNameExtractor
 		FTL,
 		BillBurr,
 		LIBERTARIAN_CHRISTIAN,
+		LIBERTY_WEEKLY,
 	}
 }

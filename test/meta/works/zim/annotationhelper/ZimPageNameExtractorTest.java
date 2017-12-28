@@ -74,6 +74,7 @@ class ZimPageNameExtractorTest
 				{":FreeTalk:Digest:2017:06:02", "FTLDigest2017-6-2.mp3"}, //Might as well test for unzeroed day!
 				{":FreeTalk:Digest:2017:08:16", "FTLDigest2017-08016.mp3"}, //now we have too many zeros? This must be manually done!
 				{":FreeTalk:Digest:2017:10:23", "FTLDigest20171023.mp3"}, //uggh... no separators at all?!?!
+				{":FreeTalk:Digest:2017:12:13", "FTL Digest 20171213.mp3"},
 				{":BillBurr:MMPC:2017:02:03", "MMPC_2-3-17.mp3"},
 				{":BillBurr:MMPC:2017:12:13", "MMPC_12-13-17.mp3"},
 				{":BillBurr:TAMMP:2017:02:09", "TAMMP_2-9-17.mp3"},
@@ -84,6 +85,9 @@ class ZimPageNameExtractorTest
 				{":AskNoah:5", "asknoah-0005.mp4"},
 				{":Podcast:LibertarianChristian:32", "/mnt/shared/Podcasts/The Libertarian Christian Podcast/Ep_32_-_Called_to_Freedom.mp3'"},
 				{":Podcast:LibertarianChristian:32", "/mnt/shared/Podcasts/The%20Libertarian%20Christian%20Podcast/Ep_32_-_Called_to_Freedom.mp3'"},
+				{":Podcast:LibertyWeekly:LiberationLibrary:3", "/mnt/yard/Podcasts/The Liberty Weekly Podcast/LL_3_The_Truth_About_Judicial_Review.mp3"},
+				{":Podcast:LibertyWeekly:LiberationLibrary:4", "/mnt/yard/Podcasts/The Liberty Weekly Podcast/Liberation_Library_4_Blood_Makes_the_Green_Grass_Grow_Conditioning_Soldiers_to_Kill.mp3"},
+				{":Podcast:LibertyWeekly:Episode:47", "/mnt/yard/Podcasts/The Liberty Weekly Podcast/Keith_Knight_Dont_Tread_on_Anyone_Ep._47.mp3"},
 			};
 	}
 
