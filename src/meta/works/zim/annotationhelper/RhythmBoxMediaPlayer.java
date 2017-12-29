@@ -3,6 +3,8 @@ package meta.works.zim.annotationhelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.stream.XMLStreamException;
+import java.io.File;
 import java.io.IOException;
 
 import static meta.works.zim.annotationhelper.PlayState.Paused;
@@ -183,6 +185,12 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			;
 	}
 
+	private static final
+	File HOME=new File(System.getProperty("user.home", "/home/robert"));
+
+	private final
+	RhythmBoxXmlExtractor rhythmBoxXmlExtractor=new RhythmBoxXmlExtractor(new File(HOME, ".local/share/rhythmbox/rhythmdb.xml"));
+
 	private
 	void noteTitleAndShowNotes(StateSnapshot stateSnapshot) throws IOException, InterruptedException
 	{
@@ -224,6 +232,31 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				}
 			}
 
+			if (likelyHasMeaninglessDescription(zimPage))
+			{
+				log.debug("blacklisted descriptions");
+			}
+			else
+			{
+				try
+				{
+					final String description = rhythmBoxXmlExtractor.getDescriptionFor(
+						new File(
+							stateSnapshot.getUrl().toString()
+						)
+					);
+
+					if (description != null)
+					{
+						zimPageAppender.pageNote(zimPage, "* " + description);
+					}
+				}
+				catch (XMLStreamException e)
+				{
+					log.debug("fail: {}", e.toString(), e);
+				}
+			}
+
 			/* tends to add extra blank lines
 			if (didSomething)
 			{
@@ -233,6 +266,12 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			}
 			*/
 		}
+	}
+
+	private
+	boolean likelyHasMeaninglessDescription(String zimPage)
+	{
+		return zimPage.contains("FreeTalk:Digest");
 	}
 
 	private
