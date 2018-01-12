@@ -29,6 +29,7 @@ class RhythmBoxXmlExtractor
 	RhythmBoxXmlExtractor(File file)
 	{
 		this.file = file;
+		//dnw: xmlInputFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, Boolean.TRUE);
 	}
 
 	public
@@ -43,23 +44,46 @@ class RhythmBoxXmlExtractor
 		try
 		{
 			String currentLocation=null;
-			String currentDescription=null;
+			StringBuilder currentDescription=null;
+			boolean inDescriptionTag=false;
 
 			while(true)
 			{
 				final
 				int type = xmlStreamReader.next();
 				{
-					log.trace("type: {}", type);
+					log.debug("type: {}", type);
 				}
 
+				if (type==CHARACTERS)
+				{
+					if (inDescriptionTag)
+					{
+						String stringValue=xmlStreamReader.getText();
+						log.debug("characters: '{}'", stringValue);
+						currentDescription.append(stringValue);
+					}
+				}
+				else
+				if (type==ENTITY_REFERENCE)
+				{
+					if (inDescriptionTag)
+					{
+						String stringValue=xmlStreamReader.getText();
+						log.debug("entity: '{}'", stringValue);
+						currentDescription.append(stringValue);
+					}
+				}
+				else
 				if (type==START_ELEMENT)
 				{
 					final
 					String tagName=xmlStreamReader.getLocalName();
 					{
-						log.trace("start: {}", tagName);
+						log.debug("start: {}", tagName);
 					}
+
+					inDescriptionTag=false;
 
 					if (tagName.equals("entry"))
 					{
@@ -69,14 +93,13 @@ class RhythmBoxXmlExtractor
 					else
 					if (tagName.equals("description"))
 					{
-						if (xmlStreamReader.next()==CHARACTERS)
-						{
-							currentDescription = xmlStreamReader.getText();
-						}
+						inDescriptionTag=true;
+						currentDescription = new StringBuilder();
 					}
 					else
 					if (tagName.equals("location"))
 					{
+						// BUG? Expecting no entities.
 						if (xmlStreamReader.next()==CHARACTERS)
 						{
 							currentLocation = xmlStreamReader.getText();
@@ -86,6 +109,8 @@ class RhythmBoxXmlExtractor
 				else
 				if (type==END_ELEMENT)
 				{
+					inDescriptionTag=false;
+
 					final
 					String tagName=xmlStreamReader.getLocalName();
 					{
@@ -99,7 +124,7 @@ class RhythmBoxXmlExtractor
 						if (locationMatch(requestedBaseName, currentLocation))
 						{
 							log.debug("match: {}", currentLocation);
-							return currentDescription;
+							return currentDescription.toString();
 						}
 					}
 				}

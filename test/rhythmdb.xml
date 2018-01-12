@@ -356,4 +356,27 @@ Bandwidth for Security Now is provided by Cachefly.
     <date>0</date>
     <media-type>application/octet-stream</media-type>
   </entry>
+	<entry type="podcast-post">
+		<title>Late Night Linux &#x2013; Episode 27</title>
+		<genre>Podcast</genre>
+		<artist>Late Night Linux (Ogg)</artist>
+		<album>Late Night Linux (Ogg)</album>
+		<duration>3919</duration>
+		<file-size>46359155</file-size>
+		<location>file:///mnt/yard/Podcasts/Late%20Night%20Linux%20(Ogg)/LNL27.ogg</location>
+		<mountpoint>http://podtrac.com/pts/redirect.mp3/latenightlinux.com/media/LNL27.ogg</mountpoint>
+		<first-seen>1514273642</first-seen>
+		<last-seen>1514273643</last-seen>
+		<bitrate>96</bitrate>
+		<date>0</date>
+		<media-type>audio/x-vorbis</media-type>
+		<status>100</status>
+		<description>It&#x2019;s been a year of Late Night Linux! We wrapped up the year with a look back at some of the biggest Linux and FOSS stories. &#xA0; January No New Ubuntu Phones on the Horizon, And No Major Updates for Existing Ones, Either Cyanogenmod became Lineage OS &#xA0; February Arch and Tails announced that they... Read More</description>
+		<subtitle>http://latenightlinux.com/feed/ogg</subtitle>
+		<summary></summary>
+		<lang></lang>
+		<copyright></copyright>
+		<image></image>
+		<post-time>1514205458</post-time>
+	</entry>
 </rhythmdb>

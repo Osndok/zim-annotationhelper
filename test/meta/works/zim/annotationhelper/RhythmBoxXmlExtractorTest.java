@@ -33,6 +33,18 @@ class RhythmBoxXmlExtractorTest
 		);
 	}
 
+	@Test
+	public
+	void testEntities() throws Exception
+	{
+		final
+		String description = this.rhythmBoxXmlExtractor.getDescriptionFor(new File("LNL27.ogg"));
+
+		// NB: Smart quote!
+		assertTrue(description.startsWith("It’s been a year of Late Night Linux!"));
+		assertTrue(description.endsWith("February Arch and Tails announced that they... Read More"));
+	}
+
 	private
 	void d(String fileName, String expectedDescription) throws IOException, XMLStreamException
 	{
