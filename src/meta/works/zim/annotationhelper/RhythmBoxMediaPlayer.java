@@ -248,7 +248,20 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 
 					if (description != null)
 					{
-						zimPageAppender.pageNote(zimPage, "* " + description);
+						if (description.indexOf('\n')>0)
+						{
+							final
+							String[] bits = description.split("\n");
+
+							final
+							String bulletPoints = "* "+String.join("\n* ", bits);
+
+							zimPageAppender.pageNote(zimPage, bulletPoints);
+						}
+						else
+						{
+							zimPageAppender.pageNote(zimPage, "* " + description);
+						}
 					}
 				}
 				catch (XMLStreamException e)
