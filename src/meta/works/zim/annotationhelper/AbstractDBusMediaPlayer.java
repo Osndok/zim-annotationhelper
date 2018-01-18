@@ -141,6 +141,12 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 				if (ignoringDocumentedReplay)
 				{
 					log.info("zim page already has an end marker, so ignoring this replay: {}", newZimPageName);
+
+					if (newZimPageName!=null)
+					{
+						zimPageAppender.journalNote("Replaying [["+newZimPageName+"]]");
+					}
+
 					return;
 				}
 
