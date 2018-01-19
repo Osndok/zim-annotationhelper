@@ -331,7 +331,20 @@ class ZimPageNameExtractor
 
 			case GWO:
 			{
-				return refine("GNUWorldOrder", bits[5]);
+				final
+				String season;
+				{
+					if (bits[3].equals("_"))
+					{
+						season=bits[4].substring(0, bits[4].length()-1);
+					}
+					else
+					{
+						season = bits[3];
+					}
+				}
+
+				return refine("Podcast:GnuWorldOrder:"+season, bits[5]);
 			}
 
 			case LIBERTARIAN_CHRISTIAN:
