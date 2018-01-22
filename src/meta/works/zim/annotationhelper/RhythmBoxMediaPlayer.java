@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static meta.works.zim.annotationhelper.PlayState.Paused;
 import static meta.works.zim.annotationhelper.PlayState.Playing;
@@ -251,12 +254,17 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 						if (description.indexOf('\n')>0)
 						{
 							final
-							String[] bits = description.split("\n");
+							String[] lines = description.split("\n");
 
 							final
-							String bulletPoints = "* "+String.join("\n* ", bits);
+							Collection<String> blurbs = removeEmptiesAndTimeCodeLines(lines);
+
+							final
+							String bulletPoints = "* "+String.join("\n* ", blurbs);
 
 							zimPageAppender.pageNote(zimPage, bulletPoints);
+
+							noteTimeCodeBlurbs(zimPage, lines);
 						}
 						else
 						{
@@ -279,6 +287,74 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			}
 			*/
 		}
+	}
+
+	private
+	Collection<String> removeEmptiesAndTimeCodeLines(String[] strings)
+	{
+		final
+		List<String> retval=new ArrayList<>(strings.length);
+		{
+			for (String string : strings)
+			{
+				if (!string.isEmpty() || isTimeCode(string))
+				{
+					retval.add(string);
+				}
+			}
+		}
+
+		return retval;
+	}
+
+	private
+	boolean isTimeCode(String string)
+	{
+		return string.startsWith("+ (0");
+	}
+
+	private
+	void noteTimeCodeBlurbs(String zimPage, String[] lines)
+	{
+		final
+		StringBuilder sb=new StringBuilder();
+
+		for (String line : lines)
+		{
+			if (isTimeCode(line))
+			{
+				sb.append("\n");
+				sb.append(reduceTimeCodeLine(line));
+			}
+		}
+	}
+
+	public static
+	String reduceTimeCodeLine(String input)
+	{
+		final
+		StringBuilder sb=new StringBuilder(input);
+
+		// In: "+ (00:24:02) - This is a blurb."
+		// Out "24:02 - This is a blurb."
+		if (sb.charAt(3)=='0')
+		{
+			if (sb.charAt(4)=='0')
+			{
+				sb.delete(0, 6);
+			}
+			else
+			{
+				sb.delete(0, 4);
+			}
+		}
+		else
+		{
+			sb.delete(0,3);
+		}
+
+		sb.deleteCharAt(sb.indexOf(")"));
+		return sb.toString();
 	}
 
 	private
