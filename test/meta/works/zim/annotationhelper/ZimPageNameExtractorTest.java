@@ -89,6 +89,8 @@ class ZimPageNameExtractorTest
 				{":Podcast:LibertyWeekly:LiberationLibrary:3", "/mnt/yard/Podcasts/The Liberty Weekly Podcast/LL_3_The_Truth_About_Judicial_Review.mp3"},
 				{":Podcast:LibertyWeekly:LiberationLibrary:4", "/mnt/yard/Podcasts/The Liberty Weekly Podcast/Liberation_Library_4_Blood_Makes_the_Green_Grass_Grow_Conditioning_Soldiers_to_Kill.mp3"},
 				{":Podcast:LibertyWeekly:Episode:47", "/mnt/yard/Podcasts/The Liberty Weekly Podcast/Keith_Knight_Dont_Tread_on_Anyone_Ep._47.mp3"},
+				{":JordanPeterson:Podcast:1", "Peterson Podcast/Episode_1_-_Reality_and_The_Sacred.m4a"},
+				{":JordanPeterson:Podcast:37", "Podcasts/The Jordan B. Peterson Podcast/37_-_Deconstruction_-_The_Lindsay_Shepherd_Affair.m4a"},
 			};
 	}
 

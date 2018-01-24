@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static meta.works.zim.annotationhelper.ZimPageNameStrategy.*;
 
 /**
  * Given a URL or file-name, return/compute the Zim page name therefor.
@@ -123,7 +124,7 @@ class ZimPageNameExtractor
 		int last=bits.length-1;
 
 		final
-		Strategy strategy = getStrategy(url, withoutPathOrFileExt, bits);
+		ZimPageNameStrategy strategy = getStrategy(url, withoutPathOrFileExt, bits);
 		{
 			if (debug)
 			{
@@ -347,6 +348,11 @@ class ZimPageNameExtractor
 				return refine("Podcast:GnuWorldOrder:"+season, bits[5]);
 			}
 
+			case JORDAN_PETERSON:
+			{
+				return refine("JordanPeterson:Podcast", firstNumeric(bits));
+			}
+
 			case LIBERTARIAN_CHRISTIAN:
 			{
 				return refine("Podcast:LibertarianChristian", refineEpisodeNumber(bits[1]));
@@ -470,6 +476,20 @@ class ZimPageNameExtractor
 		int hundreds=(hundredsCode-'a');
 		String subHundreds=baseName.substring(6,8);
 		return hundreds+subHundreds;
+	}
+
+	private
+	String firstNumeric(String[] bits)
+	{
+		for (String bit : bits)
+		{
+			if (isNumeric(bit))
+			{
+				return bit;
+			}
+		}
+
+		return null;
 	}
 
 	private
@@ -764,99 +784,104 @@ class ZimPageNameExtractor
 	}
 
 	private
-	Strategy getStrategy(String url, String s, String[] bits)
+	ZimPageNameStrategy getStrategy(String url, String s, String[] bits)
 	{
 		//-----needs deep context... can't extract from basic filename---------
 
 		if (url.contains("/Podcasts/PRay"))
 		{
-			return Strategy.MartinHash;
+			return MartinHash;
 		}
 
 		if (url.contains("Libert"))
 		{
 			if (url.contains("Christian"))
 			{
-				return Strategy.LIBERTARIAN_CHRISTIAN;
+				return LIBERTARIAN_CHRISTIAN;
 			}
 
 			if (url.contains("Weekly"))
 			{
-				return Strategy.LIBERTY_WEEKLY;
+				return LIBERTY_WEEKLY;
 			}
+		}
+
+		if (url.contains("Peterson Podcast"))
+		{
+			return JORDAN_PETERSON;
 		}
 
 		//-----------------------------------------
 
 		if (s.startsWith("FTL"))
 		{
-			return Strategy.FTL;
+			return FTL;
 		}
 
 		if (s.startsWith("T3-"))
 		{
-			return Strategy.TTT;
+			return TTT;
 		}
 
 		if (s.startsWith("Agenda31"))
 		{
-			return Strategy.AGENDA31;
+			return AGENDA31;
 		}
 
 		if (s.startsWith("gnuWorldOrder"))
 		{
-			return Strategy.GWO;
+			return GWO;
 		}
 
 		if (s.startsWith("ue-Diamond-Collection"))
 		{
-			return Strategy.USER_ERROR_DIAMOND_COLLECTION;
+			return USER_ERROR_DIAMOND_COLLECTION;
 		}
 
 		if (s.startsWith("cswdc"))
 		{
-			return Strategy.CSWDC;
+			return CSWDC;
 		}
 
 		if (s.startsWith("TAMMP") || s.startsWith("MMPC"))
 		{
-			return Strategy.BillBurr;
+			return BillBurr;
 		}
 
 		//----------- begin generic (wide-net) reasoning -------------
 
 		if (isNumeric(bits[1]) || bits.length<2)
 		{
-			return Strategy.BIT_ONE_IS_EPISODE_NUMBER;
+			return BIT_ONE_IS_EPISODE_NUMBER;
 		}
 
 		if (bits.length>4 && isNumeric(bits[3]))
 		{
-			return Strategy.BIT_THREE_IS_EPISODE_NUMBER;
+			return BIT_THREE_IS_EPISODE_NUMBER;
 		}
 
 		if (bits[1].equals("_s"))
 		{
-			return Strategy.SEASON_2_EPISODE_4;
+			return SEASON_2_EPISODE_4;
 		}
 
 		if (fuseMarker(bits[2]))
 		{
-			return Strategy.FUSE_TWO;
+			return FUSE_TWO;
 		}
 
 		if (isNumeric(bits[2]))
 		{
-			return Strategy.BIT_TWO_IS_EPISODE_NUMBER;
+			return BIT_TWO_IS_EPISODE_NUMBER;
 		}
 
 		if (isNumeric(bits[3]))
 		{
-			return Strategy.BIT_THREE_IS_EPISODE_NUMBER;
+			return BIT_THREE_IS_EPISODE_NUMBER;
 		}
 
 		log.warn("no obvious strategy for: '{}'", s);
-		return Strategy.BEST_EFFORT;
+		return BEST_EFFORT;
 	}
 
 	private
@@ -896,26 +921,6 @@ class ZimPageNameExtractor
 	}
 
 	private
-	Strategy lastStrategy;
+	ZimPageNameStrategy lastStrategy;
 
-	private
-	enum Strategy
-	{
-		TTT,
-		AGENDA31,
-		BIT_ONE_IS_EPISODE_NUMBER,
-		BIT_TWO_IS_EPISODE_NUMBER,
-		BIT_THREE_IS_EPISODE_NUMBER,
-		FUSE_TWO,
-		GWO,
-		SEASON_2_EPISODE_4,
-		USER_ERROR_DIAMOND_COLLECTION,
-		BEST_EFFORT,
-		CSWDC,
-		MartinHash,
-		FTL,
-		BillBurr,
-		LIBERTARIAN_CHRISTIAN,
-		LIBERTY_WEEKLY,
-	}
 }
