@@ -795,14 +795,15 @@ class ZimPageNameExtractor
 
 		if (url.contains("Libert"))
 		{
-			if (url.contains("Christian"))
-			{
-				return LIBERTARIAN_CHRISTIAN;
-			}
-
+			//NB: 'weekly' is more distinct/rare than 'christian' so it comes first.
 			if (url.contains("Weekly"))
 			{
 				return LIBERTY_WEEKLY;
+			}
+
+			if (url.contains("Christian"))
+			{
+				return LIBERTARIAN_CHRISTIAN;
 			}
 		}
 

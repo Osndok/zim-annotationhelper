@@ -255,6 +255,9 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 						{
 							final
 							String[] lines = description.split("\n");
+							{
+								log.debug("description has {} lines", lines.length);
+							}
 
 							final
 							Collection<String> blurbs = removeEmptiesAndTimeCodeLines(lines);
@@ -268,6 +271,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 						}
 						else
 						{
+							log.debug("single-line description: {}", description);
 							zimPageAppender.pageNote(zimPage, "* " + description);
 						}
 					}
@@ -297,7 +301,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 		{
 			for (String string : strings)
 			{
-				if (!string.isEmpty() || isTimeCode(string))
+				if (!string.isEmpty() && !isTimeCode(string))
 				{
 					retval.add(string);
 				}
@@ -314,7 +318,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 	}
 
 	private
-	void noteTimeCodeBlurbs(String zimPage, String[] lines)
+	void noteTimeCodeBlurbs(String zimPage, String[] lines) throws IOException, InterruptedException
 	{
 		final
 		StringBuilder sb=new StringBuilder();
@@ -326,12 +330,20 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				sb.append("\n");
 				sb.append(reduceTimeCodeLine(line));
 			}
+			else
+			{
+				log.debug("not a time code: {}", line);
+			}
 		}
+
+		zimPageAppender.pageNote(zimPage, sb.toString());
 	}
 
 	public static
 	String reduceTimeCodeLine(String input)
 	{
+		log.debug("reduceTimeCodeLine: {}", input);
+
 		final
 		StringBuilder sb=new StringBuilder(input);
 
