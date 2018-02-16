@@ -38,6 +38,8 @@ function start()
 	JAR2=/tmp/zim-annotationhelper.jar
 	cp -v "$JAR" "$JAR2"
 
+	mv -f "$LOG_FILE" "${LOG_FILE}.old"
+
 	D1=/usr/share/java/dbus-java
 	D2=/usr/lib/java
 	nohup java -cp $D1/dbus.jar:$D2/unix.jar:$D2/debug-disable.jar -Djava.library.path=/usr/lib64/libmatthew-java -jar "$JAR2" >> $LOG_FILE 2>&1 &
