@@ -115,8 +115,15 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 					kludge_automaticHalt=false;
 				}
 				else
+				if (isRecent(was))
 				{
-					finishedPlaying(was);
+					log.debug("podcast was {}, did we finish it?\n{}", was.getPlayState(), was);
+					//finishedPlaying(was);
+					zimPageAppender.journalNote("enough of that... time for some music!");
+				}
+				else
+				{
+					log.debug("ignoring old playback state: {}", was);
 				}
 			}
 
