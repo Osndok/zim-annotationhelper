@@ -551,6 +551,14 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		final
 		long snapshotTime = stateSnapshot.getSnapshotTime();
 
-		return now-snapshotTime > RECENT_ACTIVITY_THRESHOLD;
+		if ( now-snapshotTime > RECENT_ACTIVITY_THRESHOLD)
+		{
+			log.debug("isRecent() identifies stale state: {} - {} = {} > {}", now, snapshotTime, now-snapshotTime, RECENT_ACTIVITY_THRESHOLD);
+			return false; // NOT recent
+		}
+		else
+		{
+			return true; // *IS* recent
+		}
 	}
 }
