@@ -118,8 +118,15 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				if (isRecent(was))
 				{
 					log.debug("podcast was {}, did we finish it?\n{}", was.getPlayState(), was);
-					//finishedPlaying(was);
-					zimPageAppender.journalNote("enough of that... time for some music!");
+
+					if (now.getPlayState() == Stopped)
+					{
+						finishedPlaying(was);
+					}
+					else
+					{
+						zimPageAppender.journalNote("enough of that... for now... time for some music!");
+					}
 				}
 				else
 				{
