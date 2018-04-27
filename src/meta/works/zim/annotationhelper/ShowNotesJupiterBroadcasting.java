@@ -48,6 +48,11 @@ class ShowNotesJupiterBroadcasting extends AbstractShowNotesSource
 	private
 	String getShowNotesUrlFromPage(String jbWikiName, String episodeIdentifier, int pageNumber)
 	{
+		if (jbWikiName.equals("linuxun"))
+		{
+			return "http://linuxunplugged.com/"+episodeIdentifier;
+		}
+
 		final
 		String url;
 		{
