@@ -1,5 +1,6 @@
 package meta.works.zim.annotationhelper;
 
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -274,7 +275,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 							}
 
 							final
-							Collection<String> blurbs = removeEmptiesAndTimeCodeLines(lines);
+							Collection<String> blurbs = filterRawDescriptionPoints(lines);
 
 							final
 							String bulletPoints = "* "+String.join("\n* ", blurbs);
@@ -308,13 +309,15 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 	}
 
 	private
-	Collection<String> removeEmptiesAndTimeCodeLines(String[] strings)
+	Collection<String> filterRawDescriptionPoints(String[] strings)
 	{
 		final
 		List<String> retval=new ArrayList<>(strings.length);
 		{
 			for (String string : strings)
 			{
+				string=stripHtmlTags(string);
+
 				if (!string.isEmpty() && !isTimeCode(string))
 				{
 					retval.add(string);
@@ -323,6 +326,21 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 		}
 
 		return retval;
+	}
+
+	private
+	String stripHtmlTags(String s)
+	{
+		try
+		{
+			return Jsoup.parse(s).text();
+		}
+		catch (Throwable t)
+		{
+			//Yes, *Throwable*... like, if jsoup classes are not available!
+			t.printStackTrace();
+			return s;
+		}
 	}
 
 	private
