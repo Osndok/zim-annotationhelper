@@ -85,18 +85,25 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 				stopPlayback();
 				kludge_automaticHalt=true;
 
-				//Do this first so that vlc won't run away making logging statements & mess up the order.
-				noteTitleAndShowNotes(now);
-
-				if (vlcIsRunning())
+				//If vlc is already playing (or *paused*) with this file open, then just tell vlc to resume
+				if (vlcHasThisFileOpen(now.getUrl()))
 				{
-					tellVlcToPlay(now.getUrl());
+					tellVlcToUnpauseIfPaused();
 				}
 				else
 				{
-					launchVlcWithUrl(now.getUrl());
-				}
+					//Do this first so that vlc won't run away making logging statements & mess up the order.
+					noteTitleAndShowNotes(now);
 
+					if (vlcIsRunning())
+					{
+						tellVlcToPlay(now.getUrl());
+					}
+					else
+					{
+						launchVlcWithUrl(now.getUrl());
+					}
+				}
 				return new StateChangeReturn().withInitialTimeCodeSuppressed();
 			}
 		}
@@ -193,6 +200,27 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 		}
 
 		return null;
+	}
+
+	private
+	boolean vlcHasThisFileOpen(String rbUrl)
+	{
+		/*
+		TODO: Implement me! Next phase: print the url that vlc has open (careful: vlc may be closed!)
+		qdbus org.mpris.MediaPlayer2.vlc /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Metadata | grep '^xesam:url:' | cut -f2- -d' '
+		 */
+		return false;
+	}
+
+	private
+	void tellVlcToUnpauseIfPaused() throws IOException
+	{
+		Runtime.getRuntime().exec(new String[]{
+			"qdbus",
+			"org.mpris.MediaPlayer2.vlc",
+			"/org/mpris/MediaPlayer2",
+			"org.mpris.MediaPlayer2.Player.PlayPause"
+		});
 	}
 
 	private
