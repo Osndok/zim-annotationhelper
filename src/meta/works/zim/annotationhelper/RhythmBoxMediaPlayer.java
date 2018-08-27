@@ -9,7 +9,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static meta.works.zim.annotationhelper.PlayState.Paused;
 import static meta.works.zim.annotationhelper.PlayState.Playing;
@@ -336,6 +338,32 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 		}
 	}
 
+	private static final
+	Set<String> showNotesBlurbBlacklist;
+
+	static
+	{
+		Set<String> a=new HashSet<>();
+		{
+			// General
+			a.add("");
+
+			// No Agenda - LOL. Hype much?
+			a.add("Sign Up for the newsletter");
+			a.add("RSS Podcast Feed");
+			a.add("New: Directory Archive of Shownotes (includes all audio and video assets used) archive.noagendanotes.com");
+			a.add("The No Agenda News Network- noagendanewsnetwork.com");
+			a.add("Get the No Agenda News App for your iPhone and iPad");
+			a.add("Get the NoAgendDroid app for your Android Phone");
+			a.add("No Agenda Lite in opus format");
+			a.add("NoAgendaTorrents.com has an RSS feed or show torrents");
+			a.add("New! BitTorrent Sync the No Agenda Show");
+			a.add("This page created with the FreedomController");
+			a.add("Keywords");
+		}
+		showNotesBlurbBlacklist=a;
+	}
+
 	private
 	Collection<String> filterRawDescriptionPoints(String[] strings)
 	{
@@ -346,7 +374,16 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			{
 				string=stripHtmlTags(string);
 
-				if (!string.isEmpty() && !isTimeCode(string))
+				if (isTimeCode(string))
+				{
+					log.debug("ignore timecode: {}", string);
+				}
+				else
+				if (showNotesBlurbBlacklist.contains(string))
+				{
+					log.debug("ignore blacklisted blurb: {}", string);
+				}
+				else
 				{
 					retval.add(string);
 				}
