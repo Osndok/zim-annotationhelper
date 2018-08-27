@@ -68,7 +68,9 @@ class ShowNotesBasicURLSource extends AbstractShowNotesSource
 				else
 				{
 					//system 3 - freedom controller only
-					return String.format("http://%d.nashownotes.com", episodeNumber);
+					//return String.format("http://%d.nashownotes.com", episodeNumber);
+					//system 4 - adam loves his domain names.
+					return String.format("http://%d.noagendanotes.com/", episodeNumber);
 				}
 			}
 			else
