@@ -373,6 +373,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			for (String string : strings)
 			{
 				string=stripHtmlTags(string);
+				string=stripOutlinePrefix(string);
 
 				if (isTimeCode(string))
 				{
@@ -391,6 +392,19 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 		}
 
 		return retval;
+	}
+
+	private
+	String stripOutlinePrefix(String string)
+	{
+		if (string.startsWith("* "))
+		{
+			return string.substring(2);
+		}
+		else
+		{
+			return string;
+		}
 	}
 
 	private
