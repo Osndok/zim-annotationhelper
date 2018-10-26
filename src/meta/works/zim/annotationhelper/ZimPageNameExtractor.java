@@ -61,6 +61,9 @@ class ZimPageNameExtractor
 		}
 
 		final
+		String superBasename;
+
+		final
 		String withoutPathOrFileExt;
 		{
 			final
@@ -72,10 +75,23 @@ class ZimPageNameExtractor
 				if (slash>=0)
 				{
 					beginIndex=slash+1;
+
+					final
+					int secondToLastSlash=url.lastIndexOf('/', slash-1);
+
+					if (secondToLastSlash>=0)
+					{
+						superBasename=url.substring(secondToLastSlash+1, slash);
+					}
+					else
+					{
+						superBasename=null;
+					}
 				}
 				else
 				{
 					beginIndex=0;
+					superBasename=null;
 				}
 			}
 
@@ -433,9 +449,27 @@ class ZimPageNameExtractor
 					return withoutPathOrFileExt;
 				}
 			}
+
+			case UUID:
+			{
+				String bit0=withoutPathOrFileExt.substring(0, 2);
+				String bit1=withoutPathOrFileExt.substring(2, 4);
+				String episode=String.format("%s:%s", bit0, bit1);
+				return refine(removeSpacesAddPodcastPrefix(superBasename), episode);
+			}
+
+			default:
+				throw new UnsupportedOperationException(strategy.toString());
 		}
 
-		return withoutPathOrFileExt;
+		//return withoutPathOrFileExt;
+	}
+
+	private
+	String removeSpacesAddPodcastPrefix(String englishy)
+	{
+		final String reduced = englishy.replace(" ", "");
+		return "Podcast:"+reduced;
 	}
 
 	private
@@ -786,7 +820,14 @@ class ZimPageNameExtractor
 	private
 	ZimPageNameStrategy getStrategy(String url, String s, String[] bits)
 	{
+		log.debug("getStrategy('{}', '{}', ...)", url, s);
+
 		//-----needs deep context... can't extract from basic filename---------
+
+		if (looksLikeUUID(s))
+		{
+			return UUID;
+		}
 
 		if (url.contains("/Podcasts/PRay"))
 		{
@@ -883,6 +924,18 @@ class ZimPageNameExtractor
 
 		log.warn("no obvious strategy for: '{}'", s);
 		return BEST_EFFORT;
+	}
+
+	private
+	boolean looksLikeUUID(String s)
+	{
+		if (s.length()!=36)
+		{
+			log.debug("not a UUID, length={}: '{}'", s.length(), s);
+			return false;
+		}
+
+		return s.charAt(8)=='-' && s.charAt(13)=='-' && s.charAt(18)=='-';
 	}
 
 	private
