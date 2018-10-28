@@ -93,7 +93,8 @@ class ZimPageNameExtractorTest
 				{":Podcast:LibertyWeekly:Episode:54", "Podcasts/The%20Liberty%20Weekly%20Podcast/Subjective_vs._Objective_Morality_Ep._54_Feat._AnarchoChristian.mp3"},
 				{":JordanPeterson:Podcast:1", "Peterson Podcast/Episode_1_-_Reality_and_The_Sacred.m4a"},
 				{":JordanPeterson:Podcast:37", "Podcasts/The Jordan B. Peterson Podcast/37_-_Deconstruction_-_The_Lindsay_Shepherd_Affair.m4a"},
-				{":Podcast:WeAreLibertarians:68:0d", "/path/to/Podcasts/We Are Libertarians/680d600d-ae45-4ed9-bd2b-04996339012e.mp3"}
+				{":Podcast:WeAreLibertarians:68:0d", "/path/to/Podcasts/We Are Libertarians/680d600d-ae45-4ed9-bd2b-04996339012e.mp3"},
+				{":Podcast:AnarchoChristian:20", "/path/to/Podcasts/AnarchoChristian - Evaluating the relationship between the Christian and the state/Was_Jesus_a_Socialist-_AC020.mp3"},
 			};
 	}
 

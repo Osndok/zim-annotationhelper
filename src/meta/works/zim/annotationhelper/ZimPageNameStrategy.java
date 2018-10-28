@@ -1,10 +1,13 @@
 package meta.works.zim.annotationhelper;
 
+import java.util.UUID;
+
 public
 enum ZimPageNameStrategy
 {
 	TTT,
 	AGENDA31,
+	ANARCHOCHRISTIAN,
 	BIT_ONE_IS_EPISODE_NUMBER,
 	BIT_TWO_IS_EPISODE_NUMBER,
 	BIT_THREE_IS_EPISODE_NUMBER,
@@ -20,5 +23,6 @@ enum ZimPageNameStrategy
 	LIBERTARIAN_CHRISTIAN,
 	LIBERTY_WEEKLY,
 	JORDAN_PETERSON,
-	UUID,
+	UUID
+	,
 }

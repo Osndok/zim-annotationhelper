@@ -458,6 +458,11 @@ class ZimPageNameExtractor
 				return refine(removeSpacesAddPodcastPrefix(superBasename), episode);
 			}
 
+			case ANARCHOCHRISTIAN:
+			{
+				return refine("Podcast:AnarchoChristian", bits[8]);
+			}
+
 			default:
 				throw new UnsupportedOperationException(strategy.toString());
 		}
@@ -822,11 +827,16 @@ class ZimPageNameExtractor
 	{
 		log.debug("getStrategy('{}', '{}', ...)", url, s);
 
-		//-----needs deep context... can't extract from basic filename---------
-
 		if (looksLikeUUID(s))
 		{
 			return UUID;
+		}
+
+		//-----needs deep context... can't extract from basic filename---------
+
+		if (url.contains("/AnarchoChristian"))
+		{
+			return ANARCHOCHRISTIAN;
 		}
 
 		if (url.contains("/Podcasts/PRay"))
