@@ -452,10 +452,10 @@ class ZimPageNameExtractor
 
 			case UUID:
 			{
+				String podcast=removeSpacesAddPodcastPrefix(superBasename);
 				String bit0=withoutPathOrFileExt.substring(0, 2);
 				String bit1=withoutPathOrFileExt.substring(2, 4);
-				String episode=String.format("%s:%s", bit0, bit1);
-				return refine(removeSpacesAddPodcastPrefix(superBasename), episode);
+				return String.format(":%s:%s:%s", podcast, bit0, bit1);
 			}
 
 			case ANARCHOCHRISTIAN:
