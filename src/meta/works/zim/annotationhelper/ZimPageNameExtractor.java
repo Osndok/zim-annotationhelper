@@ -460,7 +460,8 @@ class ZimPageNameExtractor
 
 			case ANARCHOCHRISTIAN:
 			{
-				return refine("Podcast:AnarchoChristian", bits[8]);
+				String lastBit=bits[bits.length-1];
+				return refine("Podcast:AnarchoChristian", lastBit);
 			}
 
 			default:
