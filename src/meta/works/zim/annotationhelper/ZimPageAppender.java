@@ -19,10 +19,19 @@ class ZimPageAppender
 	private static final
 	Logger log = LoggerFactory.getLogger(ZimPageAppender.class);
 
+	private
+	String lastJournalNote;
+
 	public
 	void journalNote(String memo) throws IOException, InterruptedException
 	{
 		log.debug("journalNote('{}')", memo);
+
+		if (memo.equals(lastJournalNote))
+		{
+			return;
+		}
+		lastJournalNote=memo;
 
 		final
 		String[] command = new String[]
@@ -62,6 +71,8 @@ class ZimPageAppender
 			log.warn("ignoring pageNote() with null page");
 			return;
 		}
+
+		//NB: the same pageNote might be applied to different pages, which would marginally complicate duplicate suppression.
 
 		final
 		String[] command = new String[]
@@ -220,6 +231,47 @@ class ZimPageAppender
 		else
 		{
 			return override;
+		}
+	}
+
+	private
+	String lastActionItem;
+
+	public
+	void newActionItem(String memo) throws IOException, InterruptedException
+	{
+		log.debug("newActionItem('{}')", memo);
+
+		if (memo.equals(lastActionItem))
+		{
+			return;
+		}
+		lastActionItem=memo;
+
+		final
+		String[] command = new String[]
+			{
+				"zim", "--plugin", "append",
+				"--journal",
+				"--literal", "[ ] "+memo
+			};
+
+		final
+		ProcessBuilder processBuilder = new ProcessBuilder(command);
+
+		final
+		Process process = processBuilder.start();
+
+		final
+		int statusCode = process.waitFor();
+
+		if (statusCode == 0)
+		{
+			log.trace("zim-plugin-append exit success");
+		}
+		else
+		{
+			log.error("zim-plugin-append exit status {}", statusCode);
 		}
 	}
 }
