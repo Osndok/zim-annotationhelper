@@ -3,17 +3,19 @@
 # service.sh - can start/stop/restart the zim annotation helper
 #
 
-LOG_FILE=/tmp/zim-annotationhelper.log
-PID_FILE=/tmp/zim-annotationhelper.pid
+LOG_FILE=$HOME/tmp/zim-annotationhelper.log
+PID_FILE=$HOME/.local/run/zim-annotationhelper.pid
 PROJECTS=$HOME/Projects
 
 cd /
 
 function status()
 {
-	if [ -r "$PID_FILE" ]; then
+	if [ -r "$PID_FILE" ]
+	then
 		PID=$(cat $PID_FILE)
-		if grep -q java /proc/$PID/cmdline ; then
+		if grep -q java /proc/$PID/cmdline
+		then
 			echo 2>&1 "process $PID is running"
 			return 0
 		else
@@ -28,17 +30,18 @@ function status()
 
 function start()
 {
-	if status ; then
+	if status
+	then
 		echo 1>&2 "ERROR: Already running..."
 		return
 	fi
 
 	# We copy the jar out of projects, so we don't get hung up on that flaky mountpoint...
 	JAR=$PROJECTS/zim-annotationhelper/out/artifacts/zim_annotationhelper_jar/zim-annotationhelper.jar
-	JAR2=/tmp/zim-annotationhelper.jar
+	JAR2=$HOME/tmp/zim-annotationhelper.jar
 	cp -v "$JAR" "$JAR2"
 
-	mv -f "$LOG_FILE" "${LOG_FILE}.old"
+	mv -f "$LOG_FILE" "${LOG_FILE}.old" || true
 
 	D1=/usr/share/java/dbus-java
 	D2=/usr/lib/java
@@ -50,7 +53,8 @@ function start()
 
 function stop()
 {
-	if [ -r "$PID_FILE" ]; then
+	if [ -r "$PID_FILE" ]
+	then
 		pkill -F "$PID_FILE" java || true
 		#NB: This would kill the service script too.
 		#pkill -f zim-annotationhelper || true
@@ -63,7 +67,8 @@ function stop()
 
 function restart()
 {
-	if status ; then
+	if status
+	then
 		stop
 	fi
 	sleep "${1:-1}"
