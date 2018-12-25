@@ -1,6 +1,9 @@
 package meta.works.zim.annotationhelper;
 
 import com.github.sheigutn.pushbullet.Pushbullet;
+import com.github.sheigutn.pushbullet.ephemeral.Ephemeral;
+import com.github.sheigutn.pushbullet.ephemeral.SmsChangedEphemeral;
+import com.github.sheigutn.pushbullet.ephemeral.SmsNotification;
 import com.github.sheigutn.pushbullet.items.device.Device;
 import com.github.sheigutn.pushbullet.items.push.sendable.defaults.SendableNotePush;
 import com.github.sheigutn.pushbullet.items.push.sent.Push;
@@ -8,8 +11,11 @@ import com.github.sheigutn.pushbullet.items.push.sent.defaults.NotePush;
 import com.github.sheigutn.pushbullet.stream.PushbulletWebsocketClient;
 import com.github.sheigutn.pushbullet.stream.PushbulletWebsocketListener;
 import com.github.sheigutn.pushbullet.stream.message.NopStreamMessage;
+import com.github.sheigutn.pushbullet.stream.message.PushStreamMessage;
 import com.github.sheigutn.pushbullet.stream.message.StreamMessage;
 import com.github.sheigutn.pushbullet.stream.message.TickleStreamMessage;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +25,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
@@ -30,7 +41,7 @@ import java.util.concurrent.TimeUnit;
  * Created by robert on 2018-12-08 11:46.
  */
 public
-class PushbulletListener implements PushbulletWebsocketListener
+class PushbulletListener implements PushbulletWebsocketListener, Runnable
 {
 	private static final
 	Logger log = LoggerFactory.getLogger(PushbulletListener.class);
@@ -48,6 +59,14 @@ class PushbulletListener implements PushbulletWebsocketListener
 	PushbulletListener()
 	{
 		this.pushbullet=new Pushbullet(getApiKey());
+	}
+
+	@Override
+	protected
+	void finalize() throws Throwable
+	{
+		super.finalize();
+		log.debug("finalize() - I'm going away...");
 	}
 
 	private
@@ -142,6 +161,26 @@ class PushbulletListener implements PushbulletWebsocketListener
 				featuresByDeviceId.put(device.getIdentity(), feature);
 			}
 		}
+
+		//To keep us around...
+		new Thread(this).start();
+	}
+
+	@Override
+	public
+	void run()
+	{
+		try
+		{
+			while (true)
+			{
+				Thread.sleep(5000);
+			}
+		}
+		catch (InterruptedException e)
+		{
+			log.info("interrupted", e);
+		}
 	}
 
 	/**
@@ -175,8 +214,16 @@ class PushbulletListener implements PushbulletWebsocketListener
 		Pushbullet pushbullet, StreamMessage streamMessage
 	)
 	{
+		if (streamMessage instanceof NopStreamMessage)
+		{
+			log.trace("no-op");
+			return;
+		}
+
 		try
 		{
+			log.info("handle: {} / {}", streamMessage.getClass(), streamMessage.toString());
+
 			switch (streamMessage.getType())
 			{
 				case NOP:
@@ -187,7 +234,8 @@ class PushbulletListener implements PushbulletWebsocketListener
 
 				case PUSH:
 				{
-					log.info("got push stream message?");
+					//log.debug("got PUSH: {}", streamMessage.toString());
+					handlePushStreamMessage((PushStreamMessage)streamMessage);
 					break;
 				}
 
@@ -208,6 +256,307 @@ class PushbulletListener implements PushbulletWebsocketListener
 			log.error("caught", e);
 		}
 	}
+
+	private
+	void handlePushStreamMessage(PushStreamMessage pushStreamMessage) throws IOException, InterruptedException
+	{
+		final
+		Ephemeral ephemeral = pushStreamMessage.getPush();
+
+		if (ephemeral instanceof SmsChangedEphemeral)
+		{
+			final
+			SmsChangedEphemeral smsChangedEphemeral=(SmsChangedEphemeral)ephemeral;
+
+			final
+			String sourceDeviceId=smsChangedEphemeral.getSourceDeviceIdentity();
+			{
+				log.debug("device that received the sms: {}", sourceDeviceId);
+			}
+
+			for (SmsNotification notification : smsChangedEphemeral.getNotifications())
+			{
+				handleSmsNotification(sourceDeviceId, notification);
+			}
+		}
+	}
+
+	private
+	void handleSmsNotification(String deviceId, SmsNotification sms) throws IOException, InterruptedException
+	{
+		final
+		String threadId = sms.getThreadId();
+
+		final
+		String name = sms.getTitle();
+
+		final
+		String body;
+
+		// TODO: use this (the actual time received) instead of the local time for sms journal entries.
+		final
+		Date date = new Date(sms.getTimestamp()*1000);
+
+		final
+		String journalPage= ":Journal:"+colonSeparatedYearMonthDate.format(date);
+
+		final
+		String threadPage;
+		{
+			if (looksLikeGroupThread(name))
+			{
+				threadPage=String.format(":TXT:Thread:%s", threadId);
+
+				final
+				String author=guessAuthor(deviceId, threadId, sms.getTimestamp());
+
+				if (author==null)
+				{
+					body=sms.getBody();
+				}
+				else
+				{
+					body=String.format("%s - %s", author, sms.getBody());
+				}
+			}
+			else
+			{
+				threadPage=String.format(":%s:TextMessage", sanitizeForZimPageName(name));
+				body=sms.getBody();
+			}
+		}
+
+		final
+		String dateTimeMessage=String.format("\n%s - %s", linkedCompactTimeCode(journalPage, date), body);
+
+		final
+		String timeThreadMessage=String.format("\n%s - [[%s]] - %s", localTimeOnly(date), threadPage, body);
+
+		zimPageAppender.pageNote(threadPage, dateTimeMessage);
+		zimPageAppender.pageNote(journalPage, timeThreadMessage);
+	}
+
+	private
+	String guessAuthor(String deviceId, String threadId, Long timestamp)
+	{
+		try
+		{
+			final
+			PushbulletDeviceThreadRequest request = new PushbulletDeviceThreadRequest(
+				deviceId,
+				threadId
+			);
+
+			final
+			JsonObject threadData = pushbullet.executeRequest(request);
+
+			final
+			JsonObject message = locateMatchingTimestamp(threadData, timestamp);
+
+			final
+			int who = message.get("recipient_index").getAsInt();
+
+			return deviceThreadRecipient(deviceId, threadId, who);
+		}
+		catch (Exception e)
+		{
+			log.error("unable to guess author", e);
+			return null;
+		}
+	}
+
+	private final
+	Map<String, List<JsonObject>> threadRecipientsByDeviceThreadId=new HashMap<>();
+
+	private
+	String deviceThreadRecipient(String deviceId, String threadId, int index)
+	{
+		final
+		String deviceThreadId=String.format("%s:%s", deviceId, threadId);
+
+		try
+		{
+			List<JsonObject> recipients=threadRecipientsByDeviceThreadId.get(deviceThreadId);
+
+			if (recipients==null)
+			{
+				recipients=fetchDeviceThreadRecipients(deviceId, threadId);
+				threadRecipientsByDeviceThreadId.put(deviceThreadId, recipients);
+			}
+
+			return recipientToString(recipients.get(index));
+		}
+		catch (Exception e)
+		{
+			log.error("unable to map device/thread/index to user", e);
+
+			// NB: by clearing out the cache, we will (in the best case) pick up new receipients, and
+			// (in the worst case) sent a thread request for each incoming message.
+			threadRecipientsByDeviceThreadId.remove(deviceThreadId);
+
+			return String.format("r%d", index);
+		}
+	}
+
+	private
+	List<JsonObject> fetchDeviceThreadRecipients(String deviceId, String threadId)
+	{
+		for (JsonElement _thread : pushbullet
+			.executeRequest(new PushbulletDeviceThreadRequest(deviceId))
+			.get("threads")
+			.getAsJsonArray())
+		{
+			final
+			JsonObject thread=_thread.getAsJsonObject();
+
+			if (thread.get("id").getAsString().equals(threadId))
+			{
+				return recipientList(thread);
+			}
+		}
+
+		throw new IllegalStateException("could not locate thread #"+threadId);
+	}
+
+	private
+	List<JsonObject> recipientList(JsonObject thread)
+	{
+		final
+		List<JsonObject> retval=new ArrayList<>(100);
+
+		for (JsonElement recipient : thread.get("recipients").getAsJsonArray())
+		{
+			retval.add(recipient.getAsJsonObject());
+		}
+
+		return retval;
+	}
+
+	private
+	String recipientToString(JsonObject jsonObject)
+	{
+		// fields: name, address, number
+		final
+		String base=jsonObject.get("name").getAsString();
+
+		if (base.indexOf(',')>=0)
+		{
+			// e.g. "Jones, Bob" -> "Bob"
+			return base.substring(base.lastIndexOf(',')+1).trim();
+		}
+
+		if (base.indexOf(' ')>=0)
+		{
+			// e.g. "Bob Jones" -> "Bob"
+			return base.substring(0, base.indexOf(' '));
+		}
+
+		return base;
+	}
+
+	private
+	JsonObject locateMatchingTimestamp(JsonObject threadData, long timestamp)
+	{
+		for (JsonElement _message : threadData.getAsJsonArray("thread"))
+		{
+			final
+			JsonObject message=_message.getAsJsonObject();
+
+			final
+			long thisTimestamp = message.get("timestamp").getAsLong();
+
+			if (timestamp == thisTimestamp)
+			{
+				return message;
+			}
+		}
+
+		throw new RuntimeException("could not locate message by matching timestamp");
+	}
+
+	private
+	String linkedCompactTimeCode(String journalPage, Date date)
+	{
+		final
+		long seconds=date.getTime()/1000;
+
+		final
+		String timeCode=String.format("%08X", seconds);
+
+		final
+		String hexDay=timeCode.substring(0, 4);
+
+		final
+		String hexTime=timeCode.substring(4);
+
+		return String.format("[[%s|%s-%s]]", journalPage, hexDay, hexTime);
+	}
+
+	private
+	String localTimeOnly(Date date)
+	{
+		final
+		String retval=localTime.format(date).toLowerCase();
+
+		/*"1:23am".length()==6
+		if (retval.length()==6)
+		{
+			return "0"+retval;
+		}
+		else
+		{
+			return retval;
+		}
+		*/
+		return retval;
+	}
+
+	private final
+	DateFormat localTime=new SimpleDateFormat("hh:mmaa");
+
+	public static
+	String sanitizeForZimPageName(String originator)
+	{
+		//e.g. for 'originator': "Bob Jones", "12345", "+12345"
+		originator=originator.replaceAll("[^a-zA-Z0-9]", "");
+
+		if (originator.startsWith("1"))
+		{
+			originator=originator.substring(1);
+		}
+
+		final
+		char firstChar=originator.charAt(0);
+
+		if (Character.isDigit(firstChar))
+		{
+			if (originator.length()==10)
+			{
+				final String areaCode = originator.substring(0, 3);
+
+				final String remainder = originator.substring(3);
+
+				return String.format(":Phone:Number:%s:%s", areaCode, remainder);
+			}
+			else
+			{
+				return String.format(":Phone:Number:%s", originator);
+			}
+		}
+		else
+		{
+			return String.format(":%s:TextMessage", originator);
+		}
+	}
+
+	private
+	boolean looksLikeGroupThread(String userInput)
+	{
+		return userInput.indexOf(',')>=0;
+	}
+
+	private final
+	DateFormat colonSeparatedYearMonthDate =new SimpleDateFormat("YYYY:MM:dd");
 
 	private
 	void handleTickle(TickleStreamMessage tickle) throws IOException, InterruptedException
@@ -245,6 +594,9 @@ class PushbulletListener implements PushbulletWebsocketListener
 			case LIST:
 				break;
 			case ADDRESS:
+				break;
+			case SMS_CHANGED:
+				log.info("sms");
 				break;
 		}
 	}
