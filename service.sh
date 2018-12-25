@@ -3,7 +3,9 @@
 # service.sh - can start/stop/restart the zim annotation helper
 #
 
-LOG_FILE=$HOME/tmp/zim-annotationhelper.log
+# !!!: here, the file is removed
+#LOG_FILE=$HOME/tmp/zim-annotationhelper.log
+LOG_FILE=/tmp/zim-annotationhelper.log
 PID_FILE=$HOME/.local/run/zim-annotationhelper.pid
 PROJECTS=$HOME/Projects
 
