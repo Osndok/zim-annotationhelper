@@ -40,7 +40,9 @@ function start()
 
 	# We copy the jar out of projects, so we don't get hung up on that flaky mountpoint...
 	JAR=$PROJECTS/zim-annotationhelper/out/artifacts/zim_annotationhelper_jar/zim-annotationhelper.jar
-	JAR2=$HOME/tmp/zim-annotationhelper.jar
+	# Uggh... can't have it deleted: java.util.MissingResourceException: Can't find bundle for base name dbusjava_localized, locale en_US
+	#JAR2=$HOME/tmp/zim-annotationhelper.jar
+	JAR2=/tmp/zim-annotationhelper.jar
 	cp -v "$JAR" "$JAR2"
 
 	mv -f "$LOG_FILE" "${LOG_FILE}.old" || true
