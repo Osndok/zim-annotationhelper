@@ -316,12 +316,12 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 				}
 				else
 				{
-					body=String.format("%s - %s", author, sms.getBody());
+					body=String.format("**%s** - %s", author, sms.getBody());
 				}
 			}
 			else
 			{
-				threadPage=String.format(":%s:TextMessage", sanitizeForZimPageName(name));
+				threadPage=sanitizeForZimPageName(name);
 				body=sms.getBody();
 			}
 		}
