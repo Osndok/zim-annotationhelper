@@ -460,8 +460,17 @@ class ZimPageNameExtractor
 
 			case ANARCHOCHRISTIAN:
 			{
-				String lastBit=bits[bits.length-1];
-				return refine("Podcast:AnarchoChristian", lastBit);
+				String firstBit=bits[0];
+
+				if (firstBit.equalsIgnoreCase("ep"))
+				{
+					return refine("Podcast:AnarchoChristian", refineEpisodeNumber(bits[1]));
+				}
+				else
+				{
+					String lastBit = bits[bits.length - 1];
+					return refine("Podcast:AnarchoChristian", lastBit);
+				}
 			}
 
 			default:
