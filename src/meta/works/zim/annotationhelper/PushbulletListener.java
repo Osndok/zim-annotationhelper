@@ -284,6 +284,12 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	private
 	void handleSmsNotification(String deviceId, SmsNotification sms) throws IOException, InterruptedException
 	{
+		if (looksLikeSpam(sms))
+		{
+			log.debug("ignoring spammy: {}", sms);
+			return;
+		}
+
 		final
 		String threadId = sms.getThreadId();
 
@@ -334,6 +340,23 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 
 		zimPageAppender.pageNote(threadPage, dateTimeMessage);
 		zimPageAppender.pageNote(journalPage, timeThreadMessage);
+	}
+
+	private
+	boolean looksLikeSpam(SmsNotification sms)
+	{
+		final
+		String body=sms.getBody();
+
+		if (body!=null)
+		{
+			if (body.startsWith("Configuration Notification."))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private
