@@ -70,7 +70,7 @@ class ShowNotesBasicURLSource extends AbstractShowNotesSource
 					//system 3 - freedom controller only
 					//return String.format("http://%d.nashownotes.com", episodeNumber);
 					//system 4 - adam loves his domain names.
-					return String.format("http://%d.noagendanotes.com/", episodeNumber);
+					return String.format("http://%d.noagendanotes.com", episodeNumber);
 				}
 			}
 			else
@@ -88,6 +88,11 @@ class ShowNotesBasicURLSource extends AbstractShowNotesSource
 		if (showName.equals("TWIT"))
 		{
 			return String.format("https://twit.tv/shows/this-week-in-tech/episodes/%s?autostart=false", episodeName);
+		}
+		else
+		if (showName.equals("UE"))
+		{
+			return String.format("https://error.show/%s", episodeName);
 		}
 
 		log.info("unhandled show: '{}' / episode: '{}'", showName, episodeName);

@@ -29,9 +29,9 @@ class ShowNotesBasicURLSourceTest
 
 		//NB: NA-582 is (experimentally) the first one that fits this pattern.
 		t(":NA:581", null);
-		t(":NA:582", "http://582.nashownotes.com");
-		t(":NA:582b", "http://582.nashownotes.com");
-		t(":NA:1234", "http://1234.nashownotes.com");
+		t(":NA:582", "http://582.noagendanotes.com");
+		t(":NA:582b", "http://582.noagendanotes.com");
+		t(":NA:1234", "http://1234.noagendanotes.com");
 		t(":SN:597", "https://www.grc.com/sn/sn-597-notes.pdf");
 		t(":TWIT:599", "https://twit.tv/shows/this-week-in-tech/episodes/599?autostart=false");
 		t(":LNL:12", "https://latenightlinux.com/late-night-linux-episode-12/");
@@ -46,6 +46,7 @@ class ShowNotesBasicURLSourceTest
 
 		t(":FreeTalk:Live:2017:10:25", "https://www.freetalklive.com/podcast/2017-10-25");
 		t(":FreeTalk:Digest:2017:10:25", "https://www.freetalklive.com/podcast/2017-10-25");
+		t(":UE:60", "https://error.show/60");
 	}
 
 	private

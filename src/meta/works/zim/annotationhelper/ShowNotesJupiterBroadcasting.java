@@ -150,7 +150,7 @@ class ShowNotesJupiterBroadcasting extends AbstractShowNotesSource
 		LUP("linuxun"),
 		TechSNAP("techsnap"),
 		Unfilter("unfilter"),
-		UE("error")
+		//UE("error")
 		/*
 		ARCHIVED SHOW WIKI NAMES
 		--------------

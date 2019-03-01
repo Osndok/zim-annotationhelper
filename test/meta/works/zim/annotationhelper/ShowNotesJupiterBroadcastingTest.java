@@ -35,7 +35,7 @@ class ShowNotesJupiterBroadcastingTest
 				{":Unfilter:220", "http://www.jupiterbroadcasting.com/105906/reheating-cold-wars-unfilter-220/"},
 				{":LUP:178", "http://linuxunplugged.com/178"},
 				{":LAS:450", "http://www.jupiterbroadcasting.com/105836/winter-solus-review-las-450/"},
-				{":UE:8", "http://www.jupiterbroadcasting.com/104351/snorting-apple-cider-user-error-8/"},
+				//XXX:{":UE:8", "http://www.jupiterbroadcasting.com/104351/snorting-apple-cider-user-error-8/"},
 			};
 	}
 
