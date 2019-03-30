@@ -86,6 +86,25 @@ class CallInRecord
 	}
 
 	public
+	String getNicerPhoneNumber()
+	{
+		String s=stripPlusOnePrefix(rawNumber);
+
+		if (s.length()==10)
+		{
+			String one = s.substring(0, 3);
+			String two = s.substring(3, 6);
+			String three = s.substring(6);
+
+			return String.format("%s-%s-%s", one, two, three);
+		}
+		else
+		{
+			return s;
+		}
+	}
+
+	public
 	String getZimPageName()
 	{
 		String s=stripPlusOnePrefix(rawNumber);
@@ -112,7 +131,8 @@ class CallInRecord
 		}
 		else
 		{
-			return String.format("[[%s:%s]]", getZimPageName(), subPage);
+			//return String.format("[[%s:%s]]", getZimPageName(), subPage);
+			return String.format("[[%s:%s|%s]]", getZimPageName(), subPage, getNicerPhoneNumber());
 		}
 	}
 }

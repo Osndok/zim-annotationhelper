@@ -67,6 +67,6 @@ class CallInRecordTest
 		assertEquals(cir.getZimPageLink("Blather"), "[[:Phone:Number:432:897:1283:Blather|Bob Jones]]");
 
 		cir=new CallInRecord("1553887817;+14328971283;+14328971283");
-		assertEquals(cir.getZimPageLink("Text"), "[[:Phone:Number:432:897:1283:Text]]");
+		assertEquals(cir.getZimPageLink("Text"), "[[:Phone:Number:432:897:1283:Text|432-897-1283]]");
 	}
 }
