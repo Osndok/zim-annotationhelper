@@ -625,7 +625,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	}
 
 	private final
-	DateFormat zimDateAndTimeLinkFormatter=new SimpleDateFormat("'[[:Journal:'YYYY:MM:dd|YYYY-MM-DD @ HH:mm:ss]]");
+	DateFormat zimDateAndTimeLinkFormatter=new SimpleDateFormat("'[[:Journal:'YYYY:MM:dd|YYYY-MM-dd @ HH:mm:ss]]");
 
 	private
 	void handleNote(NotePush note) throws IOException, InterruptedException
@@ -666,7 +666,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 								final
 								String dateAndTimeLink = zimDateAndTimeLinkFormatter.format(callInRecord.getDate());
 
-								zimPageAppender.pageNote(callInRecord.getZimPageName(), dateAndTimeLink);
+								zimPageAppender.pageNote(callInRecord.getZimPageName(), dateAndTimeLink+" -> Call In");
 								zimPageAppender.journalNote(
 									"**Incoming call** from " +
 									callInRecord.getZimPageLink("CallIn")

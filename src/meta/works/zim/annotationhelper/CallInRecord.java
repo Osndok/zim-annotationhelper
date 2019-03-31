@@ -135,4 +135,10 @@ class CallInRecord
 			return String.format("[[%s:%s|%s]]", getZimPageName(), subPage, getNicerPhoneNumber());
 		}
 	}
+
+	public
+	String getZimPageName(String subPage)
+	{
+		return getZimPageName()+":"+subPage;
+	}
 }
