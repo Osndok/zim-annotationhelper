@@ -618,9 +618,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 				break;
 			case ADDRESS:
 				break;
+			/*
 			case SMS_CHANGED:
 				log.info("sms");
 				break;
+			*/
 		}
 	}
 

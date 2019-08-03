@@ -254,7 +254,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 
 			if (log.isTraceEnabled())
 			{
-				for (Map.Entry<String, Variant> me : propertiesByName.entrySet())
+				for (Map.Entry<String, Variant<?>> me : propertiesByName.entrySet())
 				{
 					final
 					Object value = me.getValue().getValue();
@@ -415,7 +415,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	public static final
 	ZimPageNameExtractor zimPageNameExtractor=new ZimPageNameExtractor(false);
 
-	Map<String, Variant> propertiesByName=new HashMap<String, Variant>();
+	Map<String, Variant<?>> propertiesByName=new HashMap<>();
 
 	private <T>
 	T get(Class<T> c, String keyName)

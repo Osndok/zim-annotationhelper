@@ -8,8 +8,13 @@
 LOG_FILE=/tmp/zim-annotationhelper.log
 PID_FILE=$HOME/.local/run/zim-annotationhelper.pid
 PROJECTS=$HOME/Projects
+PROJECT_DIR=$(dirname $(realpath "$0"))
+
+MAIN_CLASS="meta.works.zim.annotationhelper.Main"
 
 cd /
+
+test -d ~/.local/run || mkdir ~/.local/run
 
 function status()
 {
@@ -39,7 +44,9 @@ function start()
 	fi
 
 	# We copy the jar out of projects, so we don't get hung up on that flaky mountpoint...
-	JAR=$PROJECTS/zim-annotationhelper/out/artifacts/zim_annotationhelper_jar/zim-annotationhelper.jar
+	JAR=$PROJECT_DIR/out/artifacts/zim_annotationhelper_jar/zim-annotationhelper.jar
+	test -e $JAR || JAR=$PROJECT_DIR/target/zim-annotationhelper-1.0-SNAPSHOT-jar-with-dependencies.jar
+	test -e $JAR || mvn package
 	# Uggh... can't have it deleted: java.util.MissingResourceException: Can't find bundle for base name dbusjava_localized, locale en_US
 	#JAR2=$HOME/tmp/zim-annotationhelper.jar
 	JAR2=/tmp/zim-annotationhelper.jar
@@ -49,7 +56,7 @@ function start()
 
 	D1=/usr/share/java/dbus-java
 	D2=/usr/lib/java
-	nohup java -cp $D1/dbus.jar:$D2/unix.jar:$D2/debug-disable.jar -Djava.library.path=/usr/lib64/libmatthew-java -jar "$JAR2" >> $LOG_FILE 2>&1 &
+	nohup java -cp $D1/dbus.jar:$D2/unix.jar:$D2/debug-disable.jar:"$JAR2" -Djava.library.path=/usr/lib64/libmatthew-java "$MAIN_CLASS" >> $LOG_FILE 2>&1 &
 	echo -n "$!" > "$PID_FILE"
 	sleep 0.5
 	status
