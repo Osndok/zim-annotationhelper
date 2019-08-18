@@ -98,12 +98,18 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	private final
 	Timer timer=new Timer();
 
+	private final
+	long webSocketReplacementPeriod = TimeUnit.HOURS.toMillis(1);
+
 	public
 	void activate()
 	{
 		if (this.websocketClient==null)
 		{
 			replaceWebSocket();
+
+			final long initialDelay = webSocketReplacementPeriod;
+
 			timer.schedule(new TimerTask()
 			{
 				@Override
@@ -113,7 +119,10 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 					log.debug("replacing web socket");
 					replaceWebSocket();
 				}
-			}, TimeUnit.HOURS.toMillis(1));
+			},
+			initialDelay,
+			webSocketReplacementPeriod
+			);
 		}
 		else
 		{
