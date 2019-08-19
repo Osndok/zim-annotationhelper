@@ -237,6 +237,9 @@ class ZimPageAppender
 	private
 	String lastActionItem;
 
+	private static final
+	String actionItemPageName = System.getProperty("zim.annotationhelper.todopage", ":Todo");
+
 	public
 	void newActionItem(String memo) throws IOException, InterruptedException
 	{
@@ -249,12 +252,27 @@ class ZimPageAppender
 		lastActionItem=memo;
 
 		final
-		String[] command = new String[]
+		String[] command;
+		{
+			if (actionItemPageName.isEmpty())
 			{
-				"zim", "--plugin", "append",
-				"--journal",
-				"--literal", "[ ] "+memo
-			};
+				command = new String[]
+				{
+					"zim", "--plugin", "append",
+					"--journal",
+					"--literal", "[ ] "+memo
+				};
+			}
+			else
+			{
+				command = new String[]
+				{
+					"zim", "--plugin", "append",
+					"--page", actionItemPageName,
+					"--literal", "[ ] "+memo
+				};
+			}
+		}
 
 		final
 		ProcessBuilder processBuilder = new ProcessBuilder(command);
