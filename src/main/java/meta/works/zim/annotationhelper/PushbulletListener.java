@@ -88,11 +88,20 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		if (this.websocketClient!=null)
 		{
 			this.websocketClient.disconnect();
+			this.websocketClient=null;
 		}
 
-		this.websocketClient=pushbullet.createWebsocketClient();
-		this.websocketClient.registerListener(this);
-		this.websocketClient.connect();
+		try
+		{
+			PushbulletWebsocketClient newWebsocketClient=pushbullet.createWebsocketClient();
+			newWebsocketClient.registerListener(this);
+			newWebsocketClient.connect();
+			this.websocketClient=newWebsocketClient;
+		}
+		catch (Exception e)
+		{
+			log.error("unable to replace web socket", e);
+		}
 	}
 
 	private final
