@@ -645,7 +645,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	}
 
 	private final
-	DateFormat zimDateAndTimeLinkFormatter=new SimpleDateFormat("'[[:Journal:'YYYY:MM:dd|YYYY-MM-dd @ HH:mm:ss]]");
+	DateFormat zimDateAndTimeLinkFormatter=new SimpleDateFormat("'[[:Journal:'yyyy:MM:dd|yyyy-MM-dd @ HH:mm:ss]]");
 
 	private
 	void handleNote(NotePush note) throws IOException, InterruptedException
