@@ -597,7 +597,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	}
 
 	private final
-	DateFormat colonSeparatedYearMonthDate =new SimpleDateFormat("YYYY:MM:dd");
+	DateFormat colonSeparatedYearMonthDate =new SimpleDateFormat("yyyy:MM:dd");
 
 	private
 	void handleTickle(TickleStreamMessage tickle) throws IOException, InterruptedException
