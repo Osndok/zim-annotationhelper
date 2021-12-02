@@ -43,10 +43,13 @@ function start()
 		return
 	fi
 
-	# We copy the jar out of projects, so we don't get hung up on that flaky mountpoint...
-	JAR=$PROJECT_DIR/out/artifacts/zim_annotationhelper_jar/zim-annotationhelper.jar
+	# The order here is important, particularly the last entry (which is the one that would be built by mvn)
+	JAR=$PROJECT_DIR/zim-annotationhelper.jar
+	test -e $JAR || JAR=$PROJECT_DIR/zim-annotationhelper-1.0-SNAPSHOT-jar-with-dependencies.jar
+	test -e $JAR || JAR=$PROJECT_DIR/out/artifacts/zim_annotationhelper_jar/zim-annotationhelper.jar
 	test -e $JAR || JAR=$PROJECT_DIR/target/zim-annotationhelper-1.0-SNAPSHOT-jar-with-dependencies.jar
 	test -e $JAR || mvn package
+
 	# Uggh... can't have it deleted: java.util.MissingResourceException: Can't find bundle for base name dbusjava_localized, locale en_US
 	#JAR2=$HOME/tmp/zim-annotationhelper.jar
 	JAR2=/tmp/zim-annotationhelper.jar
