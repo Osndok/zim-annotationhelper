@@ -33,14 +33,14 @@ class ShowNotesUbuntuPodcastTest
 			};
 	}
 
-	@Test(dataProvider = "zimPageShowNotesPairs")
+	@Test(dataProvider = "zimPageShowNotesPairs", enabled = false, description = "rot")
 	public
 	void testGetUrlFor(String zimPageName, String expectedUrl) throws Exception
 	{
 		assertEquals(showNotesSource.getShowNotesURL(zimPageName), expectedUrl);
 	}
 
-	@Test
+	@Test(enabled = false, description = "rot")
 	public
 	void testHistoricPaginationRequired() throws Exception
 	{

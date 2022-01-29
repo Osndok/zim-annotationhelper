@@ -39,7 +39,7 @@ class ShowNotesJupiterBroadcastingTest
 			};
 	}
 
-	@Test(dataProvider = "zimPageShowNotesPairs")
+	@Test(dataProvider = "zimPageShowNotesPairs", enabled = false, description = "rot")
 	public
 	void testGetUrlFor(String zimPageName, String expectedUrl) throws Exception
 	{
