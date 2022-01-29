@@ -241,7 +241,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 
 				responsive = false;
 				connection = null;
-				return new StateSnapshot(PlayState.Stopped, null, null, null, NO_TIME_CODE, null, null);
+				return new StateSnapshot(PlayState.Stopped, null, null, null, NO_TIME_CODE, null, null, null);
 			}
 			catch (DBusException e)
 			{
@@ -295,18 +295,23 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		final
 		String title;
 
+		final
+		String trackId;
+
 		if (metadata.isEmpty())
 		{
 			log.trace("no file open, {}", playState);
 			url=null;
 			album=null;
 			title=null;
+			trackId=null;
 		}
 		else
 		{
 			album = getString(metadata, "xesam:album");
 			title = getString(metadata, "xesam:title");
 			url = getString(metadata, "xesam:url");
+			trackId = getString(metadata, "mpris:trackid");
 		}
 
 		final
@@ -315,7 +320,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		final
 		String roughTimeCode=getRoughTimeCode(position);
 
-		return new StateSnapshot(playState, position, url, zimPage, roughTimeCode, album, title);
+		return new StateSnapshot(playState, position, url, zimPage, roughTimeCode, album, title, trackId);
 	}
 
 	protected

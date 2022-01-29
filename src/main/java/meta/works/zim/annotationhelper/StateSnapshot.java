@@ -35,15 +35,19 @@ class StateSnapshot
 	private final
 	String title;
 
+	private final
+	String trackId;
+
 	public
 	StateSnapshot(
-		PlayState playState,
-		Long position,
-		String url,
-		String zimPage,
-		String roughTimeCode,
-		String album,
-		String title
+			PlayState playState,
+			Long position,
+			String url,
+			String zimPage,
+			String roughTimeCode,
+			String album,
+			String title,
+			String trackId
 	)
 	{
 		this.playState = playState;
@@ -64,6 +68,7 @@ class StateSnapshot
 		this.roughTimeCode=roughTimeCode;
 		this.album=album;
 		this.title=title;
+		this.trackId=trackId;
 	}
 
 	public
@@ -152,5 +157,11 @@ class StateSnapshot
 	long getSnapshotTime()
 	{
 		return time;
+	}
+
+	public
+	String getTrackId()
+	{
+		return trackId;
 	}
 }

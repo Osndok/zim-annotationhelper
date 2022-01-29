@@ -17,6 +17,7 @@ class Main
 			log.debug("activated; starting monitors");
 			new VlcMediaPlayer().start();
 			new RhythmBoxMediaPlayer().start();
+			new SpotifyPlayer().start();
 			new PushbulletListener().activate();
 		}
 		else
