@@ -113,7 +113,7 @@ class ZimPageAppender
 	}
 
 	public
-	void maybeNoteFirstPlay(String url)
+	void maybeNoteFirstPlay(String url, String title)
 	{
 		final
 		StashFile stashFile = StashFile.getInstance();
@@ -133,21 +133,26 @@ class ZimPageAppender
 				catch (Throwable e)
 				{
 					e.printStackTrace();
-					actuallyNoteFirstPlay(stashFile, url);
+					actuallyNoteFirstPlay(stashFile, url, title);
 					return;
 				}
 			}
 
-			actuallyNoteFirstPlay(stashFile, decoded);
+			actuallyNoteFirstPlay(stashFile, decoded, title);
 		}
 	}
 
 	private
-	void actuallyNoteFirstPlay(StashFile stashFile, String url)
+	void actuallyNoteFirstPlay(StashFile stashFile, String url, String title)
 	{
+		if (title == null || title.isEmpty())
+		{
+			title = basename(url);
+		}
+
 		try
 		{
-			journalNote("First music/podcast of the day: "+basename(url));
+			journalNote("First music/podcast of the day: "+title);
 		}
 		catch (Exception e)
 		{
