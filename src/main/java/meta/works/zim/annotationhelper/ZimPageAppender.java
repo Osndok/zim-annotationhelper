@@ -189,6 +189,7 @@ class ZimPageAppender
 		return thatDay != thisDay;
 	}
 
+	// TODO: Find a way OTHER than direct reference of the file to query zim for the page contents.
 	public
 	File getPageFile(final String pageName)
 	{
@@ -214,6 +215,7 @@ class ZimPageAppender
 		return new File(retval);
 	}
 
+	// TODO: Find a way OTHER than direct reference of the file to query zim for the page contents.
 	private
 	String getNotebookDirectory()
 	{
