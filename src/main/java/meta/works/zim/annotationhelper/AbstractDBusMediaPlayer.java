@@ -46,7 +46,9 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	Logger log = LoggerFactory.getLogger(AbstractDBusMediaPlayer.class);
 
 	public
-	AbstractDBusMediaPlayer(String name)
+	AbstractDBusMediaPlayer(
+			String name
+	)
 	{
 		super(name);
 	}
@@ -195,7 +197,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	Boolean appRunning;
 
 	private
-	StateSnapshot getNewState()
+	StateSnapshot extractDBusMetadata()
 	{
 		final
 		DBus.Properties properties;
@@ -205,14 +207,12 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 				if (connection == null)
 				{
 					connection = DBusConnection.getConnection(DBusConnection.SESSION);
-
-					//connection.addSigHandler(DBus.Properties.class, getDBusSender(), (DBusSigHandler<?>) this);
 				}
 
 				properties = connection.getRemoteObject(
-					getDBusSender(),
-					OBJECT_PATH,
-					DBus.Properties.class
+						getDBusSender(),
+						OBJECT_PATH,
+						DBus.Properties.class
 				);
 
 				propertiesByName = properties.GetAll(INTERFACE_NAME);
@@ -249,19 +249,29 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 			}
 		}
 
+		responsive=true;
+
+		if (log.isTraceEnabled())
 		{
-			responsive=true;
-
-			if (log.isTraceEnabled())
+			for (Map.Entry<String, Variant<?>> me : propertiesByName.entrySet())
 			{
-				for (Map.Entry<String, Variant<?>> me : propertiesByName.entrySet())
-				{
-					final
-					Object value = me.getValue().getValue();
+				final
+				Object value = me.getValue().getValue();
 
-					log.trace("'{}' = ({}) '{}'", me.getKey(), value.getClass(), value);
-				}
+				log.trace("'{}' = ({}) '{}'", me.getKey(), value.getClass(), value);
 			}
+		}
+		return null;
+	}
+
+	private
+	StateSnapshot getNewState()
+	{
+		StateSnapshot dbusError = extractDBusMetadata();
+
+		if (dbusError!=null)
+		{
+			return dbusError;
 		}
 
 		final
@@ -272,9 +282,6 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 
 		final
 		Long position = get(Long.class, "Position");
-
-		final
-		String zimPage;
 
 		final
 		Map<String,Variant> metadata=get(Map.class, "Metadata");
@@ -292,29 +299,18 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		{
 			log.trace("no file open, {}", playState);
 			url=null;
-			zimPage=null;
 			album=null;
 			title=null;
 		}
 		else
 		{
-			album = optionalString(metadata, "xesam:album");
-			title = optionalString(metadata, "xesam:title");
-
-			url = (String) metadata.get("xesam:url").getValue();
-			{
-				log.trace("url: {}", url);
-			}
-
-			if (isLocalPodcastUrl(url))
-			{
-				zimPage = zimPageNameExtractor.getZimPageNameFor(url);
-			}
-			else
-			{
-				zimPage = null;
-			}
+			album = getString(metadata, "xesam:album");
+			title = getString(metadata, "xesam:title");
+			url = getString(metadata, "xesam:url");
 		}
+
+		final
+		String zimPage = getZimPage(metadata);
 
 		final
 		String roughTimeCode=getRoughTimeCode(position);
@@ -322,19 +318,36 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		return new StateSnapshot(playState, position, url, zimPage, roughTimeCode, album, title);
 	}
 
-	private
-	String optionalString(Map<String, Variant> metadata, String fieldName)
+	protected
+	String getZimPage(final Map<String, Variant> metadata)
+	{
+		final
+		String url = getString(metadata, "xesam:url");
+
+		if (!isLocalPodcastUrl(url))
+		{
+			return null;
+		}
+
+		return zimPageNameExtractor.getZimPageNameFor(url);
+	}
+
+	protected
+	String getString(Map<String, Variant> metadata, String fieldName)
 	{
 		final
 		Variant variant = metadata.get(fieldName);
 
 		if (variant==null)
 		{
+			log.trace("no entry for: '{}'", fieldName);
 			return null;
 		}
 		else
 		{
-			return (String)variant.getValue();
+			String stringValue = (String)variant.getValue();
+			log.trace("{} = {}", fieldName, stringValue);
+			return stringValue;
 		}
 	}
 
@@ -377,7 +390,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	{
 		//return url.startsWith("file:///mnt/shared/Podcasts/");
         //return url.startsWith("/mnt/media/Podcasts");
-        return url.contains("/Podcasts/");
+        return url != null && url.contains("/Podcasts/");
     }
 
 	private
