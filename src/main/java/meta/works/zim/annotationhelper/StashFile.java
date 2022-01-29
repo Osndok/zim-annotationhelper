@@ -24,7 +24,10 @@ class StashFile
 	}
 
 	private static final
-	StashFile INSTANCE=new StashFile(new File("/home/robert/.local/zim-annotation-helper.stash"));
+	String HOME_DIRECTORY = System.getProperty("user.home");
+
+	private static final
+	StashFile INSTANCE=new StashFile(new File(HOME_DIRECTORY+"/.local/zim-annotation-helper.stash"));
 
 	static
 	StashFile getTestingStash() throws IOException

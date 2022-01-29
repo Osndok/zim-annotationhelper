@@ -234,7 +234,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 	}
 
 	private static final
-	File HOME=new File(System.getProperty("user.home", "/home/robert"));
+	File HOME=new File(System.getProperty("user.home"));
 
 	private final
 	RhythmBoxXmlExtractor rhythmBoxXmlExtractor=new RhythmBoxXmlExtractor(new File(HOME, ".local/share/rhythmbox/rhythmdb.xml"));
