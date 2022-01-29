@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -18,6 +19,8 @@ class ZimPageAppender
 {
 	private static final
 	Logger log = LoggerFactory.getLogger(ZimPageAppender.class);
+
+	private static final boolean LOG_FIRST_PLAY_ONLY = Boolean.getBoolean("log.firstPlayOnly");
 
 	private
 	String lastJournalNote;
@@ -113,7 +116,7 @@ class ZimPageAppender
 	}
 
 	public
-	void maybeNoteFirstPlay(String url, String title)
+	void nowPlaying(String url, String title)
 	{
 		final
 		StashFile stashFile = StashFile.getInstance();
@@ -121,38 +124,40 @@ class ZimPageAppender
 		final
 		Long lastPlayTime = stashFile.getLastPlayTime();
 
+		final
+		boolean first;
+
 		if (lastPlayTime == null || differentDayNumber(lastPlayTime))
 		{
-			final
-			String decoded;
-			{
-				try
-				{
-					decoded = URLDecoder.decode(url, "UTF-8");
-				}
-				catch (Throwable e)
-				{
-					e.printStackTrace();
-					actuallyNoteFirstPlay(stashFile, url, title);
-					return;
-				}
-			}
-
-			actuallyNoteFirstPlay(stashFile, decoded, title);
+			first = true;
 		}
+		else
+		{
+			first = false;
+
+			if (LOG_FIRST_PLAY_ONLY) {
+				return;
+			}
+		}
+
+		appendNowPlayingNotationToZimJournal(stashFile, url, title);
 	}
 
 	private
-	void actuallyNoteFirstPlay(StashFile stashFile, String url, String title)
+	void appendNowPlayingNotationToZimJournal(StashFile stashFile, String url, String title)
 	{
 		if (title == null || title.isEmpty())
 		{
-			title = basename(url);
+			title = basename(maybeDecode(url));
+		}
+		else
+		{
+			title = maybeDecode(title);
 		}
 
 		try
 		{
-			journalNote("First music/podcast of the day: "+title);
+			journalNote(title);
 		}
 		catch (Exception e)
 		{
@@ -160,6 +165,20 @@ class ZimPageAppender
 		}
 
 		stashFile.setLastPlayTime(System.currentTimeMillis());
+	}
+
+	private
+	String maybeDecode(final String s)
+	{
+		try
+		{
+			return URLDecoder.decode(s, StandardCharsets.UTF_8);
+		}
+		catch (Throwable e)
+		{
+			// NB: If we log anything here it will likely spam the logs horribly...
+			return s;
+		}
 	}
 
 	private
