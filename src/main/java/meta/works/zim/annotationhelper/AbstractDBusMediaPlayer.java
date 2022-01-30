@@ -125,7 +125,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 
 				if (newState.getPlayState() == PlayState.Playing)
 				{
-					zimPageAppender.nowPlaying(newState.getUrl(), newState.getTitle());
+					zimPageAppender.nowPlaying(newState);
 
 					if (newZimPageName==null)
 					{

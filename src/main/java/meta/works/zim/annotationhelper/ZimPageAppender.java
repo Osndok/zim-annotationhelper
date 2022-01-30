@@ -115,8 +115,7 @@ class ZimPageAppender
 		calendar.setTimeZone(TimeZone.getTimeZone("US/Hawaii"));
 	}
 
-	public
-	void nowPlaying(String url, String title)
+	void nowPlaying(final StateSnapshot state)
 	{
 		final
 		StashFile stashFile = StashFile.getInstance();
@@ -140,31 +139,47 @@ class ZimPageAppender
 			}
 		}
 
-		appendNowPlayingNotationToZimJournal(stashFile, url, title);
+		appendNowPlayingNotationToZimJournal(first, state);
+		stashFile.setLastPlayTime(System.currentTimeMillis());
 	}
 
 	private
-	void appendNowPlayingNotationToZimJournal(StashFile stashFile, String url, String title)
+	void appendNowPlayingNotationToZimJournal(final boolean first, StateSnapshot state)
 	{
+		StringBuilder sb = new StringBuilder();
+
+		if (state.getZimPage() != null)
+		{
+			sb.append(String.format("[[%s]] ", state.getZimPage()));
+		}
+
+		String url = state.getUrl();
+		String title = state.getTitle();
+
 		if (title == null || title.isEmpty())
 		{
-			title = basename(maybeDecode(url));
+			sb.append(basename(maybeDecode(url)));
 		}
 		else
 		{
-			title = maybeDecode(title);
+			sb.append(maybeDecode(title));
 		}
+
+		/*
+		if (first)
+		{
+			sb.append(" (today's first music/podcast)");
+		}
+		 */
 
 		try
 		{
-			journalNote(title);
+			journalNote(sb.toString());
 		}
 		catch (Exception e)
 		{
 			log.error("caught", e);
 		}
-
-		stashFile.setLastPlayTime(System.currentTimeMillis());
 	}
 
 	private
