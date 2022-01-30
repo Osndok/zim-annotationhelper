@@ -36,9 +36,6 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 
 	abstract void onPeriodicInterval(StateSnapshot state) throws IOException, InterruptedException;
 
-	private static final
-	long PERIODIC_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(2);
-
 	public static final
 	long NOTABLY_STALE_STATE_MILLIS = TimeUnit.MINUTES.toMillis(5);
 
@@ -64,7 +61,6 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 			}
 			catch (Throwable t)
 			{
-				responsive=false;
 				connection=null;
 				log.error("caught", t);
 			}
@@ -239,7 +235,6 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 					log.debug("{} is NOT running", getDBusSenderSuffix());
 				}
 
-				responsive = false;
 				connection = null;
 				return new StateSnapshot(PlayState.Stopped, null, null, null);
 			}
@@ -248,8 +243,6 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 				throw new RuntimeException(e);
 			}
 		}
-
-		responsive=true;
 
 		if (log.isTraceEnabled())
 		{
@@ -330,9 +323,6 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		}
 	}
 
-	private static final
-	String NO_TIME_CODE = "X";
-
 	private
 	boolean isLocalPodcastUrl(String url)
 	{
@@ -377,22 +367,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	}
 
 	private
-	boolean responsive;
-
-	public
-	boolean isResponsive()
-	{
-		return responsive;
-	}
-
-	private
 	StateSnapshot stateSnapshot;
-
-	public
-	StateSnapshot getStateSnapshot()
-	{
-		return stateSnapshot;
-	}
 
 	@Override
 	public
@@ -413,60 +388,6 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 
 		if (connection!=null)
 		{
-			/* ATTEMPT 1
-			final
-			String source=getDBusSender();
-
-			final
-			String path=OBJECT_PATH;
-
-			final
-			String iface=INTERFACE_NAME;
-
-			final
-			String member;
-
-			final
-			String sig;
-
-			final
-			DBusSignal signal=new DBusSignal(source, path, iface, member, sig, args);
-			connection.sendSignal(signal);
-			*/
-
-			/* ATTEMPT 2
-			final
-			String busName=getDBusSender();
-
-			final
-			String objectPath=OBJECT_PATH;
-
-			final
-			DBusInterface remoteObject;
-			{
-				try
-				{
-					remoteObject = connection.getRemoteObject(busName, objectPath);
-				}
-				catch (DBusException e)
-				{
-					log.error("caught", e);
-					return;
-				}
-
-				log.debug("got: ({}) {}", remoteObject.getClass(), remoteObject);
-			}
-
-			final
-			String methodName="Stop";
-
-			final
-			Object[] arguments=new Object[0];
-
-			connection.callMethodAsync(remoteObject, INTERFACE_NAME+"."+methodName, arguments);
-			*/
-
-			//ATTEMPT 3
 			try
 			{
 				Runtime.getRuntime().exec("qdbus "+getDBusSender()+" /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Stop");
