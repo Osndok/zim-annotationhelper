@@ -146,7 +146,7 @@ class SpotifyPlayer extends AbstractDBusMediaPlayer
     private
     void noteAdvertBlockStarts(final StateSnapshot preAdState) throws IOException, InterruptedException
     {
-        zimPageAppender.pageNote(preAdState.getZimPage(), preAdState.getRoughTimeCode()+"\n/");
+        zimPageAppender.pageNote(preAdState.getZimPage(), "/");
     }
 
     private
@@ -164,7 +164,7 @@ class SpotifyPlayer extends AbstractDBusMediaPlayer
     private
     void noteAdvertBlockEnded(final StateSnapshot state) throws IOException, InterruptedException
     {
-        zimPageAppender.pageNote(state.getZimPage(), "/\n"+state.getRoughTimeCode());
+        zimPageAppender.pageNote(state.getZimPage(), "/");
     }
 
     private
@@ -206,7 +206,7 @@ class SpotifyPlayer extends AbstractDBusMediaPlayer
         }
         else
         {
-            log.debug("onPeriodicInterval: {} -> {}", state.roughTimeCode, state.zimPage);
+            log.trace("onPeriodicInterval: {} -> {}", state.roughTimeCode, state.zimPage);
             zimPageAppender.pageNote(state.zimPage, state.roughTimeCode);
         }
     }

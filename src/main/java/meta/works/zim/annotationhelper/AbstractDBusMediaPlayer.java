@@ -120,12 +120,18 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 
 		if (getName().equals("spotify"))
 		{
-			final var approximatedPosition = positionApproximator.onStateChange(previousState, newState);
+			final var approximatedPosition = positionApproximator.onStateChange(previousState, newState) * 1000;
 
-			if (newState.position == null)
+			if (newState.position == null || newState.position == 0L)
 			{
 				newState.position = approximatedPosition;
 				newState.roughTimeCode = StateSnapshot.getRoughTimeCode(approximatedPosition);
+				log.trace("approximated position: {}", newState.roughTimeCode);
+			}
+			else
+			{
+				// Please let me know if you ever get this message spammed at you... :)
+				log.debug("spotify mpris position seems to be working");
 			}
 		}
 
@@ -135,7 +141,14 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 
 			if (newState.getPlayState() == PlayState.Playing)
 			{
-				zimPageAppender.nowPlaying(newState);
+				if (newState.refersToSameContentAs(previousState) && previousState.playState== PlayState.Paused)
+				{
+					log.debug("Suppressing notebook entry for play/pause pair");
+				}
+				else
+				{
+					zimPageAppender.nowPlaying(newState);
+				}
 
 				if (newZimPageName == null)
 				{
@@ -170,7 +183,8 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 			if (firstTimeCode(newState) && newState.getPlayState() == PlayState.Playing &&
 				(scr == null || !scr.isInitialTimeCodeSuppressed()))
 			{
-				log.debug("adding initial 0:00 interval");
+				log.debug("adding initial 0:00 interval @ {}", newState);
+				onStartingNewContentSpecificPage(newZimPageName, newState);
 				zimPageAppender.pageNote(newZimPageName, "");
 				onPeriodicInterval(newState);
 			}
@@ -185,8 +199,16 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		}
 		else
 		{
-			log.trace("not notable");
+			log.trace("not notable, and same rough time code: {} == {}", previousState.roughTimeCode, newState.roughTimeCode);
 		}
+	}
+
+	protected
+	void onStartingNewContentSpecificPage(final String zimPageName, final StateSnapshot state) throws
+																							   IOException,
+																							   InterruptedException
+	{
+		zimPageAppender.pageNote(zimPageName, state.title);
 	}
 
 	protected

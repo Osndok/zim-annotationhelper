@@ -3,7 +3,6 @@ package meta.works.zim.annotationhelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,6 +44,12 @@ class PositionApproximator
     public
     long onStateChange(StateSnapshot was, StateSnapshot now)
     {
+        if (now.playState != PlayState.Playing)
+        {
+            log.trace("not accumulating time while {}", now.playState);
+            return getState(now.url).accumulatedMiillis;
+        }
+
         // BUG: What if they paused one show, then started a different one.
         if (was.playState != PlayState.Playing && now.playState == PlayState.Playing)
         {
@@ -55,8 +60,8 @@ class PositionApproximator
         if (now.refersToSameContentAs(was))
         {
             var millis = continueTracking(was, now);
-            log.debug("continue: {} @ {}ms", now, millis);
-            return millis * 1000;
+            log.trace("continue: {} @ {}ms", now, millis);
+            return millis;
         }
         else
         {

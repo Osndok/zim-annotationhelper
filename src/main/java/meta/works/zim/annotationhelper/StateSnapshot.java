@@ -1,6 +1,8 @@
 package meta.works.zim.annotationhelper;
 
 import org.freedesktop.dbus.Variant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -17,6 +19,9 @@ import static meta.works.zim.annotationhelper.AbstractDBusMediaPlayer.getString;
 public
 class StateSnapshot
 {
+	private static final
+	Logger log = LoggerFactory.getLogger(StateSnapshot.class);
+
 	public final
 	PlayState playState;
 
@@ -232,31 +237,42 @@ class StateSnapshot
 	public
 	boolean refersToSameContentAs(final StateSnapshot that)
 	{
+		if (that == null)
+		{
+			return false;
+		}
+
 		if (this.url != null && this.url.equals(that.url))
 		{
+			log.trace("same url implies same content");
 			return true;
 		}
 
 		if (differs(this.zimPage, that.zimPage))
 		{
+			log.trace("different zim page implies different content: {} != {}", this.zimPage, that.zimPage);
 			return false;
 		}
 
 		if (differs(this.album, that.album))
 		{
+			log.trace("different album implies different content: {} != {}", this.album, that.album);
 			return false;
 		}
 
 		if (differs(this.artist, that.artist))
 		{
+			log.trace("different artist implies different content: {} != {}", this.artist, that.artist);
 			return false;
 		}
 
 		if (differs(this.title, that.title))
 		{
+			log.trace("different title implies different content: {} != {}", this.title, that.title);
 			return false;
 		}
 
+		log.trace("no differences found, assuming the same");
 		return true;
 	}
 
