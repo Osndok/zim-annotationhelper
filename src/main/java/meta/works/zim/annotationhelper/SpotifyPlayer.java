@@ -200,10 +200,14 @@ class SpotifyPlayer extends AbstractDBusMediaPlayer
     @Override
     void onPeriodicInterval(final StateSnapshot state) throws IOException, InterruptedException
     {
-        if (state.getZimPage()!=null)
+        if (state.zimPage==null)
         {
-            log.debug("onPeriodicInterval");
-            zimPageAppender.pageNote(state.getZimPage(), state.getRoughTimeCode());
+            log.debug("onPeriodicInterval: {}", state.roughTimeCode);
+        }
+        else
+        {
+            log.debug("onPeriodicInterval: {} -> {}", state.roughTimeCode, state.zimPage);
+            zimPageAppender.pageNote(state.zimPage, state.roughTimeCode);
         }
     }
 }
