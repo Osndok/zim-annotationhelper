@@ -1,11 +1,14 @@
 package meta.works.zim.annotationhelper;
 
 import meta.works.zim.annotationhelper.podcasts.JoeRogan;
+import meta.works.zim.annotationhelper.podcasts.LinuxUnplugged;
+import meta.works.zim.annotationhelper.podcasts.SpotifyPodcast;
 import org.freedesktop.dbus.Variant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public
@@ -13,6 +16,12 @@ class SpotifyPlayer extends AbstractDBusMediaPlayer
 {
     private static final
     Logger log = LoggerFactory.getLogger(SpotifyPlayer.class);
+
+    private static final
+    List<SpotifyPodcast> PODCASTS = List.of(
+            new JoeRogan(),
+            new LinuxUnplugged()
+    );
 
     public
     SpotifyPlayer()
@@ -38,9 +47,13 @@ class SpotifyPlayer extends AbstractDBusMediaPlayer
             return null;
         }
 
-        if (album.equals(JoeRogan.ALBUM))
+        for (SpotifyPodcast podcast : PODCASTS)
         {
-            return JoeRogan.getZimPage(getString(metadata, "xesam:title"));
+            if (podcast.albumNameMatches(album))
+            {
+                String title = getString(metadata, "xesam:title");
+                return podcast.getZimPageFromTitle(title);
+            }
         }
 
         log.trace("Unknown spotify album: {}", album);
@@ -92,7 +105,7 @@ class SpotifyPlayer extends AbstractDBusMediaPlayer
             }
             else
             {
-                log.info("was playing {}, but now playing {}", was, now);
+                log.info("was {}, but now {}", was, now);
             }
         }
 

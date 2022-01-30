@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,14 +52,7 @@ class ZimPageNameExtractor
 	public
 	String getZimPageNameFor(String url)
 	{
-		try
-		{
-			url = URLDecoder.decode(url, "UTF-8");
-		}
-		catch (UnsupportedEncodingException e)
-		{
-			log.error("bad url?", e);
-		}
+		url = URLDecoder.decode(url, StandardCharsets.UTF_8);
 
 		final
 		String superBasename;

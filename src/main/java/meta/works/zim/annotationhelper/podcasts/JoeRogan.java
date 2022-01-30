@@ -1,7 +1,7 @@
 package meta.works.zim.annotationhelper.podcasts;
 
 public
-class JoeRogan
+class JoeRogan implements SpotifyPodcast
 {
     public static final String ALBUM = "The Joe Rogan Experience";
 
@@ -36,5 +36,19 @@ class JoeRogan
         }
 
         return null;
+    }
+
+    @Override
+    public
+    boolean albumNameMatches(final String s)
+    {
+        return s.equals(ALBUM);
+    }
+
+    @Override
+    public
+    String getZimPageFromTitle(final String title)
+    {
+        return getZimPage(title);
     }
 }
