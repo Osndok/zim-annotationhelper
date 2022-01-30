@@ -5,37 +5,59 @@ class JoeRogan implements SpotifyPodcast
 {
     public static final String ALBUM = "The Joe Rogan Experience";
 
-    public static
-    String getZimPage(String title)
+    @Override
+    public
+    ParsedTitle parseTitle(String title)
     {
         if (title == null)
         {
             return null;
         }
 
-        if (title.charAt(0) == '#')
+        int firstHash = title.indexOf('#');
+
+        final
+        String subShow;
+
+        if (firstHash == 0)
         {
-            title = title.substring(1);
+            title = title.substring(1).replace("- ", "").trim();
+            subShow = null;
+        }
+        else
+        {
+            subShow = title.substring(0, firstHash).replace("JRE ", "").replace("Show ", "").trim();
+            title = title.substring(firstHash+1).replace("with ", "").trim();
         }
 
         int firstSpace = title.indexOf(' ');
 
-        if (firstSpace > 0)
-        {
-            String number = title.substring(0, firstSpace);
+        final
+        String number = title.substring(0, firstSpace);
 
-            try
+        final
+        String blurb = title.substring(firstSpace+1);
+
+        final
+        String zimPage;
+        {
+            if (subShow == null)
             {
-                int numericConfirmation = Integer.parseInt(number);
-                return String.format(":JRE:%s", number);
+                zimPage = String.format(":JRE:%s", number);
             }
-            catch (Exception e)
+            else
+            if (subShow.indexOf(' ') >= 0)
             {
-                // Number format exception?
+                // Unknown subshow, need an example
+                return null;
+            }
+            else
+            {
+                zimPage = String.format(":JRE:%s:%s", subShow, number);
             }
         }
 
-        return null;
+        return new ParsedTitle(number, zimPage, blurb);
     }
 
     @Override
@@ -43,12 +65,5 @@ class JoeRogan implements SpotifyPodcast
     boolean albumNameMatches(final String s)
     {
         return s.equals(ALBUM);
-    }
-
-    @Override
-    public
-    String getZimPageFromTitle(final String title)
-    {
-        return getZimPage(title);
     }
 }

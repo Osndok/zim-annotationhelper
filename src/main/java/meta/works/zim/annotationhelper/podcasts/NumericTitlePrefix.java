@@ -26,7 +26,7 @@ class NumericTitlePrefix implements SpotifyPodcast
 
     @Override
     public
-    String getZimPageFromTitle(String title)
+    ParsedTitle parseTitle(String title)
     {
         title = stripNoise(title);
 
@@ -40,7 +40,13 @@ class NumericTitlePrefix implements SpotifyPodcast
         final
         String number = title.substring(0, firstOccurrence);
 
-        return String.format(zimPageFormatString, number);
+        final
+        String blurb = title.substring(firstOccurrence+1).trim();
+
+        final
+        String zimPage = String.format(zimPageFormatString, number);
+
+        return new ParsedTitle(number, zimPage, blurb);
     }
 
     private
@@ -51,10 +57,17 @@ class NumericTitlePrefix implements SpotifyPodcast
             title = title.substring(album.length());
         }
 
+        if (title.endsWith(album))
+        {
+            title = title.substring(0, title.length()-album.length());
+        }
+
         if (title.startsWith(EPISODE_PREFIX_1))
         {
             title = title.substring(EPISODE_PREFIX_1.length());
         }
+
+        title = title.replace("| ", "");
 
         return title.trim();
     }

@@ -19,7 +19,7 @@ class SpotifyPlayer extends AbstractDBusMediaPlayer
     private static final
     Logger log = LoggerFactory.getLogger(SpotifyPlayer.class);
 
-    private static final
+    public static final
     List<SpotifyPodcast> PODCASTS = List.of(
             new JoeRogan(),
             new NumericTitlePrefix("Ask Noah Show", ':', ":NoahChelliah:Ask:%s"),
@@ -56,16 +56,38 @@ class SpotifyPlayer extends AbstractDBusMediaPlayer
             return null;
         }
 
+        SpotifyPodcast podcast = getPodcastGivenAlbum(album);
+
+        if (podcast != null)
+        {
+            String title = getString(metadata, "xesam:title");
+
+            var parsed = podcast.parseTitle(title);
+
+            if (parsed == null)
+            {
+                log.debug("{} podcast parser did not parse title: {}", album, title);
+                return null;
+            }
+
+            return parsed.zimPage;
+        }
+
+        log.trace("Unknown spotify album: {}", album);
+        return null;
+    }
+
+    public static
+    SpotifyPodcast getPodcastGivenAlbum(final String album)
+    {
         for (SpotifyPodcast podcast : PODCASTS)
         {
             if (podcast.albumNameMatches(album))
             {
-                String title = getString(metadata, "xesam:title");
-                return podcast.getZimPageFromTitle(title);
+                return podcast;
             }
         }
 
-        log.trace("Unknown spotify album: {}", album);
         return null;
     }
 

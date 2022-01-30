@@ -24,7 +24,7 @@ class NumericTitleSuffix implements SpotifyPodcast
 
     @Override
     public
-    String getZimPageFromTitle(final String title)
+    ParsedTitle parseTitle(final String title)
     {
         int lastOccurance = title.lastIndexOf(criticalCharacter);
 
@@ -34,8 +34,14 @@ class NumericTitleSuffix implements SpotifyPodcast
         }
 
         final
+        String blurb = title.substring(0, lastOccurance);
+
+        final
         String number = title.substring(lastOccurance+1);
 
-        return String.format(zimPageFormatString, number);
+        final
+        String zimPage = String.format(zimPageFormatString, number);
+
+        return new ParsedTitle(number, zimPage, blurb);
     }
 }
