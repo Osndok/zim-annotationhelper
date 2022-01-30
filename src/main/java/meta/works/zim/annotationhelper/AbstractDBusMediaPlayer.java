@@ -97,6 +97,9 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	protected
 	boolean ignoringDocumentedReplay;
 
+	private final
+	PositionApproximator positionApproximator = new PositionApproximator();
+
 	private
 	void run2() throws Exception
 	{
@@ -113,6 +116,17 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		if (previousState == null)
 		{
 			return;
+		}
+
+		if (getName().equals("spotify"))
+		{
+			final var approximatedPosition = positionApproximator.onStateChange(previousState, newState);
+
+			if (newState.position == null)
+			{
+				newState.position = approximatedPosition;
+				newState.roughTimeCode = StateSnapshot.getRoughTimeCode(approximatedPosition);
+			}
 		}
 
 		if (warrantsFiringCallback(previousState, newState))
@@ -269,10 +283,10 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		PlayState playState = PlayState.valueOf(playStateString);
 
 		final
-		Long position = get(Long.class, "Position");
+		Map<String,Variant> metadata=get(Map.class, "Metadata");
 
 		final
-		Map<String,Variant> metadata=get(Map.class, "Metadata");
+		Long position = get(Long.class, "Position");
 
 		final
 		String zimPage = getZimPage(metadata);

@@ -20,7 +20,7 @@ class StateSnapshot
 	public final
 	PlayState playState;
 
-	public final
+	public
 	Long position;
 
 	public final
@@ -32,7 +32,7 @@ class StateSnapshot
 	public final
 	String url;
 
-	public final
+	public
 	String roughTimeCode;
 
 	public final
@@ -111,7 +111,7 @@ class StateSnapshot
 	 * @param positionMicroSeconds
 	 * @return a human-readable time code with
 	 */
-	private static
+	public static
 	String getRoughTimeCode(Long positionMicroSeconds)
 	{
 		if (positionMicroSeconds==null)
