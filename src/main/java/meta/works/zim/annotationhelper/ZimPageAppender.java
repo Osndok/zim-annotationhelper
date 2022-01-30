@@ -117,6 +117,12 @@ class ZimPageAppender
 
 	void nowPlaying(final StateSnapshot state)
 	{
+		if (state.trackId != null && state.trackId.startsWith("spotify:ad"))
+		{
+			log.trace("ignoring spotify ad");
+			return;
+		}
+
 		final
 		StashFile stashFile = StashFile.getInstance();
 
