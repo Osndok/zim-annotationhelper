@@ -9,6 +9,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * TODO: ask spotify to expose the current playhead position via mpris/dbus
+ * TODO: wire-in the shownotes URL
+ */
 public
 class SpotifyPlayer extends AbstractDBusMediaPlayer
 {
