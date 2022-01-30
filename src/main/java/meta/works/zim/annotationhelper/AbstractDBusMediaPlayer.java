@@ -241,7 +241,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 
 				responsive = false;
 				connection = null;
-				return new StateSnapshot(PlayState.Stopped, null, null, null, NO_TIME_CODE, null, null, null);
+				return new StateSnapshot(PlayState.Stopped, null, null, null);
 			}
 			catch (DBusException e)
 			{
@@ -287,40 +287,9 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		Map<String,Variant> metadata=get(Map.class, "Metadata");
 
 		final
-		String url;
-
-		final
-		String album;
-
-		final
-		String title;
-
-		final
-		String trackId;
-
-		if (metadata.isEmpty())
-		{
-			log.trace("no file open, {}", playState);
-			url=null;
-			album=null;
-			title=null;
-			trackId=null;
-		}
-		else
-		{
-			album = getString(metadata, "xesam:album");
-			title = getString(metadata, "xesam:title");
-			url = getString(metadata, "xesam:url");
-			trackId = getString(metadata, "mpris:trackid");
-		}
-
-		final
 		String zimPage = getZimPage(metadata);
 
-		final
-		String roughTimeCode=getRoughTimeCode(position);
-
-		return new StateSnapshot(playState, position, url, zimPage, roughTimeCode, album, title, trackId);
+		return new StateSnapshot(playState, position, zimPage, metadata);
 	}
 
 	protected
@@ -337,9 +306,14 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 		return zimPageNameExtractor.getZimPageNameFor(url);
 	}
 
-	protected
+	public static
 	String getString(Map<String, Variant> metadata, String fieldName)
 	{
+		if (metadata==null)
+		{
+			return null;
+		}
+
 		final
 		Variant variant = metadata.get(fieldName);
 
@@ -359,37 +333,6 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	private static final
 	String NO_TIME_CODE = "X";
 
-	/**
-	 * @param positionMicroSeconds
-	 * @return a human-readable time code with
-	 */
-	private
-	String getRoughTimeCode(Long positionMicroSeconds)
-	{
-		if (positionMicroSeconds==null)
-		{
-			return "00:00";
-		}
-		else
-		{
-			long minutes = TimeUnit.MICROSECONDS.toMinutes(positionMicroSeconds);
-
-			final
-			long hours=minutes/60;
-
-			minutes=minutes%60;
-
-			if (hours>0)
-			{
-				return String.format("%d:%02d:00", hours, minutes);
-			}
-			else
-			{
-				return String.format("%02d:00", minutes);
-			}
-		}
-	}
-
 	private
 	boolean isLocalPodcastUrl(String url)
 	{
@@ -406,25 +349,7 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 			return true;
 		}
 
-		final
-		String oldSubject=previousState.getZimPage();
-
-		final
-		String newSubject=newState.getZimPage();
-
-		if (newSubject==null)
-		{
-			return oldSubject!=null;
-		}
-		else
-		{
-			return !newSubject.equals(oldSubject);
-		}
-
-		/*
-		NB: eventually, we will probably want to add a file/uri check too. In which case,
-		we might as well push the logic into the 'equals()' function, methinks.
-		 */
+		return !previousState.refersToSameContentAs(newState);
 	}
 
 	public static final

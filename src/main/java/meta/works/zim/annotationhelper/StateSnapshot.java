@@ -1,9 +1,15 @@
 package meta.works.zim.annotationhelper;
 
+import org.freedesktop.dbus.Variant;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
+
+import static meta.works.zim.annotationhelper.AbstractDBusMediaPlayer.getString;
 
 /**
  * Created by robert on 2016-10-06 13:09.
@@ -11,43 +17,42 @@ import java.util.concurrent.TimeUnit;
 public
 class StateSnapshot
 {
-	private final
+	public final
 	PlayState playState;
 
-	private final
+	public final
 	Long position;
 
-	private final
+	public final
 	String zimPage;
 
-	private final
+	public final
 	long time;
 
-	private final
+	public final
 	String url;
 
-	private final
+	public final
 	String roughTimeCode;
 
-	private final
+	public final
 	String album;
 
-	private final
+	public final
 	String title;
 
-	private final
+	public final
 	String trackId;
+
+	public final
+	String artist;
 
 	public
 	StateSnapshot(
 			PlayState playState,
 			Long position,
-			String url,
 			String zimPage,
-			String roughTimeCode,
-			String album,
-			String title,
-			String trackId
+			final Map<String, Variant> metadata
 	)
 	{
 		this.playState = playState;
@@ -64,52 +69,111 @@ class StateSnapshot
 		this.zimPage = zimPage;
 
 		this.time = System.currentTimeMillis();
-		this.url=url;
-		this.roughTimeCode=roughTimeCode;
-		this.album=album;
-		this.title=title;
-		this.trackId=trackId;
+
+		this.url = getString(metadata, "xesam:url");
+		this.roughTimeCode = getRoughTimeCode(position);
+		this.album = getString(metadata, "xesam:album");
+		this.artist = getArtist(metadata);
+		this.title = getString(metadata, "xesam:title");
+		this.trackId = getString(metadata, "mpris:trackid");
 	}
 
+	private
+	String getArtist(final Map<String, Variant> metadata)
+	{
+		final
+		String fieldName = "xesam:artist";
+
+		if (metadata==null)
+		{
+			return null;
+		}
+
+		final
+		Variant variant = metadata.get(fieldName);
+
+		if (variant==null)
+		{
+			return null;
+		}
+
+		Object value = variant.getValue();
+
+		if (value instanceof Vector)
+		{
+			value = ((Vector)value).get(0);
+		}
+
+		return value.toString();
+	}
+
+	/**
+	 * @param positionMicroSeconds
+	 * @return a human-readable time code with
+	 */
+	private static
+	String getRoughTimeCode(Long positionMicroSeconds)
+	{
+		if (positionMicroSeconds==null)
+		{
+			return "00:00";
+		}
+		else
+		{
+			long minutes = TimeUnit.MICROSECONDS.toMinutes(positionMicroSeconds);
+
+			final
+			long hours=minutes/60;
+
+			minutes=minutes%60;
+
+			if (hours>0)
+			{
+				return String.format("%d:%02d:00", hours, minutes);
+			}
+			else
+			{
+				return String.format("%02d:00", minutes);
+			}
+		}
+	}
+
+	@Deprecated
 	public
 	PlayState getPlayState()
 	{
 		return playState;
 	}
 
-	/**
-	 * @return the playback position in SECONDS, or null if it is unknown.
-	 */
-	public
-	Long getPosition()
-	{
-		return position;
-	}
-
+	@Deprecated
 	public
 	String getZimPage()
 	{
 		return zimPage;
 	}
 
+	@Deprecated
 	public
 	String getUrl()
 	{
 		return url;
 	}
 
+	@Deprecated
 	public
 	String getRoughTimeCode()
 	{
 		return roughTimeCode;
 	}
 
+	@Deprecated
 	public
 	String getAlbum()
 	{
 		return album;
 	}
 
+	@Deprecated
 	public
 	String getTitle()
 	{
@@ -163,5 +227,49 @@ class StateSnapshot
 	String getTrackId()
 	{
 		return trackId;
+	}
+
+	public
+	boolean refersToSameContentAs(final StateSnapshot that)
+	{
+		if (this.url != null && this.url.equals(that.url))
+		{
+			return true;
+		}
+
+		if (differs(this.zimPage, that.zimPage))
+		{
+			return false;
+		}
+
+		if (differs(this.album, that.album))
+		{
+			return false;
+		}
+
+		if (differs(this.artist, that.artist))
+		{
+			return false;
+		}
+
+		if (differs(this.title, that.title))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	private
+	boolean differs(final String a, final String b)
+	{
+		if (a == null)
+		{
+			return b!=null;
+		}
+		else
+		{
+			return !a.equals(b);
+		}
 	}
 }

@@ -152,12 +152,28 @@ class ZimPageAppender
 		{
 			sb.append(String.format("[[%s]] - ", state.getZimPage()));
 		}
+		else
+		{
+			var artist = state.artist;
 
-		String url = state.getUrl();
+			if (artist != null && !artist.isEmpty())
+			{
+				sb.append(artist).append(" - ");
+			}
+
+			var album = state.album;
+
+			if (album != null && !album.isEmpty() && !album.equals(state.title))
+			{
+				sb.append(album).append(" - ");
+			}
+		}
+
 		String title = state.getTitle();
 
 		if (title == null || title.isEmpty())
 		{
+			String url = state.getUrl();
 			sb.append(basename(maybeDecode(url)));
 		}
 		else
