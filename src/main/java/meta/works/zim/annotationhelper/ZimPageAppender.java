@@ -150,7 +150,7 @@ class ZimPageAppender
 
 		if (state.getZimPage() != null)
 		{
-			sb.append(String.format("[[%s]] ", state.getZimPage()));
+			sb.append(String.format("[[%s]] - ", state.getZimPage()));
 		}
 
 		String url = state.getUrl();
@@ -171,6 +171,8 @@ class ZimPageAppender
 			sb.append(" (today's first music/podcast)");
 		}
 		 */
+
+		// TODO: Find a non-ugly way to trim the garbage & reduplicated episode number prefix/suffix from this log entry.
 
 		try
 		{

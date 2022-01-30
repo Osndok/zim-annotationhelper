@@ -1,8 +1,6 @@
 package meta.works.zim.annotationhelper;
 
-import meta.works.zim.annotationhelper.podcasts.JoeRogan;
-import meta.works.zim.annotationhelper.podcasts.LinuxUnplugged;
-import meta.works.zim.annotationhelper.podcasts.SpotifyPodcast;
+import meta.works.zim.annotationhelper.podcasts.*;
 import org.freedesktop.dbus.Variant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +18,14 @@ class SpotifyPlayer extends AbstractDBusMediaPlayer
     private static final
     List<SpotifyPodcast> PODCASTS = List.of(
             new JoeRogan(),
-            new LinuxUnplugged()
+            new NumericTitlePrefix("Ask Noah Show", ':', ":NoahChelliah:Ask:%s"),
+            new NumericTitlePrefix("2.5 Admins", ':', ":Two:PointFiveAdmins:%s"),
+            new NumericTitlePrefix("Coder Radio", ':', ":CR:%s"),
+            new NumericTitlePrefix("Hardware Addicts", ':', ":Hardware:Addicts:%s"),
+            new NumericTitlePrefix("LINUX Unplugged", ':', ":LUP:%s"),
+            new NumericTitleSuffix("Linux Action News", ' ', ":LinuxAction:News:%s"),
+            new NumericTitlePrefix("Self-Hosted", ':', ":Self:Hosted:Podcast:%s"),
+            new NumericTitlePrefix("This Week in Linux", ':', ":TWIL:%s")
     );
 
     public
