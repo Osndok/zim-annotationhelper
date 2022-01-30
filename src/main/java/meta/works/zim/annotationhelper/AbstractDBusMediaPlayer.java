@@ -100,83 +100,78 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	private
 	void run2() throws Exception
 	{
-		final
-		StateSnapshot newState=getNewState();
+		final StateSnapshot newState = getNewState();
 
-		final
-		StateSnapshot previousState;
+		final StateSnapshot previousState;
 		{
 			previousState = this.stateSnapshot;
 			stateSnapshot = newState;
 		}
 
-		final
-		String newZimPageName = newState.getZimPage();
+		final String newZimPageName = newState.getZimPage();
 
-		if (previousState!=null)
+		if (previousState == null)
 		{
-			if (warrantsFiringCallback(previousState, newState))
+			return;
+		}
+
+		if (warrantsFiringCallback(previousState, newState))
+		{
+			log.debug("onStateChange: {} -> {}", previousState, newState);
+
+			if (newState.getPlayState() == PlayState.Playing)
 			{
-				log.debug("onStateChange: {} -> {}", previousState, newState);
+				zimPageAppender.nowPlaying(newState);
 
-				if (newState.getPlayState() == PlayState.Playing)
+				if (newZimPageName == null)
 				{
-					zimPageAppender.nowPlaying(newState);
-
-					if (newZimPageName==null)
-					{
-						ignoringDocumentedReplay=false;
-					}
-					else
-					{
-						final
-						File zimPageFile=zimPageAppender.getPageFile(newZimPageName);
-
-						ignoringDocumentedReplay=EndMarker.isPresentIn(zimPageFile);
-					}
+					ignoringDocumentedReplay = false;
 				}
-
-				if (ignoringDocumentedReplay)
+				else
 				{
-					log.info("zim page already has an end marker, so ignoring this replay: {}", newZimPageName);
+					final File zimPageFile = zimPageAppender.getPageFile(newZimPageName);
 
-					if (newZimPageName!=null)
-					{
-						zimPageAppender.journalNote("Replaying [["+newZimPageName+"]]");
-					}
-
-					return;
-				}
-
-				final
-				long now = System.currentTimeMillis();
-
-				final
-				StateChangeReturn scr=onStateChange(previousState, newState, now - lastStateChangeCallback);
-
-				lastStateChangeCallback = now;
-
-				if (firstTimeCode(newState) && newState.getPlayState() == PlayState.Playing &&
-					(scr==null || !scr.isInitialTimeCodeSuppressed()))
-				{
-					log.debug("adding initial 0:00 interval");
-					zimPageAppender.pageNote(newZimPageName, "");
-					onPeriodicInterval(newState);
+					ignoringDocumentedReplay = EndMarker.isPresentIn(zimPageFile);
 				}
 			}
-			else
-			if (!previousState.getRoughTimeCode().equals(newState.getRoughTimeCode()))
+
+			if (ignoringDocumentedReplay)
 			{
-				log.trace("periodic");
+				log.info("zim page already has an end marker, so ignoring this replay: {}", newZimPageName);
 
-				if (ignoringDocumentedReplay) return;
+				if (newZimPageName != null)
+				{
+					zimPageAppender.journalNote("Replaying [[" + newZimPageName + "]]");
+				}
 
+				return;
+			}
+
+			final long now = System.currentTimeMillis();
+
+			final StateChangeReturn scr = onStateChange(previousState, newState, now - lastStateChangeCallback);
+
+			lastStateChangeCallback = now;
+
+			if (firstTimeCode(newState) && newState.getPlayState() == PlayState.Playing &&
+				(scr == null || !scr.isInitialTimeCodeSuppressed()))
+			{
+				log.debug("adding initial 0:00 interval");
+				zimPageAppender.pageNote(newZimPageName, "");
 				onPeriodicInterval(newState);
 			}
-			else
-			{
-				log.trace("not notable");
-			}
+		}
+		else if (!previousState.getRoughTimeCode().equals(newState.getRoughTimeCode()))
+		{
+			log.trace("periodic");
+
+			if (ignoringDocumentedReplay) return;
+
+			onPeriodicInterval(newState);
+		}
+		else
+		{
+			log.trace("not notable");
 		}
 	}
 
