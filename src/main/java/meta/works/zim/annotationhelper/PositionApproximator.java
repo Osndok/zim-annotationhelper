@@ -15,7 +15,11 @@ import java.util.List;
 public
 class PositionApproximator
 {
-    private static final int KEEP = 10;
+    /**
+     * This would probably be the number of shows deep you might go back to multiplied by the number of adverts in each
+     * of those shows.
+     */
+    private static final int KEEP = 20;
 
     private static final
     Logger log = LoggerFactory.getLogger(PositionApproximator.class);
