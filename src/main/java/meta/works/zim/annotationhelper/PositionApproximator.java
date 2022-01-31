@@ -115,6 +115,7 @@ class PositionApproximator
         {
             if (url.equals(savedState.url))
             {
+                promote(savedState);
                 return savedState;
             }
         }
@@ -125,6 +126,13 @@ class PositionApproximator
         state.url = url;
         savedStates.add(state);
         return state;
+    }
+
+    private
+    void promote(final SavedState state)
+    {
+        savedStates.remove(state);
+        savedStates.add(state);
     }
 
     private
