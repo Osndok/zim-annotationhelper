@@ -54,8 +54,7 @@ class PositionApproximator
             return getState(now.url).accumulatedMiillis;
         }
 
-        // BUG: What if they paused one show, then started a different one.
-        if (was.playState != PlayState.Playing && now.playState == PlayState.Playing)
+        if (was.playState != PlayState.Playing || !was.refersToSameContentAs(now))
         {
             log.debug("Ignoring state change report: {} -> {}", was, now);
             return getState(now.url).accumulatedMiillis;
