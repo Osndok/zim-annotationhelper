@@ -98,6 +98,38 @@ class SpotifyPodcastParsingTests
         assertThat(r.blurb).isEqualTo("Exciting FlatHub, Wine 7.0, SUSE Liberty Linux, Linux Mint, AppIndicators");
     }
 
+    @Test
+    public void lateNightLinux()
+    {
+        var r = testCase("Late Night Linux All Episodes", "Late Night Linux X Episode 161");
+        assertThat(r.number).isEqualTo("161");
+        assertThat(r.zimPage).isEqualTo(":LNL:161");
+    }
+
+    @Test
+    public void lateNightLinuxExtras()
+    {
+        var r = testCase("Late Night Linux All Episodes", "Late Night Linux Extra X Episode 38");
+        assertThat(r.number).isEqualTo("38");
+        assertThat(r.zimPage).isEqualTo(":LNL:Extra:38");
+    }
+
+    @Test
+    public void linuxDowntime()
+    {
+        var r = testCase("Late Night Linux All Episodes", "Linux Downtime X Episode 39");
+        assertThat(r.number).isEqualTo("39");
+        assertThat(r.zimPage).isEqualTo(":Linux:Downtime:Podcast:39");
+    }
+
+    @Test
+    public void linuxAfterDark()
+    {
+        var r = testCase("Late Night Linux All Episodes", "Linux After Dark X Episode 09");
+        assertThat(r.number).isEqualTo("09");
+        assertThat(r.zimPage).isEqualTo(":Linux:AfterDark:09");
+    }
+
     private
     ParsedTitle testCase(final String album, final String title)
     {

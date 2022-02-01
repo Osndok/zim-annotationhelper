@@ -3,9 +3,9 @@ package meta.works.zim.annotationhelper.podcasts;
 public
 class NumericTitleSuffix implements SpotifyPodcast
 {
-    private final String album;
-    private final char criticalCharacter;
-    private final String zimPageFormatString;
+    protected final String album;
+    protected final char criticalCharacter;
+    protected final String zimPageFormatString;
 
     public
     NumericTitleSuffix(final String album, final char criticalCharacter, final String zimPageFormatString)
@@ -25,6 +25,12 @@ class NumericTitleSuffix implements SpotifyPodcast
     @Override
     public
     ParsedTitle parseTitle(final String title)
+    {
+        return parseTitle(title, zimPageFormatString);
+    }
+
+    protected
+    ParsedTitle parseTitle(final String title, final String zimPageFormatString)
     {
         int lastOccurance = title.lastIndexOf(criticalCharacter);
 

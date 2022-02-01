@@ -22,6 +22,7 @@ class SpotifyPlayer extends AbstractDBusMediaPlayer
     public static final
     List<SpotifyPodcast> PODCASTS = List.of(
             new JoeRogan(),
+            new LateNightLinux(),
             new NumericTitlePrefix("Ask Noah Show", ':', ":NoahChelliah:Ask:%s"),
             new NumericTitlePrefix("2.5 Admins", ':', ":Two:PointFiveAdmins:%s"),
             new NumericTitlePrefix("Coder Radio", ':', ":CR:%s"),
