@@ -139,6 +139,22 @@ class SpotifyPodcastParsingTests
         assertThat(r.zimPage).isEqualTo(":Linux:AfterDark:09");
     }
 
+    @Test
+    public void freeTalkLive()
+    {
+        var r = testCase("Free Talk Live", "Free Talk Live 2022-01-03");
+        assertThat(r.number).isEqualTo("2022:01:03");
+        assertThat(r.zimPage).isEqualTo(":FreeTalk:Live:2022:01:03");
+    }
+
+    @Test
+    public void freeTalkDigest()
+    {
+        var r = testCase("Free Talk Live", "FTL Digest 2022-01-03");
+        assertThat(r.number).isEqualTo("2022:01:03");
+        assertThat(r.zimPage).isEqualTo(":FreeTalk:Digest:2022:01:03");
+    }
+
     private
     ParsedTitle testCase(final String album, final String title)
     {
