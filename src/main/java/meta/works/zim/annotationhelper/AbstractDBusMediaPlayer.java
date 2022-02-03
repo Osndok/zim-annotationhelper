@@ -22,7 +22,7 @@ public abstract
 class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 {
     private static final
-    long SLEEP_MILLIS = TimeUnit.SECONDS.toMillis(3);
+    long SLEEP_MILLIS = TimeUnit.SECONDS.toMillis(2);
 
 	private static final
 	long RECENT_ACTIVITY_THRESHOLD = TimeUnit.MINUTES.toMillis(5);
