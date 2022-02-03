@@ -99,6 +99,15 @@ class SpotifyPodcastParsingTests
     }
 
     @Test
+    public void libertarianChristian()
+    {
+        var r = testCase("Libertarian Christian Podcast", "Ep 259: Rediscovering Republicanism, with John Nantz");
+        assertThat(r.number).isEqualTo("259");
+        assertThat(r.zimPage).isEqualTo(":Libertarian:Christian:Podcast:259");
+        assertThat(r.blurb).isEqualTo("Rediscovering Republicanism, with John Nantz");
+    }
+
+    @Test
     public void lateNightLinux()
     {
         var r = testCase("Late Night Linux All Episodes", "Late Night Linux X Episode 161");

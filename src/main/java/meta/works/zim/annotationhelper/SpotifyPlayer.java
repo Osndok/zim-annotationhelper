@@ -27,6 +27,7 @@ class SpotifyPlayer extends AbstractDBusMediaPlayer
             new NumericTitlePrefix("2.5 Admins", ':', ":Two:PointFiveAdmins:%s"),
             new NumericTitlePrefix("Coder Radio", ':', ":CR:%s"),
             new NumericTitlePrefix("Hardware Addicts", ':', ":Hardware:Addicts:%s"),
+            new NumericTitlePrefix("Libertarian Christian Podcast", ':', ":Libertarian:Christian:Podcast:%s"),
             new NumericTitlePrefix("LINUX Unplugged", ':', ":LUP:%s"),
             new NumericTitleSuffix("Linux Action News", ' ', ":LinuxAction:News:%s"),
             new NumericTitlePrefix("Self-Hosted", ':', ":Self:Hosted:Podcast:%s"),

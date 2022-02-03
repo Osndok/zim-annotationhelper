@@ -16,6 +16,7 @@ class NumericTitlePrefix implements SpotifyPodcast
     }
 
     public static final String EPISODE_PREFIX_1 = "Episode ";
+    public static final String EPISODE_PREFIX_2 = "Ep ";
 
     @Override
     public
@@ -65,6 +66,11 @@ class NumericTitlePrefix implements SpotifyPodcast
         if (title.startsWith(EPISODE_PREFIX_1))
         {
             title = title.substring(EPISODE_PREFIX_1.length());
+        }
+
+        if (title.startsWith(EPISODE_PREFIX_2))
+        {
+            title = title.substring(EPISODE_PREFIX_2.length());
         }
 
         title = title.replace("| ", "");
