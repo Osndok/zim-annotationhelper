@@ -19,6 +19,11 @@ class JoeRogan implements SpotifyPodcast
         final
         String subShow;
 
+        if (firstHash < 0)
+        {
+            return null;
+        }
+
         if (firstHash == 0)
         {
             title = title.substring(1).replace("- ", "").trim();
