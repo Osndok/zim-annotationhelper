@@ -24,6 +24,10 @@ class SpotifyPlayer extends AbstractDBusMediaPlayer
             new FreeTalk(),
             new JoeRogan(),
             new LateNightLinux(),
+
+            new NumberSign("Monero Talk", ":Monero:Talk:%s"),
+
+            new NumericTitlePrefix("Funky Crypto Podcast", ':', ":Funky:CryptoPodcast:%s"),
             new NumericTitlePrefix("Ask Noah Show", ':', ":NoahChelliah:Ask:%s"),
             new NumericTitlePrefix("2.5 Admins", ':', ":Two:PointFiveAdmins:%s"),
             new NumericTitlePrefix("Coder Radio", ':', ":CR:%s"),

@@ -163,6 +163,14 @@ class SpotifyPodcastParsingTests
         assertThat(r.zimPage).isEqualTo(":Liberty:Lockdown:123");
     }
 
+    @Test
+    public void moneroTalk()
+    {
+        var r = testCase("Monero Talk", "SUBSHOW EPI #123: Description goes here");
+        assertThat(r.number).isEqualTo("123");
+        assertThat(r.zimPage).isEqualTo(":Monero:Talk:123");
+    }
+
     private
     ParsedTitle testCase(final String album, final String title)
     {
