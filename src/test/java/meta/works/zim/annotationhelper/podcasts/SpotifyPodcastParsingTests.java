@@ -155,6 +155,14 @@ class SpotifyPodcastParsingTests
         assertThat(r.zimPage).isEqualTo(":FreeTalk:Digest:2022:01:03");
     }
 
+    @Test
+    public void libertyLockdown()
+    {
+        var r = testCase("Liberty Lockdown", "Ep 123 Ian Crossland and the Nature of the Universe");
+        assertThat(r.number).isEqualTo("123");
+        assertThat(r.zimPage).isEqualTo(":Liberty:Lockdown:123");
+    }
+
     private
     ParsedTitle testCase(final String album, final String title)
     {
