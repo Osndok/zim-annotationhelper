@@ -24,6 +24,7 @@ class SpotifyPlayer extends AbstractDBusMediaPlayer
             new FreeTalk(),
             new JoeRogan(),
             new LateNightLinux(),
+            new OrangePill(),
 
             new NumberSign("Monero Talk", ":Monero:Talk:%s"),
 

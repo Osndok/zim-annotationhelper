@@ -5,6 +5,7 @@ class NumberSign implements SpotifyPodcast
 {
     private final String album;
     private final String zimPageFormat;
+    protected String numberIndicator = "#";
 
     public
     NumberSign(final String album, final String zimPageFormat)
@@ -24,9 +25,9 @@ class NumberSign implements SpotifyPodcast
     public
     ParsedTitle parseTitle(final String title)
     {
-        int hash = title.lastIndexOf('#');
+        int indicatorPosition = title.lastIndexOf(numberIndicator);
 
-        if (hash < 0)
+        if (indicatorPosition < 0)
         {
             return null;
         }
@@ -35,7 +36,7 @@ class NumberSign implements SpotifyPodcast
         int l = title.length();
         int noise = 0;
 
-        for (int i=hash+1; i<l; i++)
+        for (int i = indicatorPosition + numberIndicator.length(); i < l; i++)
         {
             char c = title.charAt(i);
             if (Character.isDigit(c))

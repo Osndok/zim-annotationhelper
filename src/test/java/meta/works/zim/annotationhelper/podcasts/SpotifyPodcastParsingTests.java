@@ -171,6 +171,14 @@ class SpotifyPodcastParsingTests
         assertThat(r.zimPage).isEqualTo(":Monero:Talk:123");
     }
 
+    @Test
+    public void orangePill()
+    {
+        var r = testCase("Orange Pill Podcast", "Orange Pill [OP57] - Remembering");
+        assertThat(r.number).isEqualTo("57");
+        assertThat(r.zimPage).isEqualTo(":Orange:Pill:57");
+    }
+
     private
     ParsedTitle testCase(final String album, final String title)
     {
