@@ -56,7 +56,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 		return "rhythmbox";
 	}
 
-	boolean kludge_automaticHalt;
+	boolean automaticallyStoppingForPlayerHandoff;
 
 	@Override
 	StateChangeReturn onStateChange(StateSnapshot was, StateSnapshot now, long age) throws IOException, InterruptedException
@@ -64,7 +64,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 		//NB: we often get a 'paused' state before 'playing'.
 		if (now.getUrl()!=null && now.getPlayState() != Stopped)
 		{
-			if (kludge_automaticHalt)
+			if (automaticallyStoppingForPlayerHandoff)
 			{
 				log.debug("kludge_automaticHalt");
 				return null;
@@ -85,7 +85,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			if (LooksLike.videoFile(now.getUrl()))
 			{
 				stopPlayback();
-				kludge_automaticHalt=true;
+				automaticallyStoppingForPlayerHandoff = true;
 
 				//If vlc is already playing (or *paused*) with this file open, then just tell vlc to resume
 				if (vlcHasThisFileOpen(now.getUrl()))
@@ -118,11 +118,11 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			//probably music...
 			if (was.getZimPage()!=null)
 			{
-				if (kludge_automaticHalt)
+				if (automaticallyStoppingForPlayerHandoff)
 				{
 					//mute meaningless 'finished', as vlc is playing... or it otherwise never really started.
 					log.debug("intercepted 'finished' message (zim page became null)");
-					kludge_automaticHalt=false;
+					automaticallyStoppingForPlayerHandoff =false;
 				}
 				else
 				if (isRecent(was))
@@ -147,7 +147,7 @@ class RhythmBoxMediaPlayer extends AbstractDBusMediaPlayer
 			return null;
 		}
 
-		kludge_automaticHalt=false;
+		automaticallyStoppingForPlayerHandoff = false;
 
 		final
 		boolean changedShows=!was.sameShowAs(now);

@@ -145,10 +145,17 @@ class SpotifyPlayer extends AbstractDBusMediaPlayer
             else
             {
                 log.info("was {}, but now {}", was, now);
+                content2contentChange(was, now);
             }
         }
 
         return null;
+    }
+
+    private
+    void content2contentChange(final StateSnapshot was, final StateSnapshot now)
+    {
+
     }
 
     private
