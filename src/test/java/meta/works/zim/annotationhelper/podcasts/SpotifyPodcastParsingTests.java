@@ -179,6 +179,14 @@ class SpotifyPodcastParsingTests
         assertThat(r.zimPage).isEqualTo(":Orange:Pill:57");
     }
 
+    @Test
+    public void lexFridman()
+    {
+        var r = testCase("Lex Fridman Podcast", "#123 - Summary");
+        assertThat(r.number).isEqualTo("123");
+        assertThat(r.zimPage).isEqualTo(":LexFridman:Podcast:123");
+    }
+
     private
     ParsedTitle testCase(final String album, final String title)
     {

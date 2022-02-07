@@ -33,6 +33,7 @@ class SpotifyPlayer extends AbstractDBusMediaPlayer
             new NumericTitlePrefix("2.5 Admins", ':', ":Two:PointFiveAdmins:%s"),
             new NumericTitlePrefix("Coder Radio", ':', ":CR:%s"),
             new NumericTitlePrefix("Hardware Addicts", ':', ":Hardware:Addicts:%s"),
+            new NumericTitlePrefix("Lex Fridman Podcast", ' ', ":LexFridman:Podcast:%s"),
             new NumericTitlePrefix("Libertarian Christian Podcast", ':', ":Libertarian:Christian:Podcast:%s"),
             new NumericTitlePrefix("Liberty Lockdown", ' ', ":Liberty:Lockdown:%s"),
             new NumericTitlePrefix("LINUX Unplugged", ':', ":LUP:%s"),

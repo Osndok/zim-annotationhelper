@@ -1,5 +1,7 @@
 package meta.works.zim.annotationhelper.podcasts;
 
+import java.util.List;
+
 public
 class NumericTitlePrefix implements SpotifyPodcast
 {
@@ -15,8 +17,11 @@ class NumericTitlePrefix implements SpotifyPodcast
         this.zimPageFormatString = zimPageFormatString;
     }
 
-    public static final String EPISODE_PREFIX_1 = "Episode ";
-    public static final String EPISODE_PREFIX_2 = "Ep ";
+    private static final List<String> EPISODE_PREFIX_NOISE = List.of(
+        "Episode ",
+        "Ep ",
+        "#"
+    );
 
     @Override
     public
@@ -63,14 +68,12 @@ class NumericTitlePrefix implements SpotifyPodcast
             title = title.substring(0, title.length()-album.length());
         }
 
-        if (title.startsWith(EPISODE_PREFIX_1))
+        for (String prefix : EPISODE_PREFIX_NOISE)
         {
-            title = title.substring(EPISODE_PREFIX_1.length());
-        }
-
-        if (title.startsWith(EPISODE_PREFIX_2))
-        {
-            title = title.substring(EPISODE_PREFIX_2.length());
+            if (title.startsWith(prefix))
+            {
+                title = title.substring(prefix.length());
+            }
         }
 
         title = title.replace("| ", "");
