@@ -60,12 +60,12 @@ class NumericTitlePrefix implements SpotifyPodcast
     {
         if (title.startsWith(album))
         {
-            title = title.substring(album.length());
+            title = title.substring(album.length()).trim();
         }
 
         if (title.endsWith(album))
         {
-            title = title.substring(0, title.length()-album.length());
+            title = title.substring(0, title.length()-album.length()).trim();
         }
 
         for (String prefix : EPISODE_PREFIX_NOISE)
@@ -76,7 +76,8 @@ class NumericTitlePrefix implements SpotifyPodcast
             }
         }
 
-        title = title.replace("| ", "");
+        // This could also work as a stripped suffix.
+        title = title.replace("|", "");
 
         return title.trim();
     }
