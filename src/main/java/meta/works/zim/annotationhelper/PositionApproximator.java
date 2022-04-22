@@ -51,6 +51,12 @@ class PositionApproximator
         if (now.playState != PlayState.Playing)
         {
             log.trace("not accumulating time while {}", now.playState);
+
+            if (now.url == null)
+            {
+                return 0L;
+            }
+
             return getState(now.url).accumulatedMiillis;
         }
 
