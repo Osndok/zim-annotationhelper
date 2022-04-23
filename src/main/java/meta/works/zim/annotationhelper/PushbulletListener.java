@@ -1,9 +1,7 @@
 package meta.works.zim.annotationhelper;
 
 import com.github.sheigutn.pushbullet.Pushbullet;
-import com.github.sheigutn.pushbullet.ephemeral.Ephemeral;
-import com.github.sheigutn.pushbullet.ephemeral.SmsChangedEphemeral;
-import com.github.sheigutn.pushbullet.ephemeral.SmsNotification;
+import com.github.sheigutn.pushbullet.ephemeral.*;
 import com.github.sheigutn.pushbullet.items.device.Device;
 import com.github.sheigutn.pushbullet.items.push.sendable.defaults.SendableNotePush;
 import com.github.sheigutn.pushbullet.items.push.sent.Push;
@@ -252,7 +250,6 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 
 				case PUSH:
 				{
-					//log.debug("got PUSH: {}", streamMessage.toString());
 					handlePushStreamMessage((PushStreamMessage)streamMessage);
 					break;
 				}
@@ -297,6 +294,65 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 				handleSmsNotification(sourceDeviceId, notification);
 			}
 		}
+
+		if (ephemeral instanceof NotificationEphemeral)
+		{
+			final
+			NotificationEphemeral notification = (NotificationEphemeral)ephemeral;
+			var id = notification.getNotificationId();
+			var appPackage = notification.getPackageName();
+			var app = notification.getApplicationName();
+			var title = notification.getTitle();
+			LogAndRememberNotification(id, appPackage, app, title);
+		}
+
+		if (ephemeral instanceof DismissalEphemeral)
+		{
+			final
+			DismissalEphemeral dismissal = (DismissalEphemeral)ephemeral;
+			var id = dismissal.getNotificationId();
+			var appPackage = dismissal.getPackageName();
+			PopAndLogDismissedNotification(id, appPackage);
+		}
+	}
+
+	private final
+	Map<String,String> notificationsById = new HashMap<>();
+
+	private
+	void LogAndRememberNotification(
+			final String id,
+			final String appPackage,
+			final String app,
+			final String title) throws	IOException, InterruptedException
+	{
+		var summary = app+": "+title;
+		if (notificationsById.size() > 10_000)
+		{
+			notificationsById.clear();
+		}
+		notificationsById.put(id, summary);
+		zimPageAppender.journalNote(summary);
+	}
+
+	private
+	void PopAndLogDismissedNotification(final String id, final String appPackage) throws
+																				  IOException,
+																				  InterruptedException
+	{
+		var summary = notificationsById.remove(id);
+		if (summary == null)
+		{
+			summary = "Unknown "+appPackage+" notification";
+		}
+
+		// There are so many slack notifications, it's not worth logging their dismissal.
+		if (appPackage.equals("com.Slack"))
+		{
+			return;
+		}
+
+		zimPageAppender.journalNote("dismissed: "+summary);
 	}
 
 	private
