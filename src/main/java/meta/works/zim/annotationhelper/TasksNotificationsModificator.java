@@ -17,12 +17,24 @@ class TasksNotificationsModificator
     public
     void OnNotificationDisplayed(final String id, final String title) throws IOException, InterruptedException
     {
+        if (title.endsWith(" tasks"))
+        {
+            return;
+        }
+
+        // TODO: If this was just recently dismissed, then suppress both this and the original dismissal message.
         zimPageAppender.journalNote("Task: "+title);
     }
 
     public
-    void OnNotificationDismissed(final String id, final String summary) throws IOException, InterruptedException
+    void OnNotificationDismissed(final String id, final String title) throws IOException, InterruptedException
     {
-        zimPageAppender.journalNote("dismissed: Task: "+summary);
+        if (title.endsWith(" tasks"))
+        {
+            return;
+        }
+
+        // TODO: defer this, a few seconds, to see if it is instantly put back on the screen.
+        zimPageAppender.journalNote("dismissed: Task: "+title);
     }
 }
