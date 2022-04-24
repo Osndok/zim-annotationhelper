@@ -53,10 +53,14 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	private final
 	ZimPageAppender zimPageAppender=new ZimPageAppender();
 
+	private final
+	TasksNotificationsModificator tasks;
+
 	public
 	PushbulletListener()
 	{
 		this.pushbullet=new Pushbullet(getApiKey());
+		this.tasks = new TasksNotificationsModificator(zimPageAppender);
 	}
 
 	@Override
@@ -331,6 +335,14 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		{
 			notificationsById.clear();
 		}
+
+		if (appPackage.equals("org.tasks"))
+		{
+			notificationsById.put(id, title);
+			tasks.OnNotificationDisplayed(id, title);
+			return;
+		}
+
 		notificationsById.put(id, summary);
 		zimPageAppender.journalNote(summary);
 	}
@@ -349,6 +361,12 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		// There are so many slack notifications, it's not worth logging their dismissal.
 		if (appPackage.equals("com.Slack"))
 		{
+			return;
+		}
+
+		if (appPackage.equals("org.tasks"))
+		{
+			tasks.OnNotificationDismissed(id, summary);
 			return;
 		}
 
