@@ -1,16 +1,21 @@
 package meta.works.zim.annotationhelper;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 
 public
 class TasksNotificationsModificator
 {
     private final ZimPageAppender zimPageAppender;
+    private final Timer timer = new Timer();
+    private final Map<String, DeferLoggingDismissalMessage> deferredDismissalsByTitle = new ConcurrentHashMap<>();
 
     public
     TasksNotificationsModificator(final ZimPageAppender zimPageAppender)
     {
-
         this.zimPageAppender = zimPageAppender;
     }
 
@@ -22,8 +27,18 @@ class TasksNotificationsModificator
             return;
         }
 
-        // TODO: If this was just recently dismissed, then suppress both this and the original dismissal message.
-        zimPageAppender.journalNote("Task: "+title);
+        var deferred = deferredDismissalsByTitle.get(title);
+
+        // If we are reinstating a task title that was just recently dismissed, then suppress both this activation and the original/deferred dismissal message.
+        if (deferred != null && deferred.stillValid)
+        {
+            deferred.cancel();
+        }
+        else
+        {
+            // Otherwise, just log it as a task.
+            zimPageAppender.journalNote("Task: " + title);
+        }
     }
 
     public
@@ -34,8 +49,9 @@ class TasksNotificationsModificator
             return;
         }
 
-        // TODO: defer this, a few seconds, to see if it is instantly put back on the screen.
-        zimPageAppender.journalNote("dismissed: Task: "+title);
+        var deferred = new DeferLoggingDismissalMessage(title);
+        deferredDismissalsByTitle.put(title, deferred);
+        timer.schedule(deferred, 2000);
     }
 
     private
@@ -43,5 +59,49 @@ class TasksNotificationsModificator
     {
         // COPYPASTA WARNING: We rely on the fact that we already know there is one space
         return s.indexOf(' ') == s.lastIndexOf(' ');
+    }
+
+    private
+    class DeferLoggingDismissalMessage
+            extends TimerTask
+    {
+        final String title;
+        volatile boolean stillValid = true;
+
+        private
+        DeferLoggingDismissalMessage(final String title)
+        {
+            this.title = title;
+        }
+
+        @Override
+        public
+        void run()
+        {
+            neutralize();
+            try
+            {
+                zimPageAppender.journalNote("dismissed: Task: "+title);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        private
+        void neutralize()
+        {
+            stillValid = false;
+            deferredDismissalsByTitle.remove(title, this);
+        }
+
+        @Override
+        public
+        boolean cancel()
+        {
+            neutralize();
+            return super.cancel();
+        }
     }
 }
