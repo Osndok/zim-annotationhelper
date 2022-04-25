@@ -305,7 +305,8 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			var appPackage = notification.getPackageName();
 			var app = notification.getApplicationName();
 			var title = notification.getTitle();
-			LogAndRememberNotification(id, appPackage, app, title);
+			var body = notification.getBody();
+			LogAndRememberNotification(id, appPackage, app, title, body);
 		}
 
 		if (ephemeral instanceof DismissalEphemeral)
@@ -326,9 +327,23 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			final String id,
 			final String appPackage,
 			final String app,
-			final String title) throws	IOException, InterruptedException
+			final String title, final String body
+	) throws IOException, InterruptedException
 	{
-		var summary = app+": "+title;
+		String summary = app + ": " + title;
+
+		String summaryWithBody;
+		{
+			if (body == null || body.trim().isEmpty())
+			{
+				summaryWithBody = app + ": " + title;
+			}
+			else
+			{
+				summaryWithBody = app + ": " + title + ": " + body;
+			}
+		}
+
 		if (notificationsById.size() > 10_000)
 		{
 			notificationsById.clear();
@@ -349,7 +364,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		}
 		else
 		{
-			zimPageAppender.journalNote(summary);
+			zimPageAppender.journalNote(summaryWithBody);
 		}
 	}
 
