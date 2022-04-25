@@ -17,7 +17,7 @@ class TasksNotificationsModificator
     public
     void OnNotificationDisplayed(final String id, final String title) throws IOException, InterruptedException
     {
-        if (title.endsWith(" tasks"))
+        if (title.endsWith(" tasks") && OneSpace(title))
         {
             return;
         }
@@ -29,12 +29,19 @@ class TasksNotificationsModificator
     public
     void OnNotificationDismissed(final String id, final String title) throws IOException, InterruptedException
     {
-        if (title.endsWith(" tasks"))
+        if (title.endsWith(" tasks") && OneSpace(title))
         {
             return;
         }
 
         // TODO: defer this, a few seconds, to see if it is instantly put back on the screen.
         zimPageAppender.journalNote("dismissed: Task: "+title);
+    }
+
+    private
+    boolean OneSpace(final String s)
+    {
+        // COPYPASTA WARNING: We rely on the fact that we already know there is one space
+        return s.indexOf(' ') == s.lastIndexOf(' ');
     }
 }
