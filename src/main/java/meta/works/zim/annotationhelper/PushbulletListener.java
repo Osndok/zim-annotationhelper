@@ -25,14 +25,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -55,6 +48,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 
 	private final
 	TasksNotificationsModificator tasks;
+
+	private final
+	Set<String> summariesToIgnore = Set.of(
+			"F-Droid: Update ready to install"
+	);
 
 	public
 	PushbulletListener()
@@ -344,7 +342,15 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		}
 
 		notificationsById.put(id, summary);
-		zimPageAppender.journalNote(summary);
+
+		if (summariesToIgnore.contains(summary))
+		{
+			log.debug("ignore: {}", summary);
+		}
+		else
+		{
+			zimPageAppender.journalNote(summary);
+		}
 	}
 
 	private
@@ -370,7 +376,14 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			return;
 		}
 
-		zimPageAppender.journalNote("dismissed: "+summary);
+		if (summariesToIgnore.contains(summary))
+		{
+			log.debug("ignore dismissed: {}", summary);
+		}
+		else
+		{
+			zimPageAppender.journalNote("dismissed: " + summary);
+		}
 	}
 
 	private
