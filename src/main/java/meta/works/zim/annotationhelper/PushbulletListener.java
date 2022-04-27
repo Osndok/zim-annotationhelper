@@ -330,6 +330,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			final String title, final String body
 	) throws IOException, InterruptedException
 	{
+		if (DontCareAbout(appPackage, app, title, body))
+		{
+			return;
+		}
+
 		String summary = app + ": " + title;
 
 		String summaryWithBody;
@@ -337,6 +342,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			if (body == null || body.trim().isEmpty())
 			{
 				summaryWithBody = app + ": " + title;
+			}
+			else
+			if (body.length() > 800)
+			{
+				summaryWithBody = app + ": " + title + ": (" + body.length() + " characters)";
 			}
 			else
 			{
@@ -366,6 +376,17 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		{
 			zimPageAppender.journalNote(summaryWithBody);
 		}
+	}
+
+	private
+	boolean DontCareAbout(final String appPackage, final String app, final String title, final String body)
+	{
+		if (app.equals("F-Droid") && body.startsWith("Downloading update for"))
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	private
