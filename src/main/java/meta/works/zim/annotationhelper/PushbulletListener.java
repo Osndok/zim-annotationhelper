@@ -368,6 +368,14 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 
 		notificationsById.put(id, summary);
 
+		for (String prefix : prefixesToTrim)
+		{
+			if (summaryWithBody.startsWith(prefix))
+			{
+				summaryWithBody = summaryWithBody.substring(prefix.length());
+			}
+		}
+
 		if (summariesToIgnore.contains(summary))
 		{
 			log.debug("ignore: {}", summary);
@@ -377,6 +385,12 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			zimPageAppender.journalNote(summaryWithBody);
 		}
 	}
+
+	private final
+	List<String> prefixesToTrim = List.of(
+			"Slack: Thread in ",
+			"Slack: "
+	);
 
 	private
 	boolean DontCareAbout(final String appPackage, final String app, final String title, final String body)
