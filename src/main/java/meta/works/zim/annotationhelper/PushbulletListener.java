@@ -409,9 +409,17 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 																				  InterruptedException
 	{
 		var summary = notificationsById.remove(id);
+
 		if (summary == null)
 		{
-			summary = "Unknown "+appPackage+" notification #"+id;
+			if (appPackage.equals("sms") && id.equals("0"))
+			{
+				summary = "sms";
+			}
+			else
+			{
+				summary = "Unknown " + appPackage + " notification #" + id;
+			}
 		}
 
 		// There are so many slack notifications, it's not worth logging their dismissal.
