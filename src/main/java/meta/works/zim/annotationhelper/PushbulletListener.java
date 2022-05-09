@@ -14,6 +14,7 @@ import com.github.sheigutn.pushbullet.stream.message.StreamMessage;
 import com.github.sheigutn.pushbullet.stream.message.TickleStreamMessage;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import meta.works.zim.annotationhelper.util.LossySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -322,12 +323,16 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	private final
 	Map<String,String> notificationsById = new HashMap<>();
 
+	private final
+	Set<String> slackBodyBitsSeen = new LossySet<>(100);
+
 	private
 	void LogAndRememberNotification(
 			final String id,
 			final String appPackage,
 			final String app,
-			final String title, final String body
+			final String title,
+			String body
 	) throws IOException, InterruptedException
 	{
 		if (DontCareAbout(appPackage, app, title, body))
@@ -347,6 +352,35 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			if (body.length() > 800)
 			{
 				summaryWithBody = app + ": " + title + ": (" + body.length() + " characters)";
+			}
+			else if (appPackage.equals("com.Slack"))
+			{
+				var bits = body.split("\n");
+				var sb = new StringBuilder();
+				// Remove leading body elements that we have seen before.
+				for (String bit : bits)
+				{
+					// If we have accepted one bit, then accept all that follow.
+					if (sb.length() != 0)
+					{
+						sb.append('\n');
+						sb.append(bit);
+						slackBodyBitsSeen.add(bit);
+						continue;
+					}
+
+					if (slackBodyBitsSeen.add(bit))
+					{
+						sb.append(bit);
+					}
+					else
+					{
+						log.debug("Dropping seen slack body bit: {}", bit);
+					}
+				}
+				body = sb.toString();
+				log.debug("New slack body: {}", body);
+				summaryWithBody = app + ": " + title + ": " + body;
 			}
 			else
 			{
