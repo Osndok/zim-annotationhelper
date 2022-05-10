@@ -410,6 +410,16 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			}
 		}
 
+		for (String truncationPoint : truncationPoints)
+		{
+			int i = summaryWithBody.indexOf(truncationPoint);
+
+			if (i > 0)
+			{
+				summaryWithBody = summaryWithBody.substring(0, i);
+			}
+		}
+
 		if (summariesToIgnore.contains(summary))
 		{
 			log.debug("ignore: {}", summary);
@@ -424,6 +434,12 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	List<String> prefixesToTrim = List.of(
 			"Slack: Thread in ",
 			"Slack: "
+	);
+
+	private final
+	List<String> truncationPoints = List.of(
+			"View all the results.",
+			"Check activity"
 	);
 
 	private
