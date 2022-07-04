@@ -445,7 +445,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	private
 	boolean DontCareAbout(final String appPackage, final String app, final String title, final String body)
 	{
-		if (app.equals("F-Droid") && body.startsWith("Downloading update for"))
+		if (app.equals("F-Droid") /*&& body.startsWith("Downloading update for")*/)
 		{
 			return true;
 		}
@@ -473,7 +473,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		}
 
 		// There are so many slack notifications, it's not worth logging their dismissal.
-		if (appPackage.equals("com.Slack"))
+		if (appPackage.equals("com.Slack") || appPackage.startsWith("org.fdroid"))
 		{
 			return;
 		}
