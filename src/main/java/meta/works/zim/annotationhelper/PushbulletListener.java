@@ -445,7 +445,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	private
 	boolean DontCareAbout(final String appPackage, final String app, final String title, final String body)
 	{
-		if (app.equals("F-Droid") /*&& body.startsWith("Downloading update for")*/)
+		if (appPackage.startsWith("org.fdroid") || app.equals("F-Droid"))
 		{
 			return true;
 		}
