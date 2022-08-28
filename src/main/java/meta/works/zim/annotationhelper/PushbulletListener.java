@@ -438,8 +438,14 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 
 	private final
 	List<String> truncationPoints = List.of(
+			"About craigslist mail:",
+			"view posting edit",
+			"view all edit unsubscribe",
+			"about search alerts",
 			"View all the results.",
-			"Check activity"
+			"Check activity",
+			"this mandatory email",
+			"Manage family group"
 	);
 
 	private
