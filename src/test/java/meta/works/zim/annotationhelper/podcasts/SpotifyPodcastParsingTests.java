@@ -148,6 +148,14 @@ class SpotifyPodcastParsingTests
     }
 
     @Test
+    public void freeTalkLive2()
+    {
+        var r = testCase("Free Talk Live", "Free Talk Live 2022-05-31 - Ron Paul Interview");
+        assertThat(r.number).isEqualTo("2022:05:31");
+        assertThat(r.zimPage).isEqualTo(":FreeTalk:Live:2022:05:31");
+    }
+
+    @Test
     public void freeTalkDigest()
     {
         var r = testCase("Free Talk Live", "FTL Digest 2022-01-03");

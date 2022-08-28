@@ -11,11 +11,16 @@ class FreeTalk extends DateTitleSuffix
 
     @Override
     public
-    ParsedTitle parseTitle(final String title)
+    ParsedTitle parseTitle(String title)
     {
         if (title.startsWith("Free Talk Live "))
         {
             zimPageFormatString = ":FreeTalk:Live:%s";
+            int i = title.indexOf(" - ");
+            if (i > 0)
+            {
+                title = title.substring(0, i);
+            }
             return super.parseTitle(title);
         }
 
