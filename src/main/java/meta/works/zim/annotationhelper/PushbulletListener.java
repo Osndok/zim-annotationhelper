@@ -456,6 +456,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			return true;
 		}
 
+		if (appPackage.equals("com.google.android.gms") || app.equals("Google Play services"))
+		{
+			return true;
+		}
+
 		return false;
 	}
 
@@ -476,6 +481,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			{
 				summary = "Unknown " + appPackage + " notification #" + id;
 			}
+		}
+
+		// TODO: Save all the parameters, to better feed this.
+		if (DontCareAbout(appPackage, "?", summary, "?")) {
+			return;
 		}
 
 		// There are so many slack notifications, it's not worth logging their dismissal.
