@@ -55,6 +55,9 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			"F-Droid: Update ready to install"
 	);
 
+	private final
+	PhoneNumberLinker phoneNumberLinker = new PhoneNumberLinker();
+
 	public
 	PushbulletListener()
 	{
@@ -331,13 +334,18 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			final String id,
 			final String appPackage,
 			final String app,
-			final String title,
+			String title,
 			String body
 	) throws IOException, InterruptedException
 	{
 		if (DontCareAbout(appPackage, app, title, body))
 		{
 			return;
+		}
+
+		if (app.equals("Phone"))
+		{
+			title = phoneNumberLinker.linkifyPhoneNumber(title);
 		}
 
 		String summary = app + ": " + title;
