@@ -27,6 +27,9 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	private static final
 	long RECENT_ACTIVITY_THRESHOLD = TimeUnit.MINUTES.toMillis(5);
 
+	// How long of a pause, in milliseconds, before we will spawn another 'now playing' log message?
+	private static final long NEW_PLAY_SESSION_TIMEOUT = TimeUnit.HOURS.toMillis(1);
+
 	private long lastStateChangeCallback=System.currentTimeMillis();
 
 	abstract String getDBusSenderSuffix();
@@ -100,6 +103,8 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 	private final
 	PositionApproximator positionApproximator = new PositionApproximator();
 
+	long lastStateChange;
+
 	private
 	void run2() throws Exception
 	{
@@ -131,17 +136,23 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 			else
 			{
 				// Please let me know if you ever get this message spammed at you... :)
-				log.debug("spotify mpris position seems to be working");
+				log.debug("spotify mpris position seems to be working: {}", newState.position);
 			}
 		}
 
 		if (warrantsFiringCallback(previousState, newState))
 		{
 			log.debug("onStateChange: {} -> {}", previousState, newState);
+			long staleThreshold = System.currentTimeMillis() - NEW_PLAY_SESSION_TIMEOUT;
 
 			if (newState.getPlayState() == PlayState.Playing)
 			{
-				if (newState.refersToSameContentAs(previousState) && previousState.playState== PlayState.Paused)
+				// TODO: add exception: last state change was a long time ago
+				if (
+					previousState.playState== PlayState.Paused
+					&& lastStateChange > staleThreshold
+					&& newState.refersToSameContentAs(previousState)
+			    )
 				{
 					log.debug("Suppressing notebook entry for play/pause pair");
 				}
@@ -161,6 +172,8 @@ class AbstractDBusMediaPlayer extends Thread implements DBusSigHandler
 					ignoringDocumentedReplay = EndMarker.isPresentIn(zimPageFile);
 				}
 			}
+
+			lastStateChange = System.currentTimeMillis();
 
 			if (ignoringDocumentedReplay)
 			{
