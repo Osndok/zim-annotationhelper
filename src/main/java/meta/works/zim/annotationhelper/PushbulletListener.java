@@ -954,13 +954,33 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 
 		if (sender != null && !sender.isEmpty())
 		{
-			var summary = sender+": "+note.getBody();
+			var summary = sender+": "+summarize(note);
 			zimPageAppender.journalNote(summary);
 			return;
 		}
 
 		//NB: This logs even when the user dismisses an item.
 		log.debug("ignoring note: '{}' / {}", note.getTitle(), note.getBody());
+	}
+
+	private
+	String summarize(final NotePush note)
+	{
+		if (isTrivial(note.getBody()))
+		{
+			if (isTrivial(note.getTitle()))
+			{
+				return note.toString();
+			}
+			else
+			{
+				return note.getTitle();
+			}
+		}
+		else
+		{
+			return String.format("%s: %s", note.getTitle(), note.getBody());
+		}
 	}
 
 	private
