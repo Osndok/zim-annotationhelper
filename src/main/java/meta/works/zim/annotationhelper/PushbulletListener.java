@@ -955,6 +955,14 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		if (sender != null && !sender.isEmpty())
 		{
 			var summary = sender+": "+summarize(note);
+			if (note.isDismissed())
+			{
+				if (summary.length() > 100)
+				{
+					summary = summary.substring(0, 100);
+				}
+				summary = "Dismissed: " + summary;
+			}
 			zimPageAppender.journalNote(summary);
 			return;
 		}
@@ -976,6 +984,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			{
 				return note.getTitle();
 			}
+		}
+		else
+		if (isTrivial(note.getTitle()))
+		{
+			return note.getBody();
 		}
 		else
 		{
