@@ -957,9 +957,9 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			var summary = sender+": "+summarize(note);
 			if (note.isDismissed())
 			{
-				if (summary.length() > 100)
+				if (summary.length() > 47)
 				{
-					summary = summary.substring(0, 100);
+					summary = summary.substring(0, 47) + "...";
 				}
 				summary = "Dismissed: " + summary;
 			}
