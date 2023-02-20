@@ -38,6 +38,9 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	private static final
 	Logger log = LoggerFactory.getLogger(PushbulletListener.class);
 
+	private static final
+	String ME = System.getProperty("google.account.name", "Robert H");
+
 	private final
 	Pushbullet pushbullet;
 
@@ -955,13 +958,20 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		if (sender != null && !sender.isEmpty())
 		{
 			var summary = sender+": "+summarize(note);
-			if (note.isDismissed())
+
+			if (sender.equals(ME))
+			{
+				// NB: outgoing replies are "immediately dismissed", and we don't want to truncate them.
+				// This is also the path for CLI-generated messages (not just replies).
+				summary = "self: " + summarize(note);
+			}
+			else if (note.isDismissed())
 			{
 				if (summary.length() > 47)
 				{
 					summary = summary.substring(0, 47) + "...";
 				}
-				summary = "Dismissed: " + summary;
+				summary = "dismissed: " + summary;
 			}
 			zimPageAppender.journalNote(summary);
 			return;
