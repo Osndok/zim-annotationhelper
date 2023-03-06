@@ -456,7 +456,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			"View all the results.",
 			"Check activity",
 			"this mandatory email",
-			"Manage family group"
+			"Manage family group",
+			"To check hours before heading to",
+			"Rx info, price & delivery options",
+			"See more highlights",
+			"to unsubscribe"
 	);
 
 	private
