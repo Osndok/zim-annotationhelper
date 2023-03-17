@@ -458,9 +458,10 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			"this mandatory email",
 			"Manage family group",
 			"To check hours before heading to",
-			"Rx info, price & delivery options",
+			"Rx info, price ",
 			"See more highlights",
-			"to unsubscribe"
+			"to unsubscribe",
+			"To check hours before heading"
 	);
 
 	private
