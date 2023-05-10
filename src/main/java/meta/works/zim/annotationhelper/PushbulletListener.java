@@ -15,6 +15,7 @@ import com.github.sheigutn.pushbullet.stream.message.TickleStreamMessage;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import meta.works.zim.annotationhelper.util.LossySet;
+import org.buildobjects.process.ProcBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -278,6 +279,23 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		catch (Exception e)
 		{
 			log.error("caught", e);
+			bestEffortTryToNotice(e);
+		}
+	}
+
+	private
+	void bestEffortTryToNotice(final Exception e)
+	{
+		try
+		{
+			var hasMessage = e.getMessage() != null;
+			var summary = hasMessage ? String.format("zah: %s", e.getClass().getSimpleName()) : "zah caught";
+			var body = hasMessage ? e.getMessage() : e.getClass().getSimpleName();
+			ProcBuilder.run("notify-send", "--expire-time", "3600000", summary, body);
+		}
+		catch (Exception e2)
+		{
+			log.error("additionally... could not alert user", e2);
 		}
 	}
 
