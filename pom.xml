@@ -45,6 +45,12 @@
 			<version>2.8.9</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.buildobjects</groupId>
+			<artifactId>jproc</artifactId>
+			<version>2.8.2</version>
+		</dependency>
+
 		<!--dependency>
 			<groupId>com.github.sheigutn</groupId>
 			<artifactId>pushbullet-java-8</artifactId>
