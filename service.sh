@@ -16,6 +16,8 @@ cd /
 
 test -d ~/.local/run || mkdir ~/.local/run
 
+PATH=~/.local/bin:~/bin:~/bin/shared:$PATH
+
 function status()
 {
 	if [ -r "$PID_FILE" ]
