@@ -133,6 +133,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 				public
 				void run()
 				{
+					if (true) return; // DISABLED
 					log.debug("replacing web socket");
 					replaceWebSocket();
 				}
@@ -479,7 +480,8 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			"Rx info, price ",
 			"See more highlights",
 			"to unsubscribe",
-			"To check hours before heading"
+			"To check hours before heading",
+			"Or reply:"
 	);
 
 	private
