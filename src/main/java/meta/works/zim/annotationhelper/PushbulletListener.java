@@ -93,11 +93,28 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	private
 	void replaceWebSocket()
 	{
-		if (this.websocketClient!=null)
+		if (this.websocketClient != null)
 		{
 			this.websocketClient.disconnect();
-			this.websocketClient=null;
+			this.websocketClient = null;
 		}
+		replaceWebSocketIfMissingOrDisconnected();
+	}
+
+	private
+	void replaceWebSocketIfMissingOrDisconnected()
+	{
+		if (websocketClient != null)
+		{
+			if (websocketClient.isConnected())
+			{
+				return;
+			}
+
+			websocketClient = null;
+		}
+
+		log.debug("replacing websocket");
 
 		try
 		{
@@ -118,6 +135,9 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	private final
 	long webSocketReplacementPeriod = TimeUnit.HOURS.toMillis(1);
 
+	private final
+	long webSocketCheckupPeriod = TimeUnit.MINUTES.toMillis(5);
+
 	public
 	void activate()
 	{
@@ -134,13 +154,27 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 				void run()
 				{
 					if (true) return; // DISABLED
-					log.debug("replacing web socket");
+					log.debug("proactively replacing web socket");
 					replaceWebSocket();
 				}
 			},
 			initialDelay,
 			webSocketReplacementPeriod
 			);
+
+			timer.schedule(new TimerTask()
+						   {
+							   @Override
+							   public
+							   void run()
+							   {
+								   replaceWebSocketIfMissingOrDisconnected();
+							   }
+						   },
+					webSocketCheckupPeriod,
+					webSocketCheckupPeriod
+			);
+
 		}
 		else
 		{
