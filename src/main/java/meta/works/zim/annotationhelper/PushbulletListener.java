@@ -515,7 +515,9 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			"See more highlights",
 			"to unsubscribe",
 			"To check hours before heading",
-			"Or reply:"
+			"Or reply:",
+			"Msg&DataRates",
+			"how likely are you to recommend"
 	);
 
 	private
