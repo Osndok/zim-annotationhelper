@@ -466,6 +466,21 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 
 		notificationsById.put(id, summary);
 
+		summaryWithBody = applyTrimAndTruncation(summaryWithBody);
+
+		if (summariesToIgnore.contains(summary))
+		{
+			log.debug("ignore: {}", summary);
+		}
+		else
+		{
+			zimPageAppender.journalNote(summaryWithBody);
+		}
+	}
+
+	private
+	String applyTrimAndTruncation(String summaryWithBody)
+	{
 		for (String prefix : prefixesToTrim)
 		{
 			if (summaryWithBody.startsWith(prefix))
@@ -484,14 +499,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			}
 		}
 
-		if (summariesToIgnore.contains(summary))
-		{
-			log.debug("ignore: {}", summary);
-		}
-		else
-		{
-			zimPageAppender.journalNote(summaryWithBody);
-		}
+		return summaryWithBody;
 	}
 
 	private final
@@ -612,6 +620,8 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		final
 		String threadPage;
 		{
+			var trimmedSmsBody = applyTrimAndTruncation(sms.getBody());
+
 			if (looksLikeGroupThread(name))
 			{
 				threadPage=String.format(":TXT:Thread:%s", threadId);
@@ -621,11 +631,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 
 				if (author==null)
 				{
-					body=sms.getBody();
+					body=trimmedSmsBody;
 				}
 				else
 				{
-					body=String.format("**%s** - %s", author, sms.getBody());
+					body=String.format("**%s** - %s", author, trimmedSmsBody);
 				}
 			}
 			else
