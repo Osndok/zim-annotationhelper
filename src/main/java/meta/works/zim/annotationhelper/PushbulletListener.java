@@ -389,7 +389,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	void LogAndRememberNotification(
 			final String id,
 			final String appPackage,
-			final String app,
+			String app,
 			String title,
 			String body
 	) throws IOException, InterruptedException
@@ -403,6 +403,8 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		{
 			title = phoneNumberLinker.linkifyPhoneNumber(title);
 		}
+
+		app = filterAppName(app);
 
 		String summary = app + ": " + title;
 
@@ -477,6 +479,16 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			zimPageAppender.journalNote(summaryWithBody);
 		}
 	}
+
+	private
+	String filterAppName(final String app)
+	{
+		return appNameTranslations.getOrDefault(app, app);
+	}
+
+	private static final Map<String,String> appNameTranslations = Map.of(
+			"Infinity", "Reddit"
+	);
 
 	private
 	String applyTrimAndTruncation(String summaryWithBody)
