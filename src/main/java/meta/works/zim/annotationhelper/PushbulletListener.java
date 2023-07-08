@@ -539,6 +539,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			"Msg&DataRates",
 			"how likely are you to recommend",
 			"TxtHelp",
+			"Text help",
 			"Text 0 for"
 	);
 
@@ -653,7 +654,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			else
 			{
 				threadPage=sanitizeForZimPageName(name);
-				body=sms.getBody();
+				body=trimmedSmsBody;
 			}
 		}
 
