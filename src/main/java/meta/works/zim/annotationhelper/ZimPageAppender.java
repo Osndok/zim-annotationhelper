@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -62,6 +63,54 @@ class ZimPageAppender
 		{
 			log.error("zim-plugin-append exit status {}", statusCode);
 		}
+	}
+
+	public
+	void journalNoteStuckOut(String memo) throws IOException, InterruptedException
+	{
+		log.debug("journalNoteStuckOut('{}')", memo);
+
+		if (memo.equals(lastJournalNote))
+		{
+			return;
+		}
+		lastJournalNote=memo;
+
+		var time = new SimpleDateFormat("hh:mmaa").format(new Date()).toLowerCase();
+		var struckTimeAndMemo = String.format("\n~~%s - %s~~\n", time, memo);
+
+		final
+		String[] command = new String[]
+				{
+						"zim", "--plugin", "append",
+						"--journal",
+						"--literal", struckTimeAndMemo
+				};
+
+		final
+		ProcessBuilder processBuilder = new ProcessBuilder(command);
+
+		final
+		Process process = processBuilder.start();
+
+		final
+		int statusCode = process.waitFor();
+
+		if (statusCode == 0)
+		{
+			log.trace("zim-plugin-append exit success");
+		}
+		else
+		{
+			log.error("zim-plugin-append exit status {}", statusCode);
+		}
+	}
+
+	public static
+	void main(String[] args) throws Exception
+	{
+		var zap = new ZimPageAppender();
+		zap.journalNoteStuckOut("testing");
 	}
 
 	public
