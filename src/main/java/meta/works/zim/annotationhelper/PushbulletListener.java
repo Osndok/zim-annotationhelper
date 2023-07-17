@@ -539,6 +539,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			"Msg&DataRates",
 			"how likely are you to recommend",
 			"TxtHelp",
+			"Txt STOP",
 			"Text help",
 			"Text 0 for"
 	);
