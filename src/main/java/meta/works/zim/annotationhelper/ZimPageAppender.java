@@ -66,9 +66,9 @@ class ZimPageAppender
 	}
 
 	public
-	void journalNoteStuckOut(String memo) throws IOException, InterruptedException
+	void journalNoteStruckOut(String memo) throws IOException, InterruptedException
 	{
-		log.debug("journalNoteStuckOut('{}')", memo);
+		log.debug("journalNoteStruckOut('{}')", memo);
 
 		if (memo.equals(lastJournalNote))
 		{
@@ -110,7 +110,7 @@ class ZimPageAppender
 	void main(String[] args) throws Exception
 	{
 		var zap = new ZimPageAppender();
-		zap.journalNoteStuckOut("testing");
+		zap.journalNoteStruckOut("testing");
 	}
 
 	public
