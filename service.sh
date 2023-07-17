@@ -16,7 +16,9 @@ cd /
 
 test -d ~/.local/run || mkdir ~/.local/run
 
-PATH=~/.local/bin:~/bin:~/bin/shared:$PATH
+# KLUDGY
+export DISPLAY=:0
+export PATH=~/.local/bin:~/bin:~/bin/shared:$PATH
 
 function status()
 {
