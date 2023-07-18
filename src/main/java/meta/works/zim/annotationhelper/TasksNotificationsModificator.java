@@ -81,7 +81,7 @@ class TasksNotificationsModificator
             neutralize();
             try
             {
-                zimPageAppender.journalNote("dismissed: Task: "+title);
+                zimPageAppender.journalNoteStruckOut("dismissed: Task: "+title);
             }
             catch (Exception e)
             {

@@ -602,7 +602,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		}
 		else
 		{
-			zimPageAppender.journalNote("dismissed: " + summary);
+			zimPageAppender.journalNoteStruckOut("dismissed: " + summary);
 		}
 	}
 
@@ -1051,6 +1051,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 				// NB: outgoing replies are "immediately dismissed", and we don't want to truncate them.
 				// This is also the path for CLI-generated messages (not just replies).
 				summary = "self: " + summarize(note);
+				zimPageAppender.journalNote(summary);
 			}
 			else if (note.isDismissed())
 			{
@@ -1059,8 +1060,12 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 					summary = summary.substring(0, 47) + "...";
 				}
 				summary = "dismissed: " + summary;
+				zimPageAppender.journalNoteStruckOut(summary);
 			}
-			zimPageAppender.journalNote(summary);
+			else
+			{
+				zimPageAppender.journalNote(summary);
+			}
 			return;
 		}
 
