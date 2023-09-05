@@ -49,7 +49,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	PushbulletWebsocketClient websocketClient;
 
 	private final
-	ZimPageAppender zimPageAppender=new ZimPageAppender();
+	ZimPageAppender zimPageAppender=new ZimPageAppenderImpl();
 
 	private final
 	TasksNotificationsModificator tasks;
