@@ -29,15 +29,17 @@ class ZimPageAppenderImpl
 
 	@Override
 	public
-	void journalNote(String memo) throws IOException, InterruptedException
+	void journalNote(String memo, Date effectiveDate) throws IOException, InterruptedException
 	{
-		log.debug("journalNote('{}')", memo);
+		log.debug("journalNote('{}', {})", memo, effectiveDate);
 
 		if (memo.equals(lastJournalNote))
 		{
 			return;
 		}
 		lastJournalNote=memo;
+
+		// TODO: Use effectiveDate to calculate page & time-prefix
 
 		final
 		String[] command = new String[]

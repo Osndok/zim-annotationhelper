@@ -2,11 +2,18 @@ package meta.works.zim.annotationhelper;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 public
 interface ZimPageAppender
 {
-    void journalNote(String memo) throws IOException, InterruptedException;
+    default
+    void journalNote(String memo) throws IOException, InterruptedException
+    {
+        journalNote(memo, new Date());
+    }
+
+    void journalNote(String memo, Date effectiveTime) throws IOException, InterruptedException;
 
     void journalNoteStruckOut(String memo) throws IOException, InterruptedException;
 
