@@ -282,9 +282,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			return;
 		}
 
+		muteIconField(streamMessage);
+
 		try
 		{
-			log.info("handle: {} / {}", streamMessage.getClass(), streamMessage.toString());
+			log.info("handle: {} / {}", streamMessage.getClass(), streamMessage);
 
 			switch (streamMessage.getType())
 			{
@@ -316,6 +318,20 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		{
 			log.error("caught", e);
 			bestEffortTryToNotice(e);
+		}
+	}
+
+	// Mostly to decrease log noise.
+	private
+	void muteIconField(final StreamMessage streamMessage)
+	{
+		if (streamMessage instanceof PushStreamMessage a)
+		{
+			if (a.getPush() instanceof NotificationEphemeral b)
+			{
+				// TODO: Maybe we replace it with a super-compact hash? (CAS)
+				b.setIcon("[...]");
+			}
 		}
 	}
 
