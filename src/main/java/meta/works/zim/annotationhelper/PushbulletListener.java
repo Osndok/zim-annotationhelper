@@ -574,6 +574,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			return true;
 		}
 
+		if (app.equals("Eternity") && body.endsWith("New Messages"))
+		{
+			return true;
+		}
+
 		return false;
 	}
 
