@@ -416,6 +416,8 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			return;
 		}
 
+		body = applyTrimAndTruncation(body);
+
 		if (app.equals("Phone"))
 		{
 			title = phoneNumberLinker.linkifyPhoneNumber(title);
@@ -471,6 +473,8 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			}
 		}
 
+		//summaryWithBody = applyTrimAndTruncation(summaryWithBody);
+
 		if (notificationsById.size() > 10_000)
 		{
 			notificationsById.clear();
@@ -484,8 +488,6 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		}
 
 		notificationsById.put(id, summary);
-
-		summaryWithBody = applyTrimAndTruncation(summaryWithBody);
 
 		if (summariesToIgnore.contains(summary))
 		{
@@ -510,6 +512,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	private
 	String applyTrimAndTruncation(String summaryWithBody)
 	{
+		if (summaryWithBody == null)
+		{
+			return null;
+		}
+
 		for (String prefix : prefixesToTrim)
 		{
 			if (summaryWithBody.startsWith(prefix))
@@ -547,6 +554,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			"Check activity",
 			"this mandatory email",
 			"Manage family group",
+			"Manage your Location History",
 			"To check hours before heading to",
 			"Rx info, price ",
 			"See more highlights",
