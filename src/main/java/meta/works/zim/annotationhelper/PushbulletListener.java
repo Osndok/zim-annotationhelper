@@ -566,6 +566,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			"TxtHelp",
 			"Txt STOP",
 			"Text help",
+			"Text STOP",
 			"Text 0 for"
 	);
 
