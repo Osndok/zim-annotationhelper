@@ -67,6 +67,11 @@ class ZimPageAppenderImpl
 		{
 			log.error("zim-plugin-append exit status {}", statusCode);
 		}
+
+		if (memo.equals("self: Trash can activity"))
+		{
+			new ProcessBuilder("espeak", "Trash can motion").start();
+		}
 	}
 
 	@Override
