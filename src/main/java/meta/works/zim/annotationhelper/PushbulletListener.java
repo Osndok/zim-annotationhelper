@@ -5,6 +5,7 @@ import com.github.sheigutn.pushbullet.ephemeral.*;
 import com.github.sheigutn.pushbullet.items.device.Device;
 import com.github.sheigutn.pushbullet.items.push.sendable.defaults.SendableNotePush;
 import com.github.sheigutn.pushbullet.items.push.sent.Push;
+import com.github.sheigutn.pushbullet.items.push.sent.defaults.FilePush;
 import com.github.sheigutn.pushbullet.items.push.sent.defaults.NotePush;
 import com.github.sheigutn.pushbullet.stream.PushbulletWebsocketClient;
 import com.github.sheigutn.pushbullet.stream.PushbulletWebsocketListener;
@@ -971,6 +972,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			case LINK:
 				break;
 			case FILE:
+				handleFilePush((FilePush)push);
 				break;
 			case LIST:
 				break;
@@ -982,6 +984,38 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 				break;
 			*/
 		}
+	}
+
+	private
+	void handleFilePush(final FilePush push) throws IOException, InterruptedException
+	{
+		var fileType = push.getFileType();
+		var baseName = push.getFileName();
+
+		if (fileType.startsWith("image/"))
+		{
+			handleImageFilePush(push);
+		}
+		else
+		{
+			zimPageAppender.journalNote("file push: " + baseName);
+		}
+	}
+
+	private
+	void handleImageFilePush(final FilePush push) throws IOException, InterruptedException
+	{
+		var baseName = push.getFileName();
+		var fetchUrl = push.getFileUrl();
+		var imageWidth = push.getImageWidth();
+		var imageHeight = push.getImageHeight();
+		log.debug("handleImageFilePush: {}x{}: {}", imageWidth, imageHeight, fetchUrl);
+
+		// TODO: If the image is small, d/l it and stick it straight into the journal
+		// TODO: If the image is large, d/l it, scale it down, and put the small version in the journal.
+		// TODO: universal CAS refs?
+
+		zimPageAppender.journalNote("image push: " + baseName);
 	}
 
 	private final
