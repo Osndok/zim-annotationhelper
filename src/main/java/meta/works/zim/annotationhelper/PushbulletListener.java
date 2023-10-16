@@ -1115,8 +1115,16 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			{
 				// NB: outgoing replies are "immediately dismissed", and we don't want to truncate them.
 				// This is also the path for CLI-generated messages (not just replies).
-				summary = "self: " + summarize(note);
-				zimPageAppender.journalNote(summary);
+				if (note.isDismissed())
+				{
+					summary = "dismissed: self: " + summarize(note);
+					zimPageAppender.journalNoteStruckOut(summary);
+				}
+				else
+				{
+					summary = "self: " + summarize(note);
+					zimPageAppender.journalNote(summary);
+				}
 			}
 			else if (note.isDismissed())
 			{
