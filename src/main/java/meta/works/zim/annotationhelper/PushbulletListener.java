@@ -997,6 +997,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			handleImageFilePush(push);
 		}
 		else
+		if (push.isDismissed())
+		{
+			zimPageAppender.journalNoteStruckOut("file push: " + baseName);
+		}
+		else
 		{
 			zimPageAppender.journalNote("file push: " + baseName);
 		}
@@ -1011,11 +1016,36 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		var imageHeight = push.getImageHeight();
 		log.debug("handleImageFilePush: {}x{}: {}", imageWidth, imageHeight, fetchUrl);
 
+		var who = whoSent(push);
+
+		if (push.isDismissed())
+		{
+			zimPageAppender.journalNoteStruckOut(who + " pushed image: " + baseName);
+			return;
+		}
+
+
 		// TODO: If the image is small, d/l it and stick it straight into the journal
 		// TODO: If the image is large, d/l it, scale it down, and put the small version in the journal.
 		// TODO: universal CAS refs?
 
-		zimPageAppender.journalNote("image push: " + baseName);
+		zimPageAppender.journalNote(who + " pushed image: " + baseName);
+	}
+
+	private
+	String whoSent(final Push push)
+	{
+		var name = push.getSenderName();
+		var space = name.indexOf(' ');
+
+		if (space > 0)
+		{
+			return name.substring(0, space).trim();
+		}
+		else
+		{
+			return name.trim();
+		}
 	}
 
 	private final
