@@ -1145,12 +1145,16 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			{
 				// NB: outgoing replies are "immediately dismissed", and we don't want to truncate them.
 				// This is also the path for CLI-generated messages (not just replies).
+				// Do we ever get ordinary notifications for things we send? Maybe just process all
+				// self-dismissed items as new/normal.
+				/*
 				if (note.isDismissed())
 				{
 					summary = "dismissed: self: " + summarize(note);
 					zimPageAppender.journalNoteStruckOut(summary);
 				}
 				else
+				 */
 				{
 					summary = "self: " + summarize(note);
 					zimPageAppender.journalNote(summary);
