@@ -568,7 +568,8 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			"Txt STOP",
 			"Text help",
 			"Text STOP",
-			"Text 0 for"
+			"Text 0 for",
+			" STOP to "
 	);
 
 	private
@@ -1162,6 +1163,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			}
 			else if (note.isDismissed())
 			{
+				// BUG? If the WUI is open, then responses might be instantly marked as read/dismissed.
 				if (summary.length() > 47)
 				{
 					summary = summary.substring(0, 47) + "...";
