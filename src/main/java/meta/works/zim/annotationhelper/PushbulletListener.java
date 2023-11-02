@@ -1144,18 +1144,18 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 
 			if (sender.equals(ME))
 			{
-				// NB: outgoing replies are "immediately dismissed", and we don't want to truncate them.
-				// This is also the path for CLI-generated messages (not just replies).
-				// Do we ever get ordinary notifications for things we send? Maybe just process all
-				// self-dismissed items as new/normal.
-				/*
+				// NB: outgoing replies (to normal conversations) are "immediately dismissed", and we don't want to
+				// truncate them. This is also the path for CLI-generated messages (not just replies).
+				// We do need this dismissed check, though, as otherwise it will trigger when we explicitly dismiss
+				// the trash can notification too.
+				// What we really need to know is if this is the first time we are seeing this message, in which case
+				// we can ignore the dismissed flag.
 				if (note.isDismissed())
 				{
 					summary = "dismissed: self: " + summarize(note);
 					zimPageAppender.journalNoteStruckOut(summary);
 				}
 				else
-				 */
 				{
 					summary = "self: " + summarize(note);
 					zimPageAppender.journalNote(summary);
