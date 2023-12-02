@@ -1152,8 +1152,16 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 				// we can ignore the dismissed flag.
 				if (note.isDismissed())
 				{
-					summary = "dismissed: self: " + summarize(note);
-					zimPageAppender.journalNoteStruckOut(summary);
+					if (summary.contains("Trash can act"))
+					{
+						summary = "dismissed: self: " + summarize(note);
+						zimPageAppender.journalNoteStruckOut(summary);
+					}
+					else
+					{
+						summary = "self: " + summarize(note);
+						zimPageAppender.journalNote(summary);
+					}
 				}
 				else
 				{
