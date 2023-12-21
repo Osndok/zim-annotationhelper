@@ -87,7 +87,7 @@ class ZimPageAppenderImpl
 		lastJournalNote=memo;
 
 		var time = new SimpleDateFormat("hh:mmaa").format(new Date()).toLowerCase();
-		var struckTimeAndMemo = String.format("\n~~%s - %s~~\n", time, memo);
+		var struckTimeAndMemo = String.format("~~%s - %s~~", time, memo);
 
 		final
 		String[] command = new String[]
