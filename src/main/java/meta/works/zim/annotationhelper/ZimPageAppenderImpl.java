@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by robert on 2016-10-06 11:36.
@@ -38,6 +39,14 @@ class ZimPageAppenderImpl
 			return;
 		}
 		lastJournalNote=memo;
+
+		/* DNW: The newline appears between the time and the message (maybe need to impl our own '--time'?)
+		if (lastAppendWasAwhileAgo())
+		{
+			log.debug("adding extra newline prefix to journalNote()");
+			memo = "\n" + memo;
+		}
+		 */
 
 		// TODO: Use effectiveDate to calculate page & time-prefix
 
@@ -74,6 +83,26 @@ class ZimPageAppenderImpl
 		}
 	}
 
+	private Long lastJournalAppend;
+
+	private
+	boolean lastAppendWasAwhileAgo()
+	{
+		var now = System.currentTimeMillis();
+		var deadline = now - TimeUnit.MINUTES.toMillis(7);
+
+		if (lastJournalAppend != null && lastJournalAppend < deadline)
+		{
+			lastJournalAppend = now;
+			return true;
+		}
+		else
+		{
+			lastJournalAppend = now;
+			return false;
+		}
+	}
+
 	@Override
 	public
 	void journalNoteStruckOut(String memo) throws IOException, InterruptedException
@@ -85,6 +114,8 @@ class ZimPageAppenderImpl
 			return;
 		}
 		lastJournalNote=memo;
+
+		lastJournalAppend = System.currentTimeMillis();
 
 		var time = new SimpleDateFormat("hh:mmaa").format(new Date()).toLowerCase();
 		var struckTimeAndMemo = String.format("~~%s - %s~~", time, memo);
