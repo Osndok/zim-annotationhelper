@@ -541,6 +541,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 
 	private final
 	List<String> prefixesToTrim = List.of(
+			"A driver needs help delivering your Amazon order. Reply STOP to stop receiving texts for Amazon deliveries.",
 			"Slack: Thread in ",
 			"Slack: "
 	);
@@ -553,7 +554,6 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			"about search alerts",
 			"View all the results.",
 			"Check activity",
-			"this mandatory email",
 			"Manage family group",
 			"Manage your Location History",
 			"To check hours before heading to",
@@ -564,6 +564,8 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			"Or reply:",
 			"Msg&Data",
 			"how likely are you to recommend",
+			"this mandatory email",
+			" This text session will close ",
 			"TxtHelp",
 			"Txt STOP",
 			"Text help",
