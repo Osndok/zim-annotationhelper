@@ -598,6 +598,18 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			return true;
 		}
 
+		if (title.contains("LinkedIn Job Alerts"))
+		{
+			System.err.println("lija in title");
+			return true;
+		}
+
+		if (body.contains("LinkedIn Job Alerts"))
+		{
+			System.err.println("lija in body");
+			return true;
+		}
+
 		return false;
 	}
 
