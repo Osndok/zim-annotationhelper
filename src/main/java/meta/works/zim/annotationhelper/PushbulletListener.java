@@ -207,6 +207,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			catch (IllegalArgumentException e)
 			{
 				log.trace("expected", e);
+				log.debug("ignoring other device: {}", device);
 			}
 		}
 
@@ -588,6 +589,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		}
 
 		if (app.equals("Eternity") && body.endsWith("New Messages"))
+		{
+			return true;
+		}
+
+		if ((title.contains("pload") || title.contains("ownload")) && title.contains("%"))
 		{
 			return true;
 		}
