@@ -494,11 +494,21 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		if (summariesToIgnore.contains(summary))
 		{
 			log.debug("ignore: {}", summary);
+			return;
 		}
-		else
+
+		if (shouldStandOut(summaryWithBody))
 		{
-			zimPageAppender.journalNote(summaryWithBody);
+			summaryWithBody += "\n";
 		}
+
+		zimPageAppender.journalNote(summaryWithBody);
+	}
+
+	private
+	boolean shouldStandOut(final String summaryWithBody)
+	{
+		return summaryWithBody.startsWith("Weather: ");
 	}
 
 	private
