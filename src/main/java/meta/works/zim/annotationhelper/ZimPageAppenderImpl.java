@@ -1,5 +1,7 @@
 package meta.works.zim.annotationhelper;
 
+import meta.works.zim.annotationhelper.util.StringUtils;
+import org.assertj.core.internal.bytebuddy.asm.Advice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +41,15 @@ class ZimPageAppenderImpl
 			return;
 		}
 		lastJournalNote=memo;
+
+		if (memo.startsWith("Weather: Tomorrow: "))
+		{
+			log.info("diverting 'weather-tomorrow' notification to the next day");
+			var pageName = journalPageFor(effectiveDate, 1);
+			var newMemo = "Weather: " + StringUtils.stripPrefix(memo, "Weather: Tomorrow: ");
+			pageNote(pageName, newMemo);
+			return;
+		}
 
 		/* DNW: The newline appears between the time and the message (maybe need to impl our own '--time'?)
 		if (lastAppendWasAwhileAgo())
@@ -81,6 +92,23 @@ class ZimPageAppenderImpl
 		{
 			new ProcessBuilder("espeak", "Trash can motion").start();
 		}
+	}
+
+	public static
+	String journalPageFor(final Date date, final int daysOffset)
+	{
+		// Convert java.util.Date to LocalDate
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.DATE, daysOffset);
+		Date adjustedDate = cal.getTime();
+
+		// Format the adjusted date
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd");
+		String formattedDate = dateFormat.format(adjustedDate);
+
+		// Construct and return the journal page string
+		return ":Journal:" + formattedDate;
 	}
 
 	private Long lastJournalAppend;
