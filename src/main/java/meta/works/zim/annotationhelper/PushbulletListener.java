@@ -588,39 +588,51 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	private
 	boolean DontCareAbout(final String appPackage, final String app, final String title, final String body)
 	{
+		var care = false;
+		var dont_care = true;
+
 		if (appPackage.startsWith("org.fdroid") || app.equals("F-Droid"))
 		{
-			return true;
+			return dont_care;
 		}
 
 		if (appPackage.equals("com.google.android.gms") || app.equals("Google Play services"))
 		{
-			return true;
+			return dont_care;
 		}
 
 		if (app.equals("Eternity") && body.endsWith("New Messages"))
 		{
-			return true;
+			return dont_care;
 		}
 
 		if ((title.contains("pload") || title.contains("ownload")) && title.contains("%"))
 		{
-			return true;
+			return dont_care;
 		}
 
 		if (title.contains("LinkedIn Job Alerts"))
 		{
 			System.err.println("lija in title");
-			return true;
+			return dont_care;
 		}
+
+		// --------------------------------------------------------
+
+		if (body == null)
+		{
+			return care;
+		}
+
+		// ------------------- BODY BELOW THIS --------------------
 
 		if (body.contains("LinkedIn Job Alerts"))
 		{
 			System.err.println("lija in body");
-			return true;
+			return dont_care;
 		}
 
-		return false;
+		return care;
 	}
 
 	private
