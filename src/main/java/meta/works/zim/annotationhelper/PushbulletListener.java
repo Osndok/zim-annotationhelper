@@ -16,6 +16,7 @@ import com.github.sheigutn.pushbullet.stream.message.TickleStreamMessage;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import meta.works.zim.annotationhelper.util.LossySet;
+import org.apache.commons.codec.binary.StringUtils;
 import org.buildobjects.process.ProcBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -614,6 +615,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		if (title.contains("LinkedIn Job Alerts"))
 		{
 			System.err.println("lija in title");
+			return dont_care;
+		}
+
+		if (app.equals("K-9 Mail"))
+		{
 			return dont_care;
 		}
 
