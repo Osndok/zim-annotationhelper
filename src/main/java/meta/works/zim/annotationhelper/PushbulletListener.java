@@ -428,18 +428,18 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 
 		app = filterAppName(app);
 
-		String summary = app + ": " + title;
+		String summary = title.startsWith(app) ? title : app + ": " + title;
 
 		String summaryWithBody;
 		{
 			if (body == null || body.trim().isEmpty())
 			{
-				summaryWithBody = app + ": " + title;
+				summaryWithBody = summary;
 			}
 			else
 			if (body.length() > 800)
 			{
-				summaryWithBody = app + ": " + title + ": (" + body.length() + " characters)";
+				summaryWithBody = summary + ": (" + body.length() + " characters)";
 			}
 			else if (appPackage.equals("com.Slack"))
 			{
@@ -468,11 +468,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 				}
 				body = sb.toString();
 				log.debug("New slack body: {}", body);
-				summaryWithBody = app + ": " + title + ": " + body;
+				summaryWithBody = summary + ": " + body;
 			}
 			else
 			{
-				summaryWithBody = app + ": " + title + ": " + body;
+				summaryWithBody = summary + ": " + body;
 			}
 		}
 
