@@ -553,6 +553,11 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 
 	private final
 	List<String> prefixesToTrim = List.of(
+			"Hi, it's Xfinity Assistant.",
+			"Hello, ",
+			"Hello ",
+			"Hi, ",
+			"Hi",
 			"A driver needs help delivering your Amazon order. Reply STOP to stop receiving texts for Amazon deliveries.",
 			"Slack: Thread in ",
 			"Slack: "
@@ -581,6 +586,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			"TxtHelp",
 			"Txt STOP",
 			"Text help",
+			"Text Help",
 			"Text STOP",
 			"Text 0 for",
 			" STOP to "
