@@ -580,6 +580,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			"To check hours before heading",
 			"Or reply:",
 			"Msg&Data",
+			" Msg & data rate",
 			"how likely are you to recommend",
 			"this mandatory email",
 			" This text session will close ",
