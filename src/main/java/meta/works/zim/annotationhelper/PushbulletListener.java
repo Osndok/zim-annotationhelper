@@ -692,7 +692,8 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		}
 		else
 		{
-			zimPageAppender.journalNoteStruckOut("dismissed: " + summary);
+			var oneline = summary.replace('\n', '/');
+			zimPageAppender.journalNoteStruckOut("dismissed: " + oneline);
 		}
 	}
 
