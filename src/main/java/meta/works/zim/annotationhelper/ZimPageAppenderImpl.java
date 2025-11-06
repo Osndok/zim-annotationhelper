@@ -14,6 +14,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -40,6 +41,11 @@ class ZimPageAppenderImpl
 
 	private static final
 	String CALLS_PAGE_INDICATOR = "Pushbullet: Incoming call";
+
+	private static final
+	Set<String> IGNORED_STRUCK_OUT_MESSAGES = Set.of(
+			"dismissed: Phone: Missed call"
+	);
 
 	private
 	String lastJournalNote;
@@ -158,7 +164,7 @@ class ZimPageAppenderImpl
 	{
 		log.debug("journalNoteStruckOut('{}')", memo);
 
-		if (memo.equals(lastJournalNote))
+		if (memo.equals(lastJournalNote) || IGNORED_STRUCK_OUT_MESSAGES.contains(memo))
 		{
 			return;
 		}
