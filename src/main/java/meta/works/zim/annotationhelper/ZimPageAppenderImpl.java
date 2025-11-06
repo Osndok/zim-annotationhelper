@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -26,6 +28,18 @@ class ZimPageAppenderImpl
 	Logger log = LoggerFactory.getLogger(ZimPageAppenderImpl.class);
 
 	private static final boolean LOG_FIRST_PLAY_ONLY = Boolean.getBoolean("log.firstPlayOnly");
+
+	private static final
+	DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mma - ");
+
+	private static final
+	DateTimeFormatter JOURNAL_PAGE_FORMATTER = DateTimeFormatter.ofPattern(":'Journal':yyyy:MM:dd");
+
+	private static final
+	DateTimeFormatter CALLS_PAGE_FORMATTER = DateTimeFormatter.ofPattern(":'Journal':yyyy:MM:dd:'Calls'");
+
+	private static final
+	String CALLS_PAGE_INDICATOR = "Pushbullet: Incoming call";
 
 	private
 	String lastJournalNote;
@@ -51,22 +65,29 @@ class ZimPageAppenderImpl
 			return;
 		}
 
-		/* DNW: The newline appears between the time and the message (maybe need to impl our own '--time'?)
-		if (lastAppendWasAwhileAgo())
-		{
-			log.debug("adding extra newline prefix to journalNote()");
-			memo = "\n" + memo;
-		}
-		 */
+		var localDateTime = effectiveDate.toInstant()
+				.atZone(ZoneId.systemDefault())
+				.toLocalDateTime();
 
-		// TODO: Use effectiveDate to calculate page & time-prefix
+		final String page;
+		{
+			if (memo.contains(CALLS_PAGE_INDICATOR)) {
+				page = CALLS_PAGE_FORMATTER.format(localDateTime);
+			} else {
+				page = JOURNAL_PAGE_FORMATTER.format(localDateTime);
+			}
+		}
+
+		// Manually append the time, since '--time' will add the date if not on the journal page.
+		// TODO: file bug for append plugin therefor^^^
+		var timePrefix = TIME_FORMATTER.format(localDateTime).toLowerCase();
+		memo = timePrefix + memo;
 
 		final
 		String[] command = new String[]
 			{
 				"zim", "--plugin", "append",
-				"--journal",
-				"--time",
+				"--page", page,
 				"--literal", memo
 			};
 
@@ -145,14 +166,27 @@ class ZimPageAppenderImpl
 
 		lastJournalAppend = System.currentTimeMillis();
 
-		var time = new SimpleDateFormat("hh:mmaa").format(new Date()).toLowerCase();
+		var effectiveDate = new Date();
+		var localDateTime = effectiveDate.toInstant()
+				.atZone(ZoneId.systemDefault())
+				.toLocalDateTime();
+		var time = new SimpleDateFormat("hh:mmaa").format(effectiveDate).toLowerCase();
 		var struckTimeAndMemo = String.format("~~%s - %s~~", time, memo);
+
+		final String page;
+		{
+			if (memo.contains(CALLS_PAGE_INDICATOR)) {
+				page = CALLS_PAGE_FORMATTER.format(localDateTime);
+			} else {
+				page = JOURNAL_PAGE_FORMATTER.format(localDateTime);
+			}
+		}
 
 		final
 		String[] command = new String[]
 				{
 						"zim", "--plugin", "append",
-						"--journal",
+						"--page", page,
 						"--literal", struckTimeAndMemo
 				};
 
@@ -180,6 +214,9 @@ class ZimPageAppenderImpl
 	{
 		var zap = new ZimPageAppenderImpl();
 		zap.journalNoteStruckOut("testing");
+		zap.journalNoteStruckOut("testing Pushbullet: Incoming call"); // should not appear
+		zap.journalNote("testing");
+		zap.journalNote("testing Pushbullet: Incoming call");
 	}
 
 	@Override
