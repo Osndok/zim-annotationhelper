@@ -1,7 +1,6 @@
 package meta.works.zim.annotationhelper;
 
 import meta.works.zim.annotationhelper.util.StringUtils;
-import org.assertj.core.internal.bytebuddy.asm.Advice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +76,7 @@ class ZimPageAppenderImpl
 
 		final String page;
 		{
-			if (memo.contains(CALLS_PAGE_INDICATOR)) {
+			if (indicatesCall(memo)) {
 				page = CALLS_PAGE_FORMATTER.format(localDateTime);
 			} else {
 				page = JOURNAL_PAGE_FORMATTER.format(localDateTime);
@@ -89,6 +88,25 @@ class ZimPageAppenderImpl
 		var timePrefix = TIME_FORMATTER.format(localDateTime).toLowerCase();
 		memo = timePrefix + memo;
 
+		doZimPluginAppend(memo, page);
+
+		if (memo.equals("self: Trash can activity"))
+		{
+			new ProcessBuilder("espeak", "Trash can motion").start();
+		}
+
+		// We always put it in the call log, but maybe it is notable enough to go in the journal too?
+		if (isNotableCall(memo))
+		{
+			log.debug("additionally placing notable call in journal page");
+			var page2 = JOURNAL_PAGE_FORMATTER.format(localDateTime);
+			doZimPluginAppend(memo, page2);
+		}
+	}
+
+	private static
+	void doZimPluginAppend(final String memo, final String page) throws IOException, InterruptedException
+	{
 		final
 		String[] command = new String[]
 			{
@@ -113,11 +131,6 @@ class ZimPageAppenderImpl
 		else
 		{
 			log.error("zim-plugin-append exit status {}", statusCode);
-		}
-
-		if (memo.equals("self: Trash can activity"))
-		{
-			new ProcessBuilder("espeak", "Trash can motion").start();
 		}
 	}
 
@@ -181,38 +194,27 @@ class ZimPageAppenderImpl
 
 		final String page;
 		{
-			if (memo.contains(CALLS_PAGE_INDICATOR)) {
+			if (indicatesCall(memo)) {
 				page = CALLS_PAGE_FORMATTER.format(localDateTime);
 			} else {
 				page = JOURNAL_PAGE_FORMATTER.format(localDateTime);
 			}
 		}
 
-		final
-		String[] command = new String[]
-				{
-						"zim", "--plugin", "append",
-						"--page", page,
-						"--literal", struckTimeAndMemo
-				};
+		doZimPluginAppend(struckTimeAndMemo, page);
+	}
 
-		final
-		ProcessBuilder processBuilder = new ProcessBuilder(command);
+	private static
+	boolean isNotableCall(final String memo)
+	{
+		// True if the memo is for a call from a contact (named, not just a number).
+		return ( memo.contains(CALLS_PAGE_INDICATOR+": ") && !memo.contains(CALLS_PAGE_INDICATOR + ": +"));
+	}
 
-		final
-		Process process = processBuilder.start();
-
-		final
-		int statusCode = process.waitFor();
-
-		if (statusCode == 0)
-		{
-			log.trace("zim-plugin-append exit success");
-		}
-		else
-		{
-			log.error("zim-plugin-append exit status {}", statusCode);
-		}
+	private static
+	boolean indicatesCall(final String memo)
+	{
+		return memo.contains(CALLS_PAGE_INDICATOR);
 	}
 
 	public static
