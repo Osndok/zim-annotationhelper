@@ -15,6 +15,8 @@ import com.github.sheigutn.pushbullet.stream.message.StreamMessage;
 import com.github.sheigutn.pushbullet.stream.message.TickleStreamMessage;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import meta.works.zim.annotationhelper.util.Handler;
+import meta.works.zim.annotationhelper.util.HandlerResult;
 import meta.works.zim.annotationhelper.util.LossySet;
 import org.buildobjects.process.ProcBuilder;
 import org.slf4j.Logger;
@@ -63,6 +65,14 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 
 	private final
 	PhoneNumberLinker phoneNumberLinker = new PhoneNumberLinker();
+
+	private final
+	Handler<String> commandExecutor = new CommandExecutorStringHandler();
+
+	private final
+	Map<String, Handler<String>> singleWordHandlers = Map.of(
+			"nas1-unlock", commandExecutor
+	);
 
 	public
 	PushbulletListener()
@@ -1135,6 +1145,13 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	void handleFeatureNote(final NotePush note, final Feature feature) throws IOException, InterruptedException
 	{
 		final String fullMessage = getBestMessageFrom(note);
+
+		var handler = singleWordHandlers.get(fullMessage);
+
+		if (handler != null && handler.handle(fullMessage) == HandlerResult.HANDLED) {
+			log.debug("handled by special handler");
+			return;
+		}
 
 		switch (feature)
 		{
