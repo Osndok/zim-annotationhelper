@@ -1156,33 +1156,6 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			}
 			else
 			{
-				switch (note.getTitle())
-				{
-					case "call-in":
-					{
-						try
-						{
-							final
-							CallInRecord callInRecord = new CallInRecord(note.getBody());
-
-							final
-							String dateAndTimeLink = zimDateAndTimeLinkFormatter.format(callInRecord.getDate());
-
-							zimPageAppender.pageNote(callInRecord.getZimPageName(), dateAndTimeLink+" -> Call In");
-							zimPageAppender.journalNote(
-									"**Incoming call** from " +
-									callInRecord.getZimPageLink("CallIn")
-							);
-							return;
-						}
-						catch (Exception e)
-						{
-							log.error("call-in handling failure", e);
-							//fall thru, log it like normal.
-						}
-					}
-				}
-
 				//have title
 				if (isTrivial(note.getBody()))
 				{
