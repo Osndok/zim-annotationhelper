@@ -16,7 +16,6 @@ import com.github.sheigutn.pushbullet.stream.message.TickleStreamMessage;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import meta.works.zim.annotationhelper.util.LossySet;
-import org.apache.commons.codec.binary.StringUtils;
 import org.buildobjects.process.ProcBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1118,108 +1117,119 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 
 		if (feature!=null)
 		{
-			final
-			String fullMessage;
-			{
-				if (isTrivial(note.getTitle()))
-				{
-					//no title
-					if (isTrivial(note.getBody()))
-					{
-						//and no body...?
-						fullMessage=note.toString();
-					}
-					else
-					{
-						//just the body
-						fullMessage=note.getBody();
-					}
-				}
-				else
-				{
-					switch (note.getTitle())
-					{
-						case "call-in":
-						{
-							try
-							{
-								final
-								CallInRecord callInRecord = new CallInRecord(note.getBody());
-
-								final
-								String dateAndTimeLink = zimDateAndTimeLinkFormatter.format(callInRecord.getDate());
-
-								zimPageAppender.pageNote(callInRecord.getZimPageName(), dateAndTimeLink+" -> Call In");
-								zimPageAppender.journalNote(
-									"**Incoming call** from " +
-									callInRecord.getZimPageLink("CallIn")
-								);
-								return;
-							}
-							catch (Exception e)
-							{
-								log.error("call-in handling failure", e);
-								//fall thru, log it like normal.
-							}
-						}
-					}
-
-					//have title
-					if (isTrivial(note.getBody()))
-					{
-						//but no body
-						fullMessage=note.getTitle();
-					}
-					else
-					{
-						//title and body
-						fullMessage=String.format("%s: %s", note.getTitle(), note.getBody());
-					}
-				}
-			}
-
-			switch (feature)
-			{
-				case note:
-				{
-					zimPageAppender.journalNote(fullMessage.trim());
-					return;
-				}
-
-				case todo:
-				{
-					zimPageAppender.newActionItem(fullMessage.trim());
-					return;
-				}
-			}
+			// Stuff to self via special channels like 'note', 'todo', etc.
+			handleFeatureNote(note, feature);
+			return;
 		}
 
 		var sender = note.getSenderName();
 
 		if (sender != null && !sender.isEmpty())
 		{
-			var summary = sender+": "+summarize(note);
+			// Stuff from others
+			handleNoteFromSender(note, sender);
+			return;
+		}
 
-			if (sender.equals(ME))
+		log.debug("ignoring note: '{}' / {}", note.getTitle(), note.getBody());
+	}
+
+	private
+	void handleFeatureNote(final NotePush note, final Feature feature) throws IOException, InterruptedException
+	{
+		final
+		String fullMessage;
+		{
+			if (isTrivial(note.getTitle()))
 			{
-				// NB: outgoing replies (to normal conversations) are "immediately dismissed", and we don't want to
-				// truncate them. This is also the path for CLI-generated messages (not just replies).
-				// We do need this dismissed check, though, as otherwise it will trigger when we explicitly dismiss
-				// the trash can notification too.
-				// What we really need to know is if this is the first time we are seeing this message, in which case
-				// we can ignore the dismissed flag.
-				if (note.isDismissed())
+				//no title
+				if (isTrivial(note.getBody()))
 				{
-					if (summary.contains("Trash can act"))
+					//and no body...?
+					fullMessage= note.toString();
+				}
+				else
+				{
+					//just the body
+					fullMessage= note.getBody();
+				}
+			}
+			else
+			{
+				switch (note.getTitle())
+				{
+					case "call-in":
 					{
-						summary = "dismissed: self: " + summarize(note);
-						zimPageAppender.journalNoteStruckOut(summary);
+						try
+						{
+							final
+							CallInRecord callInRecord = new CallInRecord(note.getBody());
+
+							final
+							String dateAndTimeLink = zimDateAndTimeLinkFormatter.format(callInRecord.getDate());
+
+							zimPageAppender.pageNote(callInRecord.getZimPageName(), dateAndTimeLink+" -> Call In");
+							zimPageAppender.journalNote(
+									"**Incoming call** from " +
+									callInRecord.getZimPageLink("CallIn")
+							);
+							return;
+						}
+						catch (Exception e)
+						{
+							log.error("call-in handling failure", e);
+							//fall thru, log it like normal.
+						}
 					}
-					else
-					{
-						summary = "self: " + summarize(note);
-						zimPageAppender.journalNote(summary);
-					}
+				}
+
+				//have title
+				if (isTrivial(note.getBody()))
+				{
+					//but no body
+					fullMessage= note.getTitle();
+				}
+				else
+				{
+					//title and body
+					fullMessage=String.format("%s: %s", note.getTitle(), note.getBody());
+				}
+			}
+		}
+
+		switch (feature)
+		{
+			case note:
+			{
+				zimPageAppender.journalNote(fullMessage.trim());
+			}
+
+			case todo:
+			{
+				zimPageAppender.newActionItem(fullMessage.trim());
+			}
+		}
+	}
+
+	private
+	void handleNoteFromSender(final NotePush note, final String sender) throws IOException, InterruptedException
+	{
+		var summary = sender + ": " + summarize(note);
+
+		if (sender.equals(ME))
+		{
+			// NB: outgoing replies (to normal conversations) are "immediately dismissed", and we don't want to
+			// truncate them. This is also the path for CLI-generated messages (not just replies).
+			// We do need this dismissed check, though, as otherwise it will trigger when we explicitly dismiss
+			// the trash can notification too.
+			// What we really need to know is if this is the first time we are seeing this message, in which case
+			// we can ignore the dismissed flag.
+			if (note.isDismissed())
+			{
+				if (summary.contains("Trash can act"))
+				{
+					summary = "dismissed: self: " + summarize(note);
+					zimPageAppender.journalNoteStruckOut(summary);
 				}
 				else
 				{
@@ -1227,25 +1237,26 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 					zimPageAppender.journalNote(summary);
 				}
 			}
-			else if (note.isDismissed())
-			{
-				// BUG? If the WUI is open, then responses might be instantly marked as read/dismissed.
-				if (summary.length() > 47)
-				{
-					summary = summary.substring(0, 47) + "...";
-				}
-				summary = "dismissed: " + summary;
-				zimPageAppender.journalNoteStruckOut(summary);
-			}
 			else
 			{
+				summary = "self: " + summarize(note);
 				zimPageAppender.journalNote(summary);
 			}
-			return;
 		}
-
-		//NB: This logs even when the user dismisses an item.
-		log.debug("ignoring note: '{}' / {}", note.getTitle(), note.getBody());
+		else if (note.isDismissed())
+		{
+			// BUG? If the WUI is open, then responses might be instantly marked as read/dismissed.
+			if (summary.length() > 47)
+			{
+				summary = summary.substring(0, 47) + "...";
+			}
+			summary = "dismissed: " + summary;
+			zimPageAppender.journalNoteStruckOut(summary);
+		}
+		else
+		{
+			zimPageAppender.journalNote(summary);
+		}
 	}
 
 	private
