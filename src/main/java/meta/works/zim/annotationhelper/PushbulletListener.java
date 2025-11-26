@@ -1106,9 +1106,6 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		}
 	}
 
-	private final
-	DateFormat zimDateAndTimeLinkFormatter=new SimpleDateFormat("'[[:Journal:'yyyy:MM:dd|yyyy-MM-dd @ HH:mm:ss]]");
-
 	private
 	void handleNote(NotePush note) throws IOException, InterruptedException
 	{
@@ -1117,7 +1114,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 
 		if (feature!=null)
 		{
-			// Stuff to self via special channels like 'note', 'todo', etc.
+			// Stuff to self via special channels like 'todo', 'note', etc.
 			handleFeatureNote(note, feature);
 			return;
 		}
@@ -1137,38 +1134,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	private
 	void handleFeatureNote(final NotePush note, final Feature feature) throws IOException, InterruptedException
 	{
-		final
-		String fullMessage;
-		{
-			if (isTrivial(note.getTitle()))
-			{
-				//no title
-				if (isTrivial(note.getBody()))
-				{
-					//and no body...?
-					fullMessage= note.toString();
-				}
-				else
-				{
-					//just the body
-					fullMessage= note.getBody();
-				}
-			}
-			else
-			{
-				//have title
-				if (isTrivial(note.getBody()))
-				{
-					//but no body
-					fullMessage= note.getTitle();
-				}
-				else
-				{
-					//title and body
-					fullMessage=String.format("%s: %s", note.getTitle(), note.getBody());
-				}
-			}
-		}
+		final String fullMessage = getBestMessageFrom(note);
 
 		switch (feature)
 		{
@@ -1180,6 +1146,39 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			case todo:
 			{
 				zimPageAppender.newActionItem(fullMessage.trim());
+			}
+		}
+	}
+
+	private
+	String getBestMessageFrom(final NotePush note)
+	{
+		if (isTrivial(note.getTitle()))
+		{
+			//no title
+			if (isTrivial(note.getBody()))
+			{
+				//and no body...?
+				return note.toString();
+			}
+			else
+			{
+				//just the body
+				return note.getBody();
+			}
+		}
+		else
+		{
+			//have title
+			if (isTrivial(note.getBody()))
+			{
+				//but no body
+				return note.getTitle();
+			}
+			else
+			{
+				//title and body
+				return String.format("%s: %s", note.getTitle(), note.getBody());
 			}
 		}
 	}
