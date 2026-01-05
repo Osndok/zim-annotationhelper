@@ -625,20 +625,23 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			return dont_care;
 		}
 
-		if ((title.contains("pload") || title.contains("ownload")) && title.contains("%"))
-		{
-			return dont_care;
-		}
-
-		if (title.contains("LinkedIn Job Alerts"))
-		{
-			System.err.println("lija in title");
-			return dont_care;
-		}
-
 		if (app.equals("K-9 Mail"))
 		{
 			return dont_care;
+		}
+
+		if (title != null)
+		{
+			if ((title.contains("pload") || title.contains("ownload")) && title.contains("%"))
+			{
+				return dont_care;
+			}
+
+			if (title.contains("LinkedIn Job Alerts"))
+			{
+				System.err.println("lija in title");
+				return dont_care;
+			}
 		}
 
 		// --------------------------------------------------------
