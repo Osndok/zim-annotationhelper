@@ -437,6 +437,12 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 
 		app = filterAppName(app);
 
+		if (title == null)
+		{
+			title = body;
+			body = null;
+		}
+
 		String summary = title.startsWith(app) ? title : app + ": " + title;
 
 		String summaryWithBody;
