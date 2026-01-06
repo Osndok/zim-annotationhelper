@@ -412,7 +412,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	Map<String,String> notificationsById = new HashMap<>();
 
 	private final
-	Set<String> slackBodyBitsSeen = new LossySet<>(100);
+	Set<String> bodyContinuationBitsSeen = new LossySet<>(100);
 
 	private
 	void LogAndRememberNotification(
@@ -456,7 +456,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			{
 				summaryWithBody = summary + ": (" + body.length() + " characters)";
 			}
-			else if (appPackage.equals("com.Slack"))
+			else if (appPackage.equals("com.Slack") || appPackage.equals("com.microsoft.teams"))
 			{
 				var bits = body.split("\n");
 				var sb = new StringBuilder();
@@ -468,21 +468,21 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 					{
 						sb.append('\n');
 						sb.append(bit);
-						slackBodyBitsSeen.add(bit);
+						bodyContinuationBitsSeen.add(bit);
 						continue;
 					}
 
-					if (slackBodyBitsSeen.add(bit))
+					if (bodyContinuationBitsSeen.add(bit))
 					{
 						sb.append(bit);
 					}
 					else
 					{
-						log.debug("Dropping seen slack body bit: {}", bit);
+						log.debug("Dropping seen body bit: {}", bit);
 					}
 				}
 				body = sb.toString();
-				log.debug("New slack body: {}", body);
+				log.debug("New body bit: {}", body);
 				summaryWithBody = summary + ": " + body;
 			}
 			else
