@@ -33,7 +33,7 @@ class ZimPageAppenderImpl
 	DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mma - ");
 
 	private static final
-	DateTimeFormatter JOURNAL_PAGE_FORMATTER = DateTimeFormatter.ofPattern(":'Journal':yyyy:MM:dd");
+	DateTimeFormatter JOURNAL_DAY_PAGE_FORMATTER = DateTimeFormatter.ofPattern(":'Journal':yyyy:MM:dd");
 
 	private static final
 	DateTimeFormatter CALLS_PAGE_FORMATTER = DateTimeFormatter.ofPattern(":'Journal':yyyy:MM:dd:'Calls'");
@@ -79,7 +79,7 @@ class ZimPageAppenderImpl
 			if (indicatesCall(memo)) {
 				page = CALLS_PAGE_FORMATTER.format(localDateTime);
 			} else {
-				page = JOURNAL_PAGE_FORMATTER.format(localDateTime);
+				page = JOURNAL_DAY_PAGE_FORMATTER.format(localDateTime);
 			}
 		}
 
@@ -90,16 +90,18 @@ class ZimPageAppenderImpl
 
 		doZimPluginAppend(memo, page);
 
+		/*
 		if (memo.equals("self: Trash can activity"))
 		{
 			new ProcessBuilder("espeak", "Trash can motion").start();
 		}
+		 */
 
 		// We always put it in the call log, but maybe it is notable enough to go in the journal too?
 		if (isNotableCall(memo))
 		{
 			log.debug("additionally placing notable call in journal page");
-			var page2 = JOURNAL_PAGE_FORMATTER.format(localDateTime);
+			var page2 = JOURNAL_DAY_PAGE_FORMATTER.format(localDateTime);
 			doZimPluginAppend(memo, page2);
 		}
 	}
@@ -197,7 +199,7 @@ class ZimPageAppenderImpl
 			if (indicatesCall(memo)) {
 				page = CALLS_PAGE_FORMATTER.format(localDateTime);
 			} else {
-				page = JOURNAL_PAGE_FORMATTER.format(localDateTime);
+				page = JOURNAL_DAY_PAGE_FORMATTER.format(localDateTime);
 			}
 		}
 

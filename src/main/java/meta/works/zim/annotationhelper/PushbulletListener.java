@@ -1167,6 +1167,7 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			case note:
 			{
 				zimPageAppender.journalNote(fullMessage.trim());
+				zimPageAppender.journalMonthNote(fullMessage.trim(), new Date());
 			}
 
 			case todo:
