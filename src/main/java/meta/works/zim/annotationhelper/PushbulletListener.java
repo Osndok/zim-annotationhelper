@@ -3,6 +3,7 @@ package meta.works.zim.annotationhelper;
 import com.github.sheigutn.pushbullet.Pushbullet;
 import com.github.sheigutn.pushbullet.ephemeral.*;
 import com.github.sheigutn.pushbullet.items.device.Device;
+import com.github.sheigutn.pushbullet.items.push.sendable.ReceiverType;
 import com.github.sheigutn.pushbullet.items.push.sendable.defaults.SendableNotePush;
 import com.github.sheigutn.pushbullet.items.push.sent.Push;
 import com.github.sheigutn.pushbullet.items.push.sent.defaults.FilePush;
@@ -18,6 +19,7 @@ import com.google.gson.JsonObject;
 import meta.works.zim.annotationhelper.util.Handler;
 import meta.works.zim.annotationhelper.util.HandlerResult;
 import meta.works.zim.annotationhelper.util.LossySet;
+import meta.works.zim.annotationhelper.util.PropertiesBackedMap;
 import org.buildobjects.process.ProcBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +74,23 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 	private final
 	Map<String, Handler<String>> singleWordHandlers = Map.of(
 			"nas1-unlock", commandExecutor
+	);
+
+	/**
+	 * SMS routing table, backed by ~/.config/zah.routes.
+	 *
+	 * <p>Keys are case-sensitive substrings searched against each incoming SMS's
+	 * body <em>and</em> title (sender name). Values are pushbullet identities:
+	 * anything containing '@' is treated as an email address, otherwise the
+	 * value is treated as a device iden.
+	 *
+	 * <p>If multiple keys match a single SMS, the message is forwarded to every
+	 * distinct recipient. Messages whose sender name equals {@link #ME} are
+	 * never forwarded (loop guard).
+	 */
+	private final
+	PropertiesBackedMap smsRoutes = new PropertiesBackedMap(
+			new File(System.getProperty("user.home"), ".config/zah.routes")
 	);
 
 	public
@@ -724,6 +743,8 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 			return;
 		}
 
+		forwardSmsIfRouted(sms);
+
 		final
 		String threadId = sms.getThreadId();
 
@@ -793,6 +814,90 @@ class PushbulletListener implements PushbulletWebsocketListener, Runnable
 		}
 
 		return false;
+	}
+
+	/**
+	 * If the SMS body or sender-name (title) contains any configured route key
+	 * (case-sensitive substring), forward the body to each matched recipient.
+	 * Values containing '@' are treated as pushbullet email addresses; anything
+	 * else is treated as a device identity.
+	 *
+	 * <p>Messages whose sender name equals {@link #ME} are never forwarded, so
+	 * we cannot loop by forwarding our own outbound texts.
+	 */
+	private
+	void forwardSmsIfRouted(SmsNotification sms)
+	{
+		final
+		String sender = sms.getTitle();
+
+		if (sender != null && sender.equals(ME))
+		{
+			log.debug("not forwarding sms from self");
+			return;
+		}
+
+		final
+		String body = sms.getBody();
+
+		if (smsRoutes.isEmpty())
+		{
+			return;
+		}
+
+		//NB: use LinkedHashSet to preserve iteration order and dedupe recipients.
+		final
+		Set<String> recipients = new LinkedHashSet<>();
+
+		for (Map.Entry<String, String> route : smsRoutes.entrySet())
+		{
+			final
+			String key = route.getKey();
+
+			final
+			boolean bodyHit = body != null && body.contains(key);
+
+			final
+			boolean senderHit = sender != null && sender.contains(key);
+
+			if (bodyHit || senderHit)
+			{
+				log.info("sms route match: '{}' -> {}", key, route.getValue());
+				recipients.add(route.getValue());
+			}
+		}
+
+		if (recipients.isEmpty())
+		{
+			return;
+		}
+
+		final
+		String forwardBody = (body == null ? "" : body);
+
+		for (String recipient : recipients)
+		{
+			try
+			{
+				final
+				SendableNotePush note = new SendableNotePush(null, forwardBody);
+
+				if (recipient.contains("@"))
+				{
+					note.setReceiver(ReceiverType.EMAIL, recipient);
+				}
+				else
+				{
+					note.setReceiver(ReceiverType.DEVICE, recipient);
+				}
+
+				pushbullet.push(note);
+			}
+			catch (Exception e)
+			{
+				log.error("failed to forward sms to '{}'", recipient, e);
+			}
+		}
 	}
 
 	private
